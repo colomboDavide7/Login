@@ -10,6 +10,7 @@ import login.repository.ApplicationRepository;
 import login.repository.QueryException;
 import login.tools.LoginException;
 import login.tools.UserValidator;
+import login.users.User;
 import org.junit.Test;
 
 /**
@@ -91,16 +92,17 @@ public class ApplicationTest {
     // User registration
     @Test
     public void shouldAddNewUser() throws LoginException {
-        System.out.println("* UserValidator: shouldAddNewUser()\n");
+        System.out.println("* ApplicationRepository: shouldAddNewUser()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
         ApplicationRepository repo = new ApplicationRepository();
         repo.addUser(validUsername, validPassword);
+        Assert.assertTrue(true);
     }
     
     @Test (expected = LoginException.class)
     public void shouldRejectNewUser() throws LoginException{
-        System.out.println("* UserValidator: shouldRejectNewUser()\n");
+        System.out.println("* ApplicationRepository: shouldRejectNewUser()\n");
         String invalidUsername = " rossiMario97";
         String invalidPassword = "test";
         ApplicationRepository repo = new ApplicationRepository();
@@ -109,23 +111,13 @@ public class ApplicationTest {
     
     @Test
     public void shouldFindUserAfterAdding() throws LoginException, QueryException{
-        System.out.println("* UserValidator: shouldFindNewUserAfterAdding()\n");
+        System.out.println("* ApplicationRepository: shouldFindUserAfterAdding()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
         ApplicationRepository repo = new ApplicationRepository();
         repo.addUser(validUsername, validPassword);
-        Assert.assertTrue(repo.findUser(validUsername));
+        User searchedUser = repo.findUser(validUsername);
+        Assert.assertEquals(validUsername, searchedUser.username);
     }
-    
-// ================================================================================
-    // Equal username
-//    @Test
-//    public void shouldReturnTrueOnSameUsername(){
-//        System.out.println("* UserValidator: shouldReturnTrueOnSameUsername()\n");
-//        String validUsername = "rossiMario97";
-//        boolean equalUsername = UserValidator.equalsUsername(validUsername);
-//        Assert.assertEquals(true, equalUsername);
-//    }
-    
     
 }

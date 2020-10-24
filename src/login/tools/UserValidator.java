@@ -27,10 +27,6 @@ public class UserValidator {
         }
     }
     
-    public static boolean equalsUsername(String username){
-        return username.equals(username);
-    }
-    
 // ================================================================================
     private static boolean testString(IFunctionalString op, String input){
         for(int ch = 0; ch < input.length(); ch++)

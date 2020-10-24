@@ -25,10 +25,10 @@ public class ApplicationRepository {
         users.add(new User(username));
     }
     
-    public boolean findUser(String username) throws QueryException{
+    public User findUser(String username) throws QueryException{
         for(User u : users)
             if(username.equals(u.username))
-                return true;
+                return u;
         throw new QueryException();
     }
     
