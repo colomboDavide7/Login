@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import login.tools.LoginException;
 import login.tools.UserValidator;
 
 /**
@@ -23,11 +24,11 @@ public class Application {
     
     private final String FORCED = "stop";
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws LoginException {
         Application app = new Application();
     }
         
-    public Application(){
+    public Application() throws LoginException{
         
         printText("Choose a Username\n");
         
@@ -37,8 +38,8 @@ public class Application {
         try {
             reader = new BufferedReader(new InputStreamReader(System.in));
             while((line = reader.readLine()) != null){
-                if(this.username.isEmpty())
-                    if(UserValidator.validateUsername(line)){
+                if(this.username.isEmpty()){
+                    UserValidator.isValidUsername(line);
                         this.username = line;
                         System.err.println("Valid username!");
                         System.out.println("Username = " + username);
