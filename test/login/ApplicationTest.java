@@ -8,7 +8,7 @@ package login;
 import junit.framework.Assert;
 import login.repository.ApplicationRepository;
 import login.repository.QueryException;
-import login.tools.LoginException;
+import login.repository.LoginException;
 import login.tools.UserValidator;
 import login.users.User;
 import org.junit.Test;

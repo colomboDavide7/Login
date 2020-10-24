@@ -7,7 +7,6 @@ package login.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import login.tools.LoginException;
 import login.tools.UserValidator;
 import login.users.User;
 
