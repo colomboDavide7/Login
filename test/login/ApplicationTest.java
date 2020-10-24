@@ -21,71 +21,79 @@ public class ApplicationTest {
 
 // ================================================================================
 // Username Tests
-    @Test (expected = LoginException.class)
-    public void shouldRefuseEmptyUsername() throws LoginException{
+    @Test
+    public void shouldRefuseEmptyUsername(){
         System.out.println("* UserValidator: shouldRefuseEmptyUsername()\n");
         String empty = "";
-        UserValidator.isValidUsername(empty);
-    }
-    
-    @Test (expected = LoginException.class)
-    public void shouldRefuseUsernameThatDoesntBeginWithALetter() throws LoginException {
-        System.out.println("* UserValidator: shouldRefuseUsernameThatDoesntBeginWithALetter()\n");
-        String invalidUsername = "_1test_";
-        UserValidator.isValidUsername(invalidUsername);
-    }
-    
-    @Test (expected = LoginException.class)
-    public void shouldRefuseUsernameWithSpace() throws LoginException {
-        System.out.println("* UserValidator: shouldRefuseUsernameWithSpace()\n");
-        String invalidUsername = "test ";
-        UserValidator.isValidUsername(invalidUsername);
+        boolean login = UserValidator.isValidUsername(empty);
+        Assert.assertEquals(false, login);
     }
     
     @Test
-    public void shoulAcceptUsernameWithSymbolNumberUpperCase() throws LoginException {
+    public void shouldRefuseUsernameThatDoesntBeginWithALetter() {
+        System.out.println("* UserValidator: shouldRefuseUsernameThatDoesntBeginWithALetter()\n");
+        String invalidUsername = "_1test_";
+        boolean login = UserValidator.isValidUsername(invalidUsername);
+        Assert.assertEquals(false, login);
+    }
+    
+    @Test
+    public void shouldRefuseUsernameWithSpace() {
+        System.out.println("* UserValidator: shouldRefuseUsernameWithSpace()\n");
+        String invalidUsername = "test ";
+        boolean login = UserValidator.isValidUsername(invalidUsername);
+        Assert.assertEquals(false, login);
+    }
+    
+    @Test
+    public void shoulAcceptUsernameWithSymbolNumberUpperCase() {
         System.out.println("* UserValidator: shoulAcceptUsernameWithSymbolNumberUpperCase()\n");
         String validUsername = "tEst1_";
-        UserValidator.isValidUsername(validUsername);
-        Assert.assertTrue(true);
+        boolean login = UserValidator.isValidUsername(validUsername);
+        Assert.assertEquals(true, login);
     }
     
 // ================================================================================
     // Password Tests
 
-    @Test (expected = LoginException.class)
-    public void shouldRefuseEmptyPassword() throws LoginException{
+    @Test
+    public void shouldRefuseEmptyPassword(){
         System.out.println("* UserValidator: shouldRefuseEmptyPassword()\n");
         String invalidPwd = "";
-        UserValidator.isValidPassword(invalidPwd);
+        boolean login = UserValidator.isValidPassword(invalidPwd);
+        Assert.assertEquals(false, login);
     }
     
-    @Test (expected = LoginException.class)
-    public void shouldRefusePasswordWithoutSymbols() throws LoginException{
+    @Test
+    public void shouldRefusePasswordWithoutSymbols(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutSymbols()\n");
         String invalidPwd = "test1";
-        UserValidator.isValidPassword(invalidPwd);
+        boolean login = UserValidator.isValidPassword(invalidPwd);
+        Assert.assertEquals(false, login);
     }
     
-    @Test (expected = LoginException.class)
-    public void shouldRefusePasswordWithoutNumbers() throws LoginException{
+    @Test
+    public void shouldRefusePasswordWithoutNumbers(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutNumbers()\n");
         String invalidPwd = "test!_";
-        UserValidator.isValidPassword(invalidPwd);
+        boolean login = UserValidator.isValidPassword(invalidPwd);
+        Assert.assertEquals(false, login);
     }
     
-    @Test (expected = LoginException.class)
-    public void shouldRefusePasswordWithoutLetters() throws LoginException{
+    @Test
+    public void shouldRefusePasswordWithoutLetters(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutLetters()\n");
         String invalidPwd = "!123#_";
-        UserValidator.isValidPassword(invalidPwd);
+        boolean login = UserValidator.isValidPassword(invalidPwd);
+        Assert.assertEquals(false, login);
     }
     
-    @Test (expected = LoginException.class)
-    public void shouldRefusePasswordWithoutUpperCaseLetter() throws LoginException{
+    @Test
+    public void shouldRefusePasswordWithoutUpperCaseLetter(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutUpperCaseLetter()\n");
         String invalidPwd = "test!_2";
-        UserValidator.isValidPassword(invalidPwd);
+        boolean login = UserValidator.isValidPassword(invalidPwd);
+        Assert.assertEquals(false, login);
     }
     
 // ================================================================================
@@ -118,6 +126,19 @@ public class ApplicationTest {
         repo.addUser(validUsername, validPassword);
         User searchedUser = repo.findUser(validUsername);
         Assert.assertEquals(validUsername, searchedUser.username);
+    }
+
+    @Test (expected = LoginException.class)
+    public void shouldRejectUserWithSameName() throws LoginException{
+        System.out.println("* ApplicationRepository: shouldRejectUserWithSameName()\n");
+        String sameUsername = "rossiMario97";
+        ApplicationRepository repo = new ApplicationRepository();
+        repo.addUser(sameUsername, "tEst!1");
+        // This condition has the only purpose to provide an evidence that
+        // the program steps over the first read user and so that is the second
+        // call to addUser method to throw the LoginException
+        Assert.assertTrue(true);
+        repo.addUser(sameUsername, "anotherValid_23");
     }
     
 }

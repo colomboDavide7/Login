@@ -20,8 +20,9 @@ public class ApplicationRepository {
     List<User> users = new ArrayList<>();
     
     public void addUser(String username, String pwd) throws LoginException {
-        UserValidator.isValidUsername(username);
-        UserValidator.isValidPassword(pwd);
+        if(!UserValidator.isValidUsername(username) || 
+           !UserValidator.isValidPassword(pwd)      || alreadyExist(username))
+            throw new LoginException();
         users.add(new User(username));
     }
     
@@ -31,5 +32,13 @@ public class ApplicationRepository {
                 return u;
         throw new QueryException();
     }
+    
+    private boolean alreadyExist(String username) {
+        for(User u : users)
+            if(username.equals(u.username))
+                return true;
+        return false;
+    }
+    
     
 }

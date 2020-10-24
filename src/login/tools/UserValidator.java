@@ -13,18 +13,17 @@ public class UserValidator {
     
     private static final String VALID_SYMBOLS = "!@#$%&*()_+=|<>?{}\\\\[\\\\]~-";
     
-    public static void isValidUsername(String username) throws LoginException {
-        if(username.isEmpty() || !Character.isLetter(username.charAt(0)) || username.contains(" "))
-            throw new LoginException();
+    public static boolean isValidUsername(String username) {
+        return !username.isEmpty() && 
+               Character.isLetter(username.charAt(0)) && 
+               !username.contains(" ");
     }
     
-    public static void isValidPassword(String pwd) throws LoginException {
-        if(!testString(input -> Character.isDigit(input), pwd)     || 
-           !testString(input -> Character.isUpperCase(input), pwd) ||
-           !testString(input -> Character.isLetter(input), pwd)    ||
-           !testString(input -> findSymbol(input), pwd)){
-            throw new LoginException();
-        }
+    public static boolean isValidPassword(String pwd){
+        return testString(input -> Character.isDigit(input), pwd)     && 
+                testString(input -> Character.isUpperCase(input), pwd) &&
+                testString(input -> Character.isLetter(input), pwd)    &&
+                testString(input -> findSymbol(input), pwd);
     }
     
 // ================================================================================
