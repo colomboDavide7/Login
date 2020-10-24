@@ -108,7 +108,7 @@ public class ApplicationTest {
     }
     
     @Test
-    public void shouldFindNewUserAfterAdding() throws LoginException, QueryException{
+    public void shouldFindUserAfterAdding() throws LoginException, QueryException{
         System.out.println("* UserValidator: shouldFindNewUserAfterAdding()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";

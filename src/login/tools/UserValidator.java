@@ -19,9 +19,12 @@ public class UserValidator {
     }
     
     public static void isValidPassword(String pwd) throws LoginException {
-        if(!containsAtLeastOneNumber(pwd) || !containsAtLeastOneSymbol(pwd) ||
-           !containsAtLeastOneLetter(pwd) || !containsAtLeastOneUpperCase(pwd))
+        if(!testString(input -> Character.isDigit(input), pwd)     || 
+           !testString(input -> Character.isUpperCase(input), pwd) ||
+           !testString(input -> Character.isLetter(input), pwd)    ||
+           !testString(input -> findSymbol(input), pwd)){
             throw new LoginException();
+        }
     }
     
     public static boolean equalsUsername(String username){
@@ -29,30 +32,9 @@ public class UserValidator {
     }
     
 // ================================================================================
-    private static boolean containsAtLeastOneLetter(String text){
-        for(int ch = 0; ch < text.length(); ch++)
-            if(Character.isLetter(text.charAt(ch)))
-                return true;
-        return false;
-    }
-    
-    private static boolean containsAtLeastOneUpperCase(String text){
-        for(int ch = 0; ch < text.length(); ch++)
-            if(Character.isUpperCase(text.charAt(ch)))
-                return true;
-        return false;
-    }
-    
-    private static boolean containsAtLeastOneNumber(String text){
-        for(int ch = 0; ch < text.length(); ch++)
-            if(Character.isDigit(text.charAt(ch)))
-                return true;
-        return false;
-    }
-    
-    private static boolean containsAtLeastOneSymbol(String text){
-        for(int ch = 0; ch < text.length(); ch++)
-            if(findSymbol(text.charAt(ch)))
+    private static boolean testString(IFunctionalString op, String input){
+        for(int ch = 0; ch < input.length(); ch++)
+            if(op.operate(input.charAt(ch)))
                 return true;
         return false;
     }
@@ -63,7 +45,13 @@ public class UserValidator {
                 return true;
         return false;
     }
-        
+
+// ================================================================================
+    // Defining a functional Interface in order to provide a context for Lambda Expressions
+    private interface IFunctionalString{
+        boolean operate(char ch);
+    }
+    
 // ================================================================================
     
 }
