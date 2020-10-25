@@ -36,7 +36,16 @@ public class ApplicationRepository {
                     return u.login();
                 else
                     throw new QueryException(QueryException.ErrorCode.WRONG_PASSWORD);
-        
+        throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
+    }
+    
+    public User parseLogoutRequest(UserRequest r) throws QueryException {
+        for(User u : users)
+            if(u.matchUsername(r.getUsername()))
+                if(u.isLogged())
+                    return u.logout();
+                else
+                    throw new QueryException(QueryException.ErrorCode.NOT_LOGGED_IN);
         throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
     }
     

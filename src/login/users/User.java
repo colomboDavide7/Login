@@ -11,11 +11,11 @@ package login.users;
  */
 public class User {
     
-    
     public enum UserState{
         LOGGED_IN, LOGGED_OUT;
     }
     
+// ================================================================================
     private String username;
     private String password;
     private UserState state = UserState.LOGGED_OUT;
@@ -50,5 +50,9 @@ public class User {
         return this;
     }
     
+    public User logout(){
+        this.state = UserState.LOGGED_OUT;
+        return this;
+    }
     
 }

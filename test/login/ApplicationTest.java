@@ -145,7 +145,7 @@ public class ApplicationTest {
     // User registration
     @Test
     public void shouldSignUpNewUser() throws QueryException, LoginException {
-        System.out.println("* ApplicationRepository: shouldSignUpNewUser()\n");
+        System.out.println("* User SignUp: shouldSignUpNewUser()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
         
@@ -157,7 +157,7 @@ public class ApplicationTest {
     
     @Test
     public void shouldRejectNewUser() {
-        System.out.println("* ApplicationRepository: shouldRejectNewUser()\n");
+        System.out.println("* User SignUp: shouldRejectNewUser()\n");
         String validUsername   = "rossiMario97";
         String invalidPassword = "test";
         
@@ -171,7 +171,7 @@ public class ApplicationTest {
     
     @Test
     public void shouldRejectUserWithSameName() throws QueryException {
-        System.out.println("* ApplicationRepository: shouldRejectUserWithSameName()\n");
+        System.out.println("* User SignUp: shouldRejectUserWithSameName()\n");
         String sameUsername = "rossiMario97";
         
         try {
@@ -182,6 +182,20 @@ public class ApplicationTest {
         } catch (LoginException ex) {
             Assert.assertEquals(ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
         }
+    }
+    
+    @Test
+    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws LoginException, QueryException{
+        System.out.println("* User SignUp: shouldHaveTheLoggedInStateOnAfterLogin()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        UserRequest sign = UserRequest.signupRequest(user, pwd);
+        User signedUser = this.repo.parseSignUpRequest(sign);
+        
+        // Put the double assertion in order to be sure that the test will fail.
+        Assert.assertFalse(signedUser.isLogged());
+        Assert.assertTrue(signedUser.isLoggedOut());
     }
     
 // ================================================================================
@@ -264,20 +278,59 @@ public class ApplicationTest {
         Assert.assertTrue(loggedIn.isLogged());
     }
     
+// ================================================================================
+    // User logout
     @Test
-    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws LoginException, QueryException{
-        System.out.println("* User Login: shouldHaveTheLoggedInStateOnAfterLogin()\n");
+    public void shouldRefuseLogoutWhenNotLoggedIn() throws LoginException, QueryException{
+        System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
         String user = "testUser";
         String pwd  = "Test1!";
         
-        UserRequest sign = UserRequest.signupRequest(user, pwd);
-        User signedUser = this.repo.parseSignUpRequest(sign);
+        try{
+            UserRequest sign = UserRequest.signupRequest(user, pwd);
+            this.repo.parseSignUpRequest(sign);
+            UserRequest logout = UserRequest.logoutRequest(user, pwd);
+            this.repo.parseLogoutRequest(logout);
+        }catch(QueryException ex){
+            Assert.assertEquals(QueryException.ErrorCode.NOT_LOGGED_IN, ex.getErrorCode());
+        }
         
-        // Put the double assertion in order to be sure that the test will fail.
-        Assert.assertFalse(signedUser.isLogged());
-        Assert.assertTrue(signedUser.isLoggedOut());
+    }
+    
+    @Test
+    public void shouldRefuseLogoutWhenNotSignedUp(){
+        System.out.println("* User Logout: shouldRefuseLogoutWhenNotSignedUp()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        try{
+            UserRequest logout = UserRequest.logoutRequest(user, pwd);
+            this.repo.parseLogoutRequest(logout);
+        }catch(QueryException ex){
+            Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        }
+    }
+    
+    @Test
+    public void shouldAcceptLogoutWhenLoggedIn() throws LoginException, QueryException{
+        System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        // Signing up
+        UserRequest sign = UserRequest.signupRequest(user, pwd);
+        this.repo.parseSignUpRequest(sign);
+        // Login
+        UserRequest login = UserRequest.loginRequest(user, pwd);
+        this.repo.parseLoginRequest(login);
+        // Logout
+        UserRequest logout = UserRequest.logoutRequest(user, pwd);
+        User loggedOut = this.repo.parseLogoutRequest(logout);
+        
+        Assert.assertTrue(loggedOut.matchPassword(pwd) && loggedOut.matchUsername(user));
     }
     
 // ================================================================================
+    // Application Manager
     
 }

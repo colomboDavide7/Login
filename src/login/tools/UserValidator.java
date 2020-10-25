@@ -54,7 +54,7 @@ public class UserValidator {
                 return true;
         return false;
     }
-
+    
 // ================================================================================
     // Defining a functional Interface in order to provide a context for Lambda Expressions
     private interface IFunctionalString{

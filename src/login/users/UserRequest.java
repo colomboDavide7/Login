@@ -19,6 +19,10 @@ public abstract class UserRequest {
         return new SignUpRequest(username, pwd);
     }
     
+    public static UserRequest logoutRequest(String username, String pwd){
+        return new LogoutRequest(username, pwd);
+    }
+    
 // ================================================================================
     protected String username;
     protected String pwd;

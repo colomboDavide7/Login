@@ -12,8 +12,7 @@ package login.tools;
 public class LoginException extends Exception {
     
     public enum ErrorCode{
-        USERNAME_ALREADY_USED, INVALID_PASSWORD, INVALID_USERNAME, 
-        WRONG_PASSWORD;
+        USERNAME_ALREADY_USED, INVALID_PASSWORD, INVALID_USERNAME;
     }
     
     private ErrorCode errorCode;

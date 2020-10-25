@@ -12,10 +12,10 @@ package login.repository;
 public class QueryException extends Exception {
 
     public enum ErrorCode{
-        NOT_SIGNED_UP, WRONG_PASSWORD;
+        NOT_SIGNED_UP, WRONG_PASSWORD, NOT_LOGGED_IN;
     }
     
-    
+// ================================================================================
     private ErrorCode errorCode;
     
     public QueryException(ErrorCode code){
