@@ -9,7 +9,7 @@ package login.tools;
  *
  * @author davidecolombo
  */
-public class LoginException extends Exception {
+public class CredentialException extends Exception {
     
     public enum ErrorCode{
         USERNAME_ALREADY_USED, INVALID_PASSWORD, INVALID_USERNAME;
@@ -17,7 +17,7 @@ public class LoginException extends Exception {
     
     private ErrorCode errorCode;
     
-    public LoginException(ErrorCode code){
+    public CredentialException(ErrorCode code){
         this.errorCode = code;
     }
     

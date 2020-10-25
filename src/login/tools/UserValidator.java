@@ -6,7 +6,7 @@
 package login.tools;
 
 import java.util.Iterator;
-import login.tools.LoginException.ErrorCode;
+import login.tools.CredentialException.ErrorCode;
 import login.users.User;
 
 /**
@@ -17,26 +17,26 @@ public class UserValidator {
     
     private static final String VALID_SYMBOLS = "!@#$%&*()_+=|<>?{}\\\\[\\\\]~-";
         
-    public static boolean isValidUsername(String username) throws LoginException {
+    public static boolean isValidUsername(String username) throws CredentialException {
         if(username.isEmpty() || !Character.isLetter(username.charAt(0)) || 
            username.contains(" "))
-            throw new LoginException(ErrorCode.INVALID_USERNAME);
+            throw new CredentialException(ErrorCode.INVALID_USERNAME);
         return true;
     }
     
-    public static boolean isValidPassword(String pwd) throws LoginException {
+    public static boolean isValidPassword(String pwd) throws CredentialException {
         if(!testString(input -> Character.isDigit(input), pwd)     || 
            !testString(input -> Character.isUpperCase(input), pwd) ||
            !testString(input -> Character.isLetter(input), pwd)    ||
            !testString(input -> findSymbol(input), pwd))
-            throw new LoginException(ErrorCode.INVALID_PASSWORD); 
+            throw new CredentialException(ErrorCode.INVALID_PASSWORD); 
         return true;
     }
     
-    public static boolean isSignedUp(Iterator<User> userIter, User specificUser) throws LoginException {
+    public static boolean isSignedUp(Iterator<User> userIter, User specificUser) throws CredentialException {
         for (; userIter.hasNext(); )
             if(userIter.next().equals(specificUser))
-                throw new LoginException(ErrorCode.USERNAME_ALREADY_USED);
+                throw new CredentialException(ErrorCode.USERNAME_ALREADY_USED);
         return false;
     }
     

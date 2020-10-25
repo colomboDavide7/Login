@@ -8,8 +8,8 @@ package login;
 import junit.framework.Assert;
 import login.repository.ApplicationRepository;
 import login.repository.QueryException;
-import login.tools.LoginException;
-import login.tools.LoginException.ErrorCode;
+import login.tools.CredentialException;
+import login.tools.CredentialException.ErrorCode;
 import login.tools.UserValidator;
 import login.users.User;
 import login.users.UserRequest;
@@ -41,7 +41,7 @@ public class ApplicationTest {
         
         try {
             UserValidator.isValidUsername(empty);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_USERNAME, ex.getErrorCode());
         }
         
@@ -54,7 +54,7 @@ public class ApplicationTest {
         
         try {
             UserValidator.isValidUsername(invalidUsername);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_USERNAME, ex.getErrorCode());
         }
     }
@@ -65,13 +65,13 @@ public class ApplicationTest {
         String invalidUsername = "test ";
         try {
             UserValidator.isValidUsername(invalidUsername);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_USERNAME, ex.getErrorCode());
         }
     }
     
     @Test
-    public void shoulAcceptUsernameWithSymbolNumberUpperCase() throws LoginException {
+    public void shoulAcceptUsernameWithSymbolNumberUpperCase() throws CredentialException {
         System.out.println("* UserValidator: shoulAcceptUsernameWithSymbolNumberUpperCase()\n");
         String validUsername = "tEst1_";
         boolean login = UserValidator.isValidUsername(validUsername);
@@ -88,7 +88,7 @@ public class ApplicationTest {
         
         try {
             UserValidator.isValidPassword(invalidPwd);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
         }
     }
@@ -100,7 +100,7 @@ public class ApplicationTest {
         
         try {
             UserValidator.isValidPassword(invalidPwd);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
         }
     }
@@ -112,7 +112,7 @@ public class ApplicationTest {
         
         try {
             UserValidator.isValidPassword(invalidPwd);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
         }
     }
@@ -124,7 +124,7 @@ public class ApplicationTest {
         
         try {
             UserValidator.isValidPassword(invalidPwd);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
         }
     }
@@ -136,7 +136,7 @@ public class ApplicationTest {
         
         try {
             UserValidator.isValidPassword(invalidPwd);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
         }
     }
@@ -144,7 +144,7 @@ public class ApplicationTest {
 // ================================================================================
     // User registration
     @Test
-    public void shouldSignUpNewUser() throws QueryException, LoginException {
+    public void shouldSignUpNewUser() throws QueryException, CredentialException {
         System.out.println("* User SignUp: shouldSignUpNewUser()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
@@ -164,7 +164,7 @@ public class ApplicationTest {
         try {
             UserRequest loginRequest = UserRequest.signupRequest(validUsername, invalidPassword);
             this.repo.parseSignUpRequest(loginRequest);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
         }
     }
@@ -179,13 +179,13 @@ public class ApplicationTest {
             this.repo.parseSignUpRequest(sign);
             sign = UserRequest.signupRequest(sameUsername, "anotherValid_23");
             this.repo.parseSignUpRequest(sign);
-        } catch (LoginException ex) {
+        } catch (CredentialException ex) {
             Assert.assertEquals(ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
         }
     }
     
     @Test
-    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws LoginException, QueryException{
+    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws CredentialException, QueryException{
         System.out.println("* User SignUp: shouldHaveTheLoggedInStateOnAfterLogin()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -215,7 +215,7 @@ public class ApplicationTest {
     }
     
     @Test
-    public void shouldRefuseWrongPassword() throws LoginException {
+    public void shouldRefuseWrongPassword() throws CredentialException {
         System.out.println("* User Login: shouldRefuseWrongPassword()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -235,7 +235,7 @@ public class ApplicationTest {
     }
     
     @Test
-    public void shouldRefuseWrongUsername() throws LoginException, QueryException{
+    public void shouldRefuseWrongUsername() throws CredentialException, QueryException{
         System.out.println("* User Login: shouldRefuseWrongUsername()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -252,7 +252,7 @@ public class ApplicationTest {
     }
     
     @Test
-    public void shouldBeSuccessfullLogin() throws LoginException, QueryException{
+    public void shouldBeSuccessfullLogin() throws CredentialException, QueryException{
         System.out.println("* User Login: shouldBeSuccessfullLogin()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -265,7 +265,7 @@ public class ApplicationTest {
     }   
     
     @Test
-    public void shouldHaveTheLoggedInStateAfterLogin() throws LoginException, QueryException{
+    public void shouldHaveTheLoggedInStateAfterLogin() throws CredentialException, QueryException{
         System.out.println("* User Login: shouldHaveTheLoggedInStateAfterLogin()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -279,7 +279,7 @@ public class ApplicationTest {
     }
     
     @Test
-    public void shouldRefuseLoginRequestWhenAlreadyLoggedIn() throws LoginException, QueryException{
+    public void shouldRefuseLoginRequestWhenAlreadyLoggedIn() throws CredentialException, QueryException{
         System.out.println("* User Login: shouldRefuseLoginRequestWhenAlreadyLoggedIn()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -299,7 +299,7 @@ public class ApplicationTest {
 // ================================================================================
     // User logout
     @Test
-    public void shouldRefuseLogoutWhenNotLoggedIn() throws LoginException, QueryException{
+    public void shouldRefuseLogoutWhenNotLoggedIn() throws CredentialException, QueryException{
         System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -330,7 +330,7 @@ public class ApplicationTest {
     }
     
     @Test
-    public void shouldAcceptLogoutWhenLoggedIn() throws LoginException, QueryException{
+    public void shouldAcceptLogoutWhenLoggedIn() throws CredentialException, QueryException{
         System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
         String user = "testUser";
         String pwd  = "Test1!";
@@ -350,5 +350,44 @@ public class ApplicationTest {
     
 // ================================================================================
     // Application Manager
+    @Test
+    public void shouldSendSignUpRequest() throws CredentialException{
+        System.out.println("* Application Manager: shouldSendSignUpRequest()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        boolean sended = this.manager.sendSignUpRequest(user, pwd);
+        Assert.assertTrue(sended);
+    }
+    
+    @Test
+    public void shouldSendLoginRequest() throws QueryException, CredentialException{
+        System.out.println("* Application Manager: shouldSendLoginRequest()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        boolean sended = this.manager.sendSignUpRequest(user, pwd);
+        Assert.assertTrue(sended);
+        
+        sended = this.manager.sendLoginRequest(user, pwd);
+        Assert.assertTrue(sended);
+    }
+    
+    @Test
+    public void shouldSendLogoutRequest() throws CredentialException, QueryException{
+        System.out.println("* Application Manager: shouldSendLoginRequest()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        boolean sended = this.manager.sendSignUpRequest(user, pwd);
+        Assert.assertTrue(sended);
+        
+        sended = this.manager.sendLoginRequest(user, pwd);
+        Assert.assertTrue(sended);
+        
+        sended = this.manager.sendLogoutRequest(user, pwd);
+        Assert.assertTrue(sended);
+    }
+    
     
 }

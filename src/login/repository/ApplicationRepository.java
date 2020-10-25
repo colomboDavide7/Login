@@ -5,7 +5,7 @@
  */
 package login.repository;
 
-import login.tools.LoginException;
+import login.tools.CredentialException;
 import java.util.ArrayList;
 import java.util.List;
 import login.tools.UserValidator;
@@ -20,7 +20,7 @@ public class ApplicationRepository {
     
     private List<User> users = new ArrayList<>();
     
-    public User parseSignUpRequest(UserRequest r) throws LoginException {
+    public User parseSignUpRequest(UserRequest r) throws CredentialException {
         UserValidator.isValidUsername(r.getUsername());
         UserValidator.isValidPassword(r.getPassword());
         UserValidator.isSignedUp(users.iterator(), new User(r.getUsername(), r.getPassword()));
