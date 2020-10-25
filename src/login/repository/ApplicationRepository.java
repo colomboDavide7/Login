@@ -27,17 +27,16 @@ public class ApplicationRepository {
     
     public User findUser(String username) throws QueryException{
         for(User u : users)
-            if(username.equals(u.username))
+            if(u.equals(new User(username)))
                 return u;
         throw new QueryException();
     }
     
     private boolean alreadyExist(String username) {
         for(User u : users)
-            if(username.equals(u.username))
+            if(u.equals(new User(username)))
                 return true;
         return false;
     }
-    
     
 }

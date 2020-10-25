@@ -11,10 +11,14 @@ package login.users;
  */
 public class User {
     
-    public String username;
+    private String username;
     
     public User(String username){
         this.username = username;
+    }
+    
+    public boolean equals(User user){
+        return this.username.equals(user.username);
     }
     
 }

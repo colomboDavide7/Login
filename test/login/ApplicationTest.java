@@ -111,10 +111,10 @@ public class ApplicationTest {
     @Test (expected = LoginException.class)
     public void shouldRejectNewUser() throws LoginException{
         System.out.println("* ApplicationRepository: shouldRejectNewUser()\n");
-        String invalidUsername = " rossiMario97";
+        String validUsername = " rossiMario97";
         String invalidPassword = "test";
         ApplicationRepository repo = new ApplicationRepository();
-        repo.addUser(invalidUsername, invalidPassword);
+        repo.addUser(validUsername, invalidPassword);
     }
     
     @Test
@@ -123,9 +123,11 @@ public class ApplicationTest {
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
         ApplicationRepository repo = new ApplicationRepository();
+        
         repo.addUser(validUsername, validPassword);
         User searchedUser = repo.findUser(validUsername);
-        Assert.assertEquals(validUsername, searchedUser.username);
+        
+        Assert.assertTrue(new User(validUsername).equals(searchedUser));
     }
 
     @Test (expected = LoginException.class)
