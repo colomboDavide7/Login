@@ -5,6 +5,8 @@
  */
 package login.tools;
 
+import login.tools.LoginException.ErrorCode;
+
 /**
  *
  * @author davidecolombo
@@ -13,17 +15,20 @@ public class UserValidator {
     
     private static final String VALID_SYMBOLS = "!@#$%&*()_+=|<>?{}\\\\[\\\\]~-";
     
-    public static boolean isValidUsername(String username) {
-        return !username.isEmpty() && 
-               Character.isLetter(username.charAt(0)) && 
-               !username.contains(" ");
+    public static boolean isValidUsername(String username) throws LoginException {
+        if(username.isEmpty() || !Character.isLetter(username.charAt(0)) || 
+           username.contains(" "))
+            throw new LoginException(ErrorCode.INVALID_USERNAME);
+        return true;
     }
     
-    public static boolean isValidPassword(String pwd){
-        return testString(input -> Character.isDigit(input), pwd)     && 
-                testString(input -> Character.isUpperCase(input), pwd) &&
-                testString(input -> Character.isLetter(input), pwd)    &&
-                testString(input -> findSymbol(input), pwd);
+    public static boolean isValidPassword(String pwd) throws LoginException {
+        if(!testString(input -> Character.isDigit(input), pwd)     || 
+           !testString(input -> Character.isUpperCase(input), pwd) ||
+           !testString(input -> Character.isLetter(input), pwd)    ||
+           !testString(input -> findSymbol(input), pwd))
+            throw new LoginException(ErrorCode.INVALID_PASSWORD);
+        return true;
     }
     
 // ================================================================================

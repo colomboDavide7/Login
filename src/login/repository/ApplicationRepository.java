@@ -5,8 +5,12 @@
  */
 package login.repository;
 
+import login.tools.LoginException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import login.tools.LoginException.ErrorCode;
 import login.tools.UserValidator;
 import login.users.User;
 
@@ -16,12 +20,12 @@ import login.users.User;
  */
 public class ApplicationRepository {
     
-    List<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
     
     public void addUser(String username, String pwd) throws LoginException {
-        if(!UserValidator.isValidUsername(username) || 
-           !UserValidator.isValidPassword(pwd)      || alreadyExist(username))
-            throw new LoginException();
+        UserValidator.isValidUsername(username);
+        UserValidator.isValidPassword(pwd);
+        alreadyExist(username);
         users.add(new User(username));
     }
     
@@ -32,11 +36,15 @@ public class ApplicationRepository {
         throw new QueryException();
     }
     
-    private boolean alreadyExist(String username) {
-        for(User u : users)
-            if(u.equals(new User(username)))
-                return true;
-        return false;
+    private boolean alreadyExist(String username) throws LoginException {
+        try {
+            findUser(username);
+            throw new LoginException(ErrorCode.USERNAME_ALREADY_USED);
+        } catch (QueryException ex) {
+            return false;
+        }
     }
+        
+// ================================================================================
     
 }

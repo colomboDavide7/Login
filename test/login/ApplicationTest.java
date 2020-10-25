@@ -8,9 +8,11 @@ package login;
 import junit.framework.Assert;
 import login.repository.ApplicationRepository;
 import login.repository.QueryException;
-import login.repository.LoginException;
+import login.tools.LoginException;
+import login.tools.LoginException.ErrorCode;
 import login.tools.UserValidator;
 import login.users.User;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -19,34 +21,54 @@ import org.junit.Test;
  */
 public class ApplicationTest {
 
+    private ApplicationRepository repo;
+    
+    // This snippet of code is always executed before running every single test
+    @Before
+    public void setup(){
+        this.repo = new ApplicationRepository();
+    }
+    
 // ================================================================================
 // Username Tests
     @Test
-    public void shouldRefuseEmptyUsername(){
+    public void shouldRefuseEmptyUsername() {
         System.out.println("* UserValidator: shouldRefuseEmptyUsername()\n");
         String empty = "";
-        boolean login = UserValidator.isValidUsername(empty);
-        Assert.assertEquals(false, login);
+        
+        try {
+            UserValidator.isValidUsername(empty);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_USERNAME, ex.getErrorCode());
+        }
+        
     }
     
     @Test
     public void shouldRefuseUsernameThatDoesntBeginWithALetter() {
         System.out.println("* UserValidator: shouldRefuseUsernameThatDoesntBeginWithALetter()\n");
         String invalidUsername = "_1test_";
-        boolean login = UserValidator.isValidUsername(invalidUsername);
-        Assert.assertEquals(false, login);
+        
+        try {
+            UserValidator.isValidUsername(invalidUsername);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_USERNAME, ex.getErrorCode());
+        }
     }
     
     @Test
     public void shouldRefuseUsernameWithSpace() {
         System.out.println("* UserValidator: shouldRefuseUsernameWithSpace()\n");
         String invalidUsername = "test ";
-        boolean login = UserValidator.isValidUsername(invalidUsername);
-        Assert.assertEquals(false, login);
+        try {
+            UserValidator.isValidUsername(invalidUsername);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_USERNAME, ex.getErrorCode());
+        }
     }
     
     @Test
-    public void shoulAcceptUsernameWithSymbolNumberUpperCase() {
+    public void shoulAcceptUsernameWithSymbolNumberUpperCase() throws LoginException {
         System.out.println("* UserValidator: shoulAcceptUsernameWithSymbolNumberUpperCase()\n");
         String validUsername = "tEst1_";
         boolean login = UserValidator.isValidUsername(validUsername);
@@ -56,56 +78,78 @@ public class ApplicationTest {
 // ================================================================================
     // Password Tests
 
-    @Test
+    @Test 
     public void shouldRefuseEmptyPassword(){
         System.out.println("* UserValidator: shouldRefuseEmptyPassword()\n");
         String invalidPwd = "";
-        boolean login = UserValidator.isValidPassword(invalidPwd);
-        Assert.assertEquals(false, login);
+        
+        try {
+            UserValidator.isValidPassword(invalidPwd);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
+        }
     }
     
     @Test
     public void shouldRefusePasswordWithoutSymbols(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutSymbols()\n");
         String invalidPwd = "test1";
-        boolean login = UserValidator.isValidPassword(invalidPwd);
-        Assert.assertEquals(false, login);
+        
+        try {
+            UserValidator.isValidPassword(invalidPwd);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
+        }
     }
     
     @Test
     public void shouldRefusePasswordWithoutNumbers(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutNumbers()\n");
         String invalidPwd = "test!_";
-        boolean login = UserValidator.isValidPassword(invalidPwd);
-        Assert.assertEquals(false, login);
+        
+        try {
+            UserValidator.isValidPassword(invalidPwd);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
+        }
     }
     
-    @Test
+    @Test 
     public void shouldRefusePasswordWithoutLetters(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutLetters()\n");
         String invalidPwd = "!123#_";
-        boolean login = UserValidator.isValidPassword(invalidPwd);
-        Assert.assertEquals(false, login);
+        
+        try {
+            UserValidator.isValidPassword(invalidPwd);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
+        }
     }
     
     @Test
     public void shouldRefusePasswordWithoutUpperCaseLetter(){
         System.out.println("* UserValidator: shouldRefusePasswordWithoutUpperCaseLetter()\n");
         String invalidPwd = "test!_2";
-        boolean login = UserValidator.isValidPassword(invalidPwd);
-        Assert.assertEquals(false, login);
+        
+        try {
+            UserValidator.isValidPassword(invalidPwd);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
+        }
     }
     
 // ================================================================================
     // User registration
     @Test
-    public void shouldAddNewUser() throws LoginException {
+    public void shouldAddNewUser() throws LoginException, QueryException {
         System.out.println("* ApplicationRepository: shouldAddNewUser()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
-        ApplicationRepository repo = new ApplicationRepository();
-        repo.addUser(validUsername, validPassword);
-        Assert.assertTrue(true);
+        
+        this.repo.addUser(validUsername, validPassword);
+        User searchedUser = repo.findUser(validUsername);
+        
+        Assert.assertTrue(new User(validUsername).equals(searchedUser));
     }
     
     @Test (expected = LoginException.class)
@@ -113,34 +157,31 @@ public class ApplicationTest {
         System.out.println("* ApplicationRepository: shouldRejectNewUser()\n");
         String validUsername = " rossiMario97";
         String invalidPassword = "test";
-        ApplicationRepository repo = new ApplicationRepository();
-        repo.addUser(validUsername, invalidPassword);
+        
+        this.repo.addUser(validUsername, invalidPassword);
     }
-    
+        
     @Test
-    public void shouldFindUserAfterAdding() throws LoginException, QueryException{
-        System.out.println("* ApplicationRepository: shouldFindUserAfterAdding()\n");
-        String validUsername = "rossiMario97";
-        String validPassword = "tEst!1";
-        ApplicationRepository repo = new ApplicationRepository();
-        
-        repo.addUser(validUsername, validPassword);
-        User searchedUser = repo.findUser(validUsername);
-        
-        Assert.assertTrue(new User(validUsername).equals(searchedUser));
-    }
-
-    @Test (expected = LoginException.class)
-    public void shouldRejectUserWithSameName() throws LoginException{
+    public void shouldRejectUserWithSameName() throws QueryException{
         System.out.println("* ApplicationRepository: shouldRejectUserWithSameName()\n");
         String sameUsername = "rossiMario97";
-        ApplicationRepository repo = new ApplicationRepository();
-        repo.addUser(sameUsername, "tEst!1");
-        // This condition has the only purpose to provide an evidence that
-        // the program steps over the first read user and so that is the second
-        // call to addUser method to throw the LoginException
-        Assert.assertTrue(true);
-        repo.addUser(sameUsername, "anotherValid_23");
+        
+        try {
+            this.repo.addUser(sameUsername, "tEst!1");
+            User searchedUser = repo.findUser(sameUsername);
+
+            Assert.assertTrue(new User(sameUsername).equals(searchedUser));
+            
+            repo.addUser(sameUsername, "anotherValid_23");
+        } catch (LoginException ex) {
+            Assert.assertEquals(ex.getErrorCode(), LoginException.ErrorCode.USERNAME_ALREADY_USED);
+        }
     }
+    
+// ================================================================================
+    // User login
+    
+    
+// ================================================================================
     
 }
