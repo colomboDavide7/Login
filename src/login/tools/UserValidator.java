@@ -7,6 +7,7 @@ package login.tools;
 
 import java.util.Iterator;
 import login.tools.LoginException.ErrorCode;
+import login.users.LoginRequest;
 import login.users.User;
 
 /**
@@ -29,7 +30,7 @@ public class UserValidator {
            !testString(input -> Character.isUpperCase(input), pwd) ||
            !testString(input -> Character.isLetter(input), pwd)    ||
            !testString(input -> findSymbol(input), pwd))
-            throw new LoginException(ErrorCode.INVALID_PASSWORD);
+            throw new LoginException(ErrorCode.INVALID_PASSWORD); 
         return true;
     }
     

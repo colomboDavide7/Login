@@ -9,6 +9,8 @@ import login.tools.LoginException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.tools.LoginException.ErrorCode;
 import login.tools.UserValidator;
 import login.users.LoginRequest;
@@ -27,20 +29,25 @@ public class ApplicationRepository {
         try{
             UserValidator.isValidUsername(r.getUsername());
             UserValidator.isValidPassword(r.getPassword());
-            UserValidator.isSignedUp(users.iterator(), new User(r.getUsername()));
+            UserValidator.isSignedUp(users.iterator(), new User(r.getUsername(), r.getPassword()));
         }catch(LoginException ex){
             if(ex.getErrorCode() != ErrorCode.NOT_SIGNED_UP)
                 throw new LoginException(ex.getErrorCode());
-            users.add(new User(r.getUsername()));
+            users.add(new User(r.getUsername(), r.getPassword()));
         }
     }
     
     public void userLogin(LoginRequest r) throws LoginException {
-        UserValidator.isSignedUp(users.iterator(), new User(r.getUsername()));
+        
     }
     
+//    private void login(LoginRequest r){
+//        for(User u : users)
+//            if(u.)
+//    }
+    
     public User findUser(String username) throws QueryException {
-        User searchedUser = new User(username);
+        User searchedUser = new User(username, null);
         for(User u : users)
             if(u.equals(searchedUser))
                 return u;

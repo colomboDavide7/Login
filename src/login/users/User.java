@@ -12,13 +12,23 @@ package login.users;
 public class User {
     
     private String username;
+    private String password;
     
-    public User(String username){
+    public User(String username, String password){
         this.username = username;
+        this.password = password;
     }
     
     public boolean equals(User user){
         return this.username.equals(user.username);
+    }
+    
+    public boolean matchPassword(LoginRequest r){
+        return this.password.equals(r.getPassword());
+    }
+    
+    public boolean matchUsername(LoginRequest r){
+        return this.username.equals(r.getUsername());
     }
     
 }

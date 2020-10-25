@@ -156,7 +156,7 @@ public class ApplicationTest {
         SignUpRequest loginRequest = new SignUpRequest(validUsername, validPassword);
         this.repo.addUser(loginRequest);
         User searchedUser = repo.findUser(loginRequest.getUsername());
-        Assert.assertTrue(new User(validUsername).equals(searchedUser));
+        Assert.assertTrue(new User(validUsername, validPassword).equals(searchedUser));
     }
     
     @Test
@@ -202,8 +202,61 @@ public class ApplicationTest {
         }catch(LoginException ex){
             Assert.assertEquals(ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
         }
-        
     }
+    
+    @Test
+    public void shouldRefuseWrongPassword() throws QueryException, LoginException{
+        System.out.println("* User Login: shouldRefuseWrongPassword()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        SignUpRequest sign = new SignUpRequest(user, pwd);
+        this.repo.addUser(sign);
+        User searchedUser = repo.findUser(sign.getUsername());
+        Assert.assertTrue(new User(user, pwd).equals(searchedUser));
+
+        LoginRequest login = new LoginRequest(user, "wrongPassword");
+        boolean pwdMatch = searchedUser.matchPassword(login);
+        Assert.assertFalse(pwdMatch);
+    }
+    
+    @Test
+    public void shouldRefuseWrongUsername() throws LoginException, QueryException{
+        System.out.println("* User Login: shouldRefuseWrongUsername()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        SignUpRequest sign = new SignUpRequest(user, pwd);
+        this.repo.addUser(sign);
+        User searchedUser = repo.findUser(sign.getUsername());
+        Assert.assertTrue(new User(user, pwd).equals(searchedUser));
+
+        LoginRequest login = new LoginRequest("anotherUsername", pwd);
+        boolean usernameMatch = searchedUser.matchUsername(login);
+        Assert.assertFalse(usernameMatch);
+    }
+    
+//    @Test 
+//    public void shouldRefuseLoginWithWrongPassword() throws LoginException, QueryException{
+//        System.out.println("* User Login: shouldRefuseLoginWithWrongPassword()\n");
+//        String user = "testUser";
+//        String pwd  = "Test1!";
+//        
+//        try{
+//            
+//            SignUpRequest sign = new SignUpRequest(user, pwd);
+//            this.repo.addUser(sign);
+//            User searchedUser = repo.findUser(sign.getUsername());
+//            Assert.assertTrue(new User(user, pwd).equals(searchedUser));
+//
+//            LoginRequest login = new LoginRequest(user, "wrongPassword");
+//            this.repo.userLogin(login);
+//            
+//        }catch(LoginException ex){
+//            Assert.assertEquals(ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+//        }
+//        
+//    }
             
     
 // ================================================================================
