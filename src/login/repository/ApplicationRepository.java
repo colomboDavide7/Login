@@ -21,7 +21,7 @@ public class ApplicationRepository {
     
     private List<User> users = new ArrayList<>();
     
-    public void addUser(UserRequest r) throws LoginException {
+    public void signup(UserRequest r) throws LoginException {
         try{
             UserValidator.isValidUsername(r.getUsername());
             UserValidator.isValidPassword(r.getPassword());
@@ -33,21 +33,12 @@ public class ApplicationRepository {
         }
     }
     
-    public void userLogin(UserRequest r) throws LoginException {
-        try{
-            UserValidator.isSignedUp(users.iterator(), new User(r.getUsername(), r.getPassword()));
-        }catch(LoginException ex){
-            if(ex.getErrorCode() != ErrorCode.USERNAME_ALREADY_USED)
-                throw new LoginException(ex.getErrorCode());
-            // login
-        }
-    }
-    
-    public User findUser(UserRequest r) throws QueryException {
+    public User searchSpecificUser(UserRequest r) throws QueryException {
+        User searchedUser = new User(r.getUsername(), r.getPassword());
         for(User u : users)
-            if(r.matchUser(u))
+            if(u.equals(searchedUser))
                 return u;
-        throw new QueryException();
+        throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
     }
     
 // ================================================================================

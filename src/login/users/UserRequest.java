@@ -22,20 +22,10 @@ public abstract class UserRequest {
 // ================================================================================
     protected String username;
     protected String pwd;
-    protected User user;
             
     public UserRequest(String username, String pwd){
         this.username = username;
         this.pwd = pwd;
-        this.user = new User(username, pwd);
-    }
-    
-    public UserRequest(User user){
-        this.user = user;
-    }
-    
-    public boolean matchUser(User u){
-        return this.user.equals(u);
     }
     
     public String getUsername(){

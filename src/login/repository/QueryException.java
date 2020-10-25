@@ -11,5 +11,19 @@ package login.repository;
  */
 public class QueryException extends Exception {
 
+    public enum ErrorCode{
+        NOT_SIGNED_UP;
+    }
+    
+    
+    private ErrorCode errorCode;
+    
+    public QueryException(ErrorCode code){
+        this.errorCode = code;
+    }
+    
+    public ErrorCode getErrorCode(){
+        return this.errorCode;
+    }
     
 }

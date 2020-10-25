@@ -10,13 +10,9 @@ package login.users;
  * @author davidecolombo
  */
 public class SignUpRequest extends UserRequest {
-    
+
     public SignUpRequest(String username, String pwd) {
         super(username, pwd);
-    }
-    
-    public SignUpRequest(User u){
-        super(u);
     }
     
 }
