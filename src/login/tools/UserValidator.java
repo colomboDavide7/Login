@@ -37,7 +37,7 @@ public class UserValidator {
         for (; userIter.hasNext(); )
             if(userIter.next().equals(specificUser))
                 throw new LoginException(ErrorCode.USERNAME_ALREADY_USED);
-        return false;
+        throw new LoginException(ErrorCode.NOT_SIGNED_UP);
     }
     
 // ================================================================================

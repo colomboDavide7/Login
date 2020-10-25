@@ -148,15 +148,14 @@ public class ApplicationTest {
 // ================================================================================
     // User registration
     @Test
-    public void shouldAddNewUser() throws LoginException, QueryException {
+    public void shouldAddNewUser() throws QueryException, LoginException {
         System.out.println("* ApplicationRepository: shouldAddNewUser()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
         
         SignUpRequest loginRequest = new SignUpRequest(validUsername, validPassword);
         this.repo.addUser(loginRequest);
-        User searchedUser = repo.findUser(validUsername);
-        
+        User searchedUser = repo.findUser(loginRequest.getUsername());
         Assert.assertTrue(new User(validUsername).equals(searchedUser));
     }
     
@@ -182,12 +181,8 @@ public class ApplicationTest {
         try {
             SignUpRequest loginRequest = new SignUpRequest(sameUsername, "tEst!1");
             this.repo.addUser(loginRequest);
-            User searchedUser = repo.findUser(sameUsername);
-
-            Assert.assertTrue(new User(sameUsername).equals(searchedUser));
             loginRequest = new SignUpRequest(sameUsername, "anotherValid_23");
             repo.addUser(loginRequest);
-            
         } catch (LoginException ex) {
             Assert.assertEquals(ex.getErrorCode(), LoginException.ErrorCode.USERNAME_ALREADY_USED);
         }
@@ -195,13 +190,20 @@ public class ApplicationTest {
     
 // ================================================================================
     // User login
-//    @Test
-//    public void shouldRefuseNotSignedUpUsers(){
-//        System.out.println("* User Login: shouldRefuseNotSignedUpUsers()\n");
-//        String user = "testUser";
-//        String pwd  = "Test1!";
-//        UserRequest r = new LoginRequest(user, pwd, UserRequest.RequestType.LOGIN);
-//    }
+    @Test
+    public void shouldRefuseNotSignedUpUsers(){
+        System.out.println("* User Login: shouldRefuseNotSignedUpUsers()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        try{
+            LoginRequest r = new LoginRequest(user, pwd);
+            this.repo.userLogin(r);
+        }catch(LoginException ex){
+            Assert.assertEquals(ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        }
+        
+    }
             
     
 // ================================================================================
