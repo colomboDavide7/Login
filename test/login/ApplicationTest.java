@@ -265,8 +265,8 @@ public class ApplicationTest {
     }   
     
     @Test
-    public void shouldHaveTheLoggedInStateOnAfterLogin() throws LoginException, QueryException{
-        System.out.println("* User Login: shouldHaveTheLoggedInStateOnAfterLogin()\n");
+    public void shouldHaveTheLoggedInStateAfterLogin() throws LoginException, QueryException{
+        System.out.println("* User Login: shouldHaveTheLoggedInStateAfterLogin()\n");
         String user = "testUser";
         String pwd  = "Test1!";
         
@@ -276,6 +276,24 @@ public class ApplicationTest {
         User loggedIn = this.repo.parseLoginRequest(login);
         
         Assert.assertTrue(loggedIn.isLogged());
+    }
+    
+    @Test
+    public void shouldRefuseLoginRequestWhenAlreadyLoggedIn() throws LoginException, QueryException{
+        System.out.println("* User Login: shouldRefuseLoginRequestWhenAlreadyLoggedIn()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        
+        try{
+            UserRequest sign = UserRequest.signupRequest(user, pwd);
+            this.repo.parseSignUpRequest(sign);
+            UserRequest login = UserRequest.loginRequest(user, pwd);
+            this.repo.parseLoginRequest(login);
+            login = UserRequest.loginRequest(user, pwd);
+            this.repo.parseLoginRequest(login);
+        }catch(QueryException ex){
+            Assert.assertEquals(QueryException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
+        }
     }
     
 // ================================================================================

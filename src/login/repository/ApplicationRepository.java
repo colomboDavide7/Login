@@ -33,7 +33,10 @@ public class ApplicationRepository {
         for(User u : users)
             if(u.matchUsername(r.getUsername()))
                 if(u.matchPassword(r.getPassword()))
-                    return u.login();
+                    if(u.isLoggedOut())
+                        return u.login();
+                    else
+                        throw new QueryException(QueryException.ErrorCode.ALREADY_LOGGED_IN);
                 else
                     throw new QueryException(QueryException.ErrorCode.WRONG_PASSWORD);
         throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
