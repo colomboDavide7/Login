@@ -23,11 +23,11 @@ public class User {
         return this.username.equals(user.username);
     }
     
-    public boolean matchPassword(LoginRequest r){
+    public boolean matchPassword(UserRequest r){
         return this.password.equals(r.getPassword());
     }
     
-    public boolean matchUsername(LoginRequest r){
+    public boolean matchUsername(UserRequest r){
         return this.username.equals(r.getUsername());
     }
     

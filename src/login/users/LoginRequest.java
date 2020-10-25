@@ -15,5 +15,8 @@ public class LoginRequest extends UserRequest {
         super(username, pwd);
     }
     
+    public LoginRequest(User u){
+        super(u);
+    }
     
 }

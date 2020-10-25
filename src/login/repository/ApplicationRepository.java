@@ -7,15 +7,11 @@ package login.repository;
 
 import login.tools.LoginException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import login.tools.LoginException.ErrorCode;
 import login.tools.UserValidator;
-import login.users.LoginRequest;
-import login.users.SignUpRequest;
 import login.users.User;
+import login.users.UserRequest;
 
 /**
  *
@@ -25,7 +21,7 @@ public class ApplicationRepository {
     
     private List<User> users = new ArrayList<>();
     
-    public void addUser(SignUpRequest r) throws LoginException {
+    public void addUser(UserRequest r) throws LoginException {
         try{
             UserValidator.isValidUsername(r.getUsername());
             UserValidator.isValidPassword(r.getPassword());
@@ -37,19 +33,19 @@ public class ApplicationRepository {
         }
     }
     
-    public void userLogin(LoginRequest r) throws LoginException {
-        
+    public void userLogin(UserRequest r) throws LoginException {
+        try{
+            UserValidator.isSignedUp(users.iterator(), new User(r.getUsername(), r.getPassword()));
+        }catch(LoginException ex){
+            if(ex.getErrorCode() != ErrorCode.USERNAME_ALREADY_USED)
+                throw new LoginException(ex.getErrorCode());
+            // login
+        }
     }
     
-//    private void login(LoginRequest r){
-//        for(User u : users)
-//            if(u.)
-//    }
-    
-    public User findUser(String username) throws QueryException {
-        User searchedUser = new User(username, null);
+    public User findUser(UserRequest r) throws QueryException {
         for(User u : users)
-            if(u.equals(searchedUser))
+            if(r.matchUser(u))
                 return u;
         throw new QueryException();
     }

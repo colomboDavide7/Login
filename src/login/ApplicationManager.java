@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import login.repository.ApplicationRepository;
 import login.users.UserRequest;
-import login.users.UserRequest.RequestType;
 
 /**
  *

@@ -15,4 +15,8 @@ public class SignUpRequest extends UserRequest {
         super(username, pwd);
     }
     
+    public SignUpRequest(User u){
+        super(u);
+    }
+    
 }
