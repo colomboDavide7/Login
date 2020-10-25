@@ -5,13 +5,18 @@
  */
 package login;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 import login.repository.ApplicationRepository;
 import login.repository.QueryException;
 import login.tools.LoginException;
 import login.tools.LoginException.ErrorCode;
 import login.tools.UserValidator;
+import login.users.LoginRequest;
+import login.users.SignUpRequest;
 import login.users.User;
+import login.users.UserRequest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,11 +27,13 @@ import org.junit.Test;
 public class ApplicationTest {
 
     private ApplicationRepository repo;
+    private ApplicationManager manager;
     
     // This snippet of code is always executed before running every single test
     @Before
     public void setup(){
         this.repo = new ApplicationRepository();
+        this.manager = new ApplicationManager();
     }
     
 // ================================================================================
@@ -146,33 +153,41 @@ public class ApplicationTest {
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
         
-        this.repo.addUser(validUsername, validPassword);
+        SignUpRequest loginRequest = new SignUpRequest(validUsername, validPassword);
+        this.repo.addUser(loginRequest);
         User searchedUser = repo.findUser(validUsername);
         
         Assert.assertTrue(new User(validUsername).equals(searchedUser));
     }
     
-    @Test (expected = LoginException.class)
-    public void shouldRejectNewUser() throws LoginException{
+    @Test
+    public void shouldRejectNewUser() {
         System.out.println("* ApplicationRepository: shouldRejectNewUser()\n");
-        String validUsername = " rossiMario97";
+        String validUsername   = "rossiMario97";
         String invalidPassword = "test";
         
-        this.repo.addUser(validUsername, invalidPassword);
+        try {
+            SignUpRequest loginRequest = new SignUpRequest(validUsername, invalidPassword);
+            this.repo.addUser(loginRequest);
+        } catch (LoginException ex) {
+            Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
+        }
     }
         
     @Test
-    public void shouldRejectUserWithSameName() throws QueryException{
+    public void shouldRejectUserWithSameName() throws QueryException {
         System.out.println("* ApplicationRepository: shouldRejectUserWithSameName()\n");
         String sameUsername = "rossiMario97";
         
         try {
-            this.repo.addUser(sameUsername, "tEst!1");
+            SignUpRequest loginRequest = new SignUpRequest(sameUsername, "tEst!1");
+            this.repo.addUser(loginRequest);
             User searchedUser = repo.findUser(sameUsername);
 
             Assert.assertTrue(new User(sameUsername).equals(searchedUser));
+            loginRequest = new SignUpRequest(sameUsername, "anotherValid_23");
+            repo.addUser(loginRequest);
             
-            repo.addUser(sameUsername, "anotherValid_23");
         } catch (LoginException ex) {
             Assert.assertEquals(ex.getErrorCode(), LoginException.ErrorCode.USERNAME_ALREADY_USED);
         }
@@ -180,7 +195,14 @@ public class ApplicationTest {
     
 // ================================================================================
     // User login
-    
+//    @Test
+//    public void shouldRefuseNotSignedUpUsers(){
+//        System.out.println("* User Login: shouldRefuseNotSignedUpUsers()\n");
+//        String user = "testUser";
+//        String pwd  = "Test1!";
+//        UserRequest r = new LoginRequest(user, pwd, UserRequest.RequestType.LOGIN);
+//    }
+            
     
 // ================================================================================
     

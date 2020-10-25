@@ -16,7 +16,7 @@ import login.users.User;
 public class UserValidator {
     
     private static final String VALID_SYMBOLS = "!@#$%&*()_+=|<>?{}\\\\[\\\\]~-";
-    
+        
     public static boolean isValidUsername(String username) throws LoginException {
         if(username.isEmpty() || !Character.isLetter(username.charAt(0)) || 
            username.contains(" "))
@@ -33,8 +33,8 @@ public class UserValidator {
         return true;
     }
     
-    public static boolean alreadyExist(Iterator<User> userIter, User specificUser) throws LoginException{
-        for(; userIter.hasNext(); )
+    public static boolean isSignedUp(Iterator<User> userIter, User specificUser) throws LoginException {
+        for (; userIter.hasNext(); )
             if(userIter.next().equals(specificUser))
                 throw new LoginException(ErrorCode.USERNAME_ALREADY_USED);
         return false;

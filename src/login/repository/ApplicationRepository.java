@@ -7,8 +7,10 @@ package login.repository;
 
 import login.tools.LoginException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import login.tools.UserValidator;
+import login.users.SignUpRequest;
 import login.users.User;
 
 /**
@@ -19,11 +21,11 @@ public class ApplicationRepository {
     
     private List<User> users = new ArrayList<>();
     
-    public void addUser(String username, String pwd) throws LoginException {
-        UserValidator.isValidUsername(username);
-        UserValidator.isValidPassword(pwd);
-        UserValidator.alreadyExist(users.iterator(), new User(username));
-        users.add(new User(username));
+    public void addUser(SignUpRequest r) throws LoginException {
+        UserValidator.isValidUsername(r.getUsername());
+        UserValidator.isValidPassword(r.getPassword());
+        UserValidator.isSignedUp(users.iterator(), new User(r.getUsername()));
+        users.add(new User(r.getUsername()));
     }
     
     public User findUser(String username) throws QueryException {
@@ -33,7 +35,7 @@ public class ApplicationRepository {
                 return u;
         throw new QueryException();
     }
-        
+    
 // ================================================================================
     
 }
