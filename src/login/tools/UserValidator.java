@@ -5,7 +5,9 @@
  */
 package login.tools;
 
+import java.util.Iterator;
 import login.tools.LoginException.ErrorCode;
+import login.users.User;
 
 /**
  *
@@ -29,6 +31,13 @@ public class UserValidator {
            !testString(input -> findSymbol(input), pwd))
             throw new LoginException(ErrorCode.INVALID_PASSWORD);
         return true;
+    }
+    
+    public static boolean alreadyExist(Iterator<User> userIter, User specificUser) throws LoginException{
+        for(; userIter.hasNext(); )
+            if(userIter.next().equals(specificUser))
+                throw new LoginException(ErrorCode.USERNAME_ALREADY_USED);
+        return false;
     }
     
 // ================================================================================

@@ -8,9 +8,6 @@ package login.repository;
 import login.tools.LoginException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import login.tools.LoginException.ErrorCode;
 import login.tools.UserValidator;
 import login.users.User;
 
@@ -25,24 +22,16 @@ public class ApplicationRepository {
     public void addUser(String username, String pwd) throws LoginException {
         UserValidator.isValidUsername(username);
         UserValidator.isValidPassword(pwd);
-        alreadyExist(username);
+        UserValidator.alreadyExist(users.iterator(), new User(username));
         users.add(new User(username));
     }
     
-    public User findUser(String username) throws QueryException{
+    public User findUser(String username) throws QueryException {
+        User searchedUser = new User(username);
         for(User u : users)
-            if(u.equals(new User(username)))
+            if(u.equals(searchedUser))
                 return u;
         throw new QueryException();
-    }
-    
-    private boolean alreadyExist(String username) throws LoginException {
-        try {
-            findUser(username);
-            throw new LoginException(ErrorCode.USERNAME_ALREADY_USED);
-        } catch (QueryException ex) {
-            return false;
-        }
     }
         
 // ================================================================================
