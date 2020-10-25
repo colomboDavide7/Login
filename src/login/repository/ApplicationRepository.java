@@ -20,18 +20,20 @@ public class ApplicationRepository {
     
     private List<User> users = new ArrayList<>();
     
-    public void parseSignUpRequest(UserRequest r) throws LoginException {
+    public User parseSignUpRequest(UserRequest r) throws LoginException {
         UserValidator.isValidUsername(r.getUsername());
         UserValidator.isValidPassword(r.getPassword());
         UserValidator.isSignedUp(users.iterator(), new User(r.getUsername(), r.getPassword()));
-        users.add(new User(r.getUsername(), r.getPassword()));
+        User signed = new User(r.getUsername(), r.getPassword());
+        users.add(signed);
+        return signed;
     }
     
     public User parseLoginRequest(UserRequest r) throws QueryException {
         for(User u : users)
             if(u.matchUsername(r.getUsername()))
                 if(u.matchPassword(r.getPassword()))
-                    return u;
+                    return u.login();
                 else
                     throw new QueryException(QueryException.ErrorCode.WRONG_PASSWORD);
         

@@ -11,8 +11,14 @@ package login.users;
  */
 public class User {
     
+    
+    public enum UserState{
+        LOGGED_IN, LOGGED_OUT;
+    }
+    
     private String username;
     private String password;
+    private UserState state = UserState.LOGGED_OUT;
     
     public User(String username, String password){
         this.username = username;
@@ -30,5 +36,19 @@ public class User {
     public boolean matchUsername(String username){
         return this.username.equals(username);
     }
+    
+    public boolean isLogged(){
+        return this.state == UserState.LOGGED_IN;
+    }
+    
+    public boolean isLoggedOut(){
+        return this.state == UserState.LOGGED_OUT;
+    }
+    
+    public User login(){
+        this.state = UserState.LOGGED_IN;
+        return this;
+    }
+    
     
 }
