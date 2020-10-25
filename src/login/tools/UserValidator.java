@@ -7,7 +7,6 @@ package login.tools;
 
 import java.util.Iterator;
 import login.tools.LoginException.ErrorCode;
-import login.users.LoginRequest;
 import login.users.User;
 
 /**
@@ -38,7 +37,7 @@ public class UserValidator {
         for (; userIter.hasNext(); )
             if(userIter.next().equals(specificUser))
                 throw new LoginException(ErrorCode.USERNAME_ALREADY_USED);
-        throw new LoginException(ErrorCode.NOT_SIGNED_UP);
+        return false;
     }
     
 // ================================================================================

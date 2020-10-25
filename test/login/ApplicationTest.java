@@ -144,14 +144,14 @@ public class ApplicationTest {
 // ================================================================================
     // User registration
     @Test
-    public void shouldAddNewUser() throws QueryException, LoginException {
-        System.out.println("* ApplicationRepository: shouldAddNewUser()\n");
+    public void shouldSignUpNewUser() throws QueryException, LoginException {
+        System.out.println("* ApplicationRepository: shouldSignUpNewUser()\n");
         String validUsername = "rossiMario97";
         String validPassword = "tEst!1";
         
         UserRequest sign = UserRequest.signupRequest(validUsername, validPassword);
-        this.repo.signup(sign);
-        User searchedUser = repo.searchSpecificUser(sign);
+        this.repo.parseSignUpRequest(sign);
+        User searchedUser = repo.parseLoginRequest(sign);
         Assert.assertTrue(new User(validUsername, validPassword).equals(searchedUser));
     }
     
@@ -163,7 +163,7 @@ public class ApplicationTest {
         
         try {
             UserRequest loginRequest = UserRequest.signupRequest(validUsername, invalidPassword);
-            this.repo.signup(loginRequest);
+            this.repo.parseSignUpRequest(loginRequest);
         } catch (LoginException ex) {
             Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
         }
@@ -176,9 +176,9 @@ public class ApplicationTest {
         
         try {
             UserRequest sign = UserRequest.signupRequest(sameUsername, "tEst!1");
-            this.repo.signup(sign);
+            this.repo.parseSignUpRequest(sign);
             sign = UserRequest.signupRequest(sameUsername, "anotherValid_23");
-            this.repo.signup(sign);
+            this.repo.parseSignUpRequest(sign);
         } catch (LoginException ex) {
             Assert.assertEquals(ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
         }
@@ -194,27 +194,30 @@ public class ApplicationTest {
         
         try{
             UserRequest r = UserRequest.loginRequest(user, pwd);
-            this.repo.searchSpecificUser(r);
+            this.repo.parseLoginRequest(r);
         }catch(QueryException ex){
             Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
         }
     }
     
     @Test
-    public void shouldRefuseWrongPassword() throws QueryException, LoginException{
+    public void shouldRefuseWrongPassword() throws LoginException {
         System.out.println("* User Login: shouldRefuseWrongPassword()\n");
         String user = "testUser";
         String pwd  = "Test1!";
         
-        UserRequest sign = UserRequest.signupRequest(user, pwd);
-        this.repo.signup(sign);
-        
-        User searchedUser = repo.searchSpecificUser(sign);
-        Assert.assertTrue(new User(user, pwd).equals(searchedUser));
+        try{
+            UserRequest sign = UserRequest.signupRequest(user, pwd);
+            this.repo.parseSignUpRequest(sign);
 
-        UserRequest login = UserRequest.loginRequest(user, "wrongPwd");
-        boolean pwdMatch = searchedUser.matchPassword(login);
-        Assert.assertFalse(pwdMatch);
+            User searchedUser = repo.parseLoginRequest(sign);
+            Assert.assertTrue(new User(user, pwd).equals(searchedUser));
+
+            UserRequest login = UserRequest.loginRequest(user, "wrongPwd");
+            this.repo.parseLoginRequest(login);
+        }catch(QueryException ex){
+            Assert.assertEquals(QueryException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        }
     }
     
     @Test
@@ -223,14 +226,16 @@ public class ApplicationTest {
         String user = "testUser";
         String pwd  = "Test1!";
         
+        try{
         UserRequest sign = UserRequest.signupRequest(user, pwd);
-        this.repo.signup(sign);
-        User searchedUser = repo.searchSpecificUser(sign);
-        Assert.assertTrue(new User(user, pwd).equals(searchedUser));
+        this.repo.parseSignUpRequest(sign);
         
         UserRequest login = UserRequest.loginRequest("anotheUsername", pwd);
-        boolean usernameMatch = searchedUser.matchUsername(login);
-        Assert.assertFalse(usernameMatch);
+        this.repo.parseLoginRequest(login);
+        }catch(QueryException ex){
+            Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        }
+        
     }
     
 // ================================================================================
