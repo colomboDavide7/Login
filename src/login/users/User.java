@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * @author davidecolombo
  */
-public class User {
+public class User implements IUser {
     
     public enum UserState{
         LOGGED_IN, LOGGED_OUT;
@@ -44,11 +44,13 @@ public class User {
     }
     
 // ================================================================================
-    public final User addProperty(PropertyName key, String value){
+    @Override
+    public final IUser addProperty(PropertyName key, String value){
         this.properties.put(key, value);
         return this;
     }
     
+    @Override
     public final String getProperty(PropertyName key) throws PropertyException{
         if(this.properties.keySet().stream().anyMatch(k -> (k == key)))
             return this.properties.get(key);
