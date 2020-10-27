@@ -18,6 +18,6 @@ public class UserCredential {
         this.username = username;
         this.password = password;
     }
-    
+
     
 }
