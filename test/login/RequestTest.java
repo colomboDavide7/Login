@@ -7,9 +7,9 @@ package login;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import login.controllers.LoginController;
+import login.controllers.RequestController;
 import login.repository.ApplicationRepository;
-import login.request.UserRequest;
+import login.users.UserRequest;
 import login.users.IUser;
 import login.users.User;
 import static org.junit.Assert.*;
@@ -65,24 +65,17 @@ public class RequestTest {
     }
     
     @Test
-    public void shouldSendSignUpRequest(){
-        System.out.println("* User property: shouldAddBirthdayProperty()\n");
+    public void shouldBeSignUpRequest(){
+        System.out.println("* User property: shouldBeSignUpRequest()\n");
         String username = "valid";
         String pwd      = "Test_1";
-        String city     = "New York";
-        String phone    = "0000000000";
-        String sex      = "Male";
         
-        IUser u = new User(username, pwd)
-                        .addProperty(User.PropertyName.CITY, city)
-                        .addProperty(User.PropertyName.GENDER, sex)
-                        .addProperty(User.PropertyName.MAIN_PHONE, phone);
-        
-        UserRequest request = UserRequest.signupRequest(u);
-        
-        LoginController c = new LoginController();
-        c.setApplicationReference(this.app);
-        c.sendSignUpRequest(request);
+        IUser u       = new User(username, pwd);
+        UserRequest r = UserRequest.signupRequest(u, UserRequest.RequestType.SIGN_UP);
+        assertTrue(r.matchType(UserRequest.RequestType.SIGN_UP));
     }
+    
+// ================================================================================
+    // Controllers 
     
 }

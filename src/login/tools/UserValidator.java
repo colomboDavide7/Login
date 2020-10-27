@@ -6,7 +6,7 @@
 package login.tools;
 
 import java.util.Iterator;
-import login.request.UserRequest;
+import login.users.UserRequest;
 import login.tools.CredentialException.ErrorCode;
 import login.users.IUser;
 

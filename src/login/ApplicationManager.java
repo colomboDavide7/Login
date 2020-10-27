@@ -11,7 +11,7 @@ import login.repository.QueryException;
 import login.tools.CredentialException;
 import login.tools.UserValidator;
 import login.users.User;
-import login.request.UserRequest;
+import login.users.UserRequest;
 import login.users.IUser;
 
 /**

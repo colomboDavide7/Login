@@ -8,7 +8,7 @@ package login;
 import login.repository.ApplicationRepository;
 import login.repository.QueryException;
 import login.tools.CredentialException;
-import login.request.UserRequest;
+import login.users.UserRequest;
 
 /**
  *

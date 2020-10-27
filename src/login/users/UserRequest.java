@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.request;
+package login.users;
 
 import java.util.List;
 import login.users.IUser;
@@ -13,29 +13,35 @@ import login.users.User;
  *
  * @author davidecolombo
  */
-public abstract class UserRequest {
+public class UserRequest {
     
     public enum RequestType{
         SIGN_UP, LOGIN, LOGOUT;
     }
     
-    public static UserRequest signupRequest(IUser u){
-        return new SignUpRequest(u);
+    public static UserRequest signupRequest(IUser u, RequestType t){
+        return new UserRequest(u, t);
     }
     
-    public static UserRequest loginRequest(IUser u){
-        return new LoginRequest(u);
+    public static UserRequest loginRequest(IUser u, RequestType t){
+        return new UserRequest(u, t);
     }
     
-    public static UserRequest logoutRequest(IUser u){
-        return new LogoutRequest(u);
+    public static UserRequest logoutRequest(IUser u, RequestType t){
+        return new UserRequest(u, t);
     }
     
 // ================================================================================
-    protected IUser u;
+    private IUser u;
+    private RequestType t;
     
-    public UserRequest(IUser u){
+    public UserRequest(IUser u, RequestType t){
         this.u = u;
+        this.t = t;
+    }
+    
+    public boolean matchType(RequestType t){
+        return this.t == t;
     }
     
     public String getUserProperty(User.PropertyName prop) {
