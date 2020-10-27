@@ -21,21 +21,18 @@ import login.users.IUser;
 public class ApplicationManager {
         
     private List<IUser> users = new ArrayList<>();
-    private List<UserRequest> requests = new ArrayList();
     
-    public IUser parseSignUpRequest(UserRequest r) throws CredentialException {
-        UserValidator.isValidUsername(r.getUsername());
-        UserValidator.isValidPassword(r.getPassword());
-        UserValidator.isSignedUp(users.iterator(), new User(r.getUsername(), r.getPassword()));
-        IUser signed = new User(r.getUsername(), r.getPassword());
-        users.add(signed);
-        return signed;
+    public void parseSignUpRequest(UserRequest r) throws CredentialException {
+        UserValidator.isValidUsername(r.getUserProperty(User.PropertyName.USERNAME));
+        UserValidator.isValidPassword(r.getUserProperty(User.PropertyName.PASSWORD));
+        UserValidator.isSignedUp(users.iterator(), r);
+        r.addUserToList(users);
     }
     
     public IUser parseLoginRequest(UserRequest r) throws QueryException {
         for(IUser u : users)
-            if(u.matchUsername(r.getUsername()))
-                if(u.matchPassword(r.getPassword()))
+            if(matchUsernameProperty(u, r))
+                if(matchPasswordProperty(u, r))
                     if(u.isLoggedOut())
                         return u.login();
                     else
@@ -45,14 +42,37 @@ public class ApplicationManager {
         throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
     }
     
+    private boolean matchUsernameProperty(IUser u, UserRequest r){
+        return r.matchUserProperty(User.PropertyName.USERNAME, u.getProperty(User.PropertyName.USERNAME));
+    }
+    
+    private boolean matchPasswordProperty(IUser u, UserRequest r){
+        return r.matchUserProperty(User.PropertyName.PASSWORD, u.getProperty(User.PropertyName.PASSWORD));
+    }
+    
+    
     public IUser parseLogoutRequest(UserRequest r) throws QueryException {
         for(IUser u : users)
-            if(u.matchUsername(r.getUsername()))
+            if(matchUsernameProperty(u, r))
                 if(u.isLogged())
                     return u.logout();
                 else
                     throw new QueryException(QueryException.ErrorCode.NOT_LOGGED_IN);
         throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
+    }
+    
+    public boolean isLoggedIn(IUser u){
+        for(IUser user : users)
+            if(user.matchProperty(User.PropertyName.USERNAME, u.getProperty(User.PropertyName.USERNAME)))
+                return user.isLogged();
+        return false;
+    }
+    
+    public boolean isLoggedOut(IUser u){
+        for(IUser user : users)
+            if(user.matchProperty(User.PropertyName.USERNAME, u.getProperty(User.PropertyName.USERNAME)))
+                return user.isLoggedOut();
+        return false;
     }
     
 }

@@ -7,9 +7,13 @@ package login;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import login.users.PropertyException;
+import login.controllers.LoginController;
+import login.repository.ApplicationRepository;
+import login.request.UserRequest;
+import login.users.IUser;
 import login.users.User;
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -18,13 +22,24 @@ import org.junit.Test;
  */
 public class RequestTest {
     
+    private Application app;
+    private ApplicationManager manager;
+    private ApplicationRepository repo;
+    
+    @Before
+    public void setup(){
+        this.manager = new ApplicationManager();
+        this.repo    = new ApplicationRepository();
+        this.app = new Application(manager, repo);
+    }
+    
     @Test 
     public void shouldCreateUserWithBirthday(){
         System.out.println("* User property: shouldCreateUserWithBirthday()\n");
         String username = "valid";
         String pwd      = "Test_1";
         LocalDate birth = LocalDate.of(1987, 5, 23);        
-        User u = new User(username, pwd, birth);
+        IUser u = new User(username, pwd, birth);
         
         assertTrue(u.isMyBirthDay(birth));
         assertFalse(u.isMyBirthDay(LocalDate.of(1997, 2, 25)));
@@ -36,8 +51,7 @@ public class RequestTest {
         String username = "valid";
         String pwd      = "Test_1";
         
-        try{
-            User u = new User(username, pwd);
+            IUser u = new User(username, pwd);
             LocalDate birth = LocalDate.of(1976, 5, 23);
             DateTimeFormatter formatter = u.getFormatter();
             String formattedBirth = birth.format(formatter);
@@ -45,9 +59,29 @@ public class RequestTest {
             
             String myBirth = u.getProperty(User.PropertyName.BIRTH);
             String myCity  = u.getProperty(User.PropertyName.CITY);
-        }catch(PropertyException ex){
-            assertEquals(PropertyException.ErrorCode.NOT_FOUND, ex.getErrorCode());
-        }
+            assertTrue(u.isEmptyProperty(User.PropertyName.CITY, myCity));
     }
+    
+    @Test
+    public void shouldSendSignUpRequest(){
+        System.out.println("* User property: shouldAddBirthdayProperty()\n");
+        String username = "valid";
+        String pwd      = "Test_1";
+        String city     = "New York";
+        String phone    = "0000000000";
+        String sex      = "Male";
+        
+        IUser u = new User(username, pwd)
+                        .addProperty(User.PropertyName.CITY, city)
+                        .addProperty(User.PropertyName.GENDER, sex)
+                        .addProperty(User.PropertyName.MAIN_PHONE, phone);
+        
+        UserRequest request = UserRequest.signupRequest(u);
+        
+        LoginController c = new LoginController();
+        c.setApplicationReference(this.app);
+        c.sendSignUpRequest(request);
+    }
+            
     
 }

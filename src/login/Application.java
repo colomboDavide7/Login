@@ -24,18 +24,18 @@ public class Application {
         this.repository = repo;
     }
     
-    public boolean sendSignUpRequest(String username, String pwd) throws CredentialException{
-        this.manager.parseSignUpRequest(UserRequest.signupRequest(username, pwd));
+    public boolean sendSignUpRequest(UserRequest r) throws CredentialException {
+        this.manager.parseSignUpRequest(r);
         return true;
     }
     
-    public boolean sendLoginRequest(String username, String pwd) throws QueryException{
-        this.manager.parseLoginRequest(UserRequest.signupRequest(username, pwd));
+    public boolean sendLoginRequest(UserRequest r) throws QueryException{
+        this.manager.parseLoginRequest(r);
         return true;
     }
     
-    public boolean sendLogoutRequest(String username, String pwd) throws QueryException{
-        this.manager.parseLogoutRequest(UserRequest.signupRequest(username, pwd));
+    public boolean sendLogoutRequest(UserRequest r) throws QueryException{
+        this.manager.parseLogoutRequest(r);
         return true;
     }
  

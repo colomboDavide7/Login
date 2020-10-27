@@ -5,6 +5,10 @@
  */
 package login.request;
 
+import java.util.List;
+import login.users.IUser;
+import login.users.User;
+
 /**
  *
  * @author davidecolombo
@@ -15,33 +19,39 @@ public abstract class UserRequest {
         SIGN_UP, LOGIN, LOGOUT;
     }
     
-    public static UserRequest loginRequest(String username, String pwd){
-        return new LoginRequest(username, pwd);
+    public static UserRequest signupRequest(IUser u){
+        return new SignUpRequest(u);
     }
     
-    public static UserRequest signupRequest(String username, String pwd){
-        return new SignUpRequest(username, pwd);
+    public static UserRequest loginRequest(IUser u){
+        return new LoginRequest(u);
     }
     
-    public static UserRequest logoutRequest(String username, String pwd){
-        return new LogoutRequest(username, pwd);
+    public static UserRequest logoutRequest(IUser u){
+        return new LogoutRequest(u);
     }
     
 // ================================================================================
-    protected String username;
-    protected String pwd;
-            
-    public UserRequest(String username, String pwd){
-        this.username = username;
-        this.pwd = pwd;
+    protected IUser u;
+    
+    public UserRequest(IUser u){
+        this.u = u;
     }
     
-    public String getUsername(){
-        return this.username;
+    public String getUserProperty(User.PropertyName prop) {
+        return this.u.getProperty(prop);
     }
     
-    public String getPassword(){
-        return this.pwd;
+    public boolean matchUser(IUser u){
+        return this.u.equals(u);
+    }
+    
+    public boolean matchUserProperty(User.PropertyName key, String value){
+        return this.u.matchProperty(key, value);
+    }
+    
+    public void addUserToList(List<IUser> list){
+        list.add(this.u);
     }
     
 }

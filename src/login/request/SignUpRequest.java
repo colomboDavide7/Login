@@ -5,16 +5,17 @@
  */
 package login.request;
 
-import login.request.UserRequest;
+import login.users.IUser;
+
 
 /**
  *
  * @author davidecolombo
  */
 public class SignUpRequest extends UserRequest {
-
-    public SignUpRequest(String username, String pwd) {
-        super(username, pwd);
+    
+    public SignUpRequest(IUser u){
+        super(u);
     }
     
 }

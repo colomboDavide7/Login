@@ -9,28 +9,10 @@ package login.users;
  *
  * @author davidecolombo
  */
-public interface IUser {
+public interface IUser extends ILogin, IComparable, IUserDate {
     
     IUser addProperty(User.PropertyName key, String value);
     
-    String getProperty(User.PropertyName key) throws PropertyException;
-    
-// ================================================================================
-    public boolean equals(IUser user);
-    
-    public boolean matchPassword(String pwd);
-    
-    public boolean matchUsername(String username);
-    
-// ================================================================================
-    public boolean isLogged();
-    
-    public boolean isLoggedOut();
-    
-    public IUser login();
-    
-    public IUser logout();
-    
-// ================================================================================
-    
+    String getProperty(User.PropertyName key);
+
 }

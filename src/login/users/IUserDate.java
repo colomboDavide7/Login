@@ -3,18 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.request;
+package login.users;
 
-import login.users.IUser;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
  * @author davidecolombo
  */
-public class LoginRequest extends UserRequest {
+public interface IUserDate {
     
-    public LoginRequest(IUser u){
-        super(u);
-    }
+    DateTimeFormatter getFormatter();
+    
+    boolean isMyBirthDay(LocalDate date);
     
 }

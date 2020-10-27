@@ -5,7 +5,7 @@
  */
 package login.request;
 
-import login.request.UserRequest;
+import login.users.IUser;
 
 /**
  *
@@ -13,8 +13,8 @@ import login.request.UserRequest;
  */
 public class LogoutRequest extends UserRequest{
     
-    public LogoutRequest(String username, String pwd) {
-        super(username, pwd);
+    public LogoutRequest(IUser u){
+        super(u);
     }
     
 }

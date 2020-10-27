@@ -15,7 +15,7 @@ import java.util.Map;
  * @author davidecolombo
  */
 public class User implements IUser {
-    
+
     public enum UserState{
         LOGGED_IN, LOGGED_OUT;
     }
@@ -23,7 +23,8 @@ public class User implements IUser {
     public enum PropertyName {
         USERNAME, PASSWORD,
         BIRTH, CITY,
-        AGE, GENDER;
+        AGE, GENDER, 
+        MAIN_PHONE, SECOND_PHONE;
     }
     
 // ================================================================================
@@ -31,6 +32,7 @@ public class User implements IUser {
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
     private Map<PropertyName, String> properties = new HashMap<>();
     private UserState state = UserState.LOGGED_OUT;
+    private final String EMPTY_PROPERTY = "";
     
     public User(String username, String password){
         this.addProperty(PropertyName.USERNAME, username);
@@ -51,39 +53,37 @@ public class User implements IUser {
     }
     
     @Override
-    public final String getProperty(PropertyName key) throws PropertyException {
+    public final String getProperty(PropertyName key) {
         if(this.properties.keySet().stream().anyMatch(k -> (k == key)))
             return this.properties.get(key);
-        throw new PropertyException(PropertyException.ErrorCode.NOT_FOUND);
+        return this.EMPTY_PROPERTY;
     }
     
 // ================================================================================
     @Override
     public boolean equals(IUser user){
-        try {
             return this.getProperty(PropertyName.USERNAME)
                     .equals(user.getProperty(PropertyName.USERNAME));
-        } catch (PropertyException ex) {
-            return false;
-        }
     }
     
     @Override
     public boolean matchPassword(String pwd){
-        try {
-            return this.getProperty(PropertyName.PASSWORD).equals(pwd);
-        } catch (PropertyException ex) {
-            return false;
-        }
+        return this.getProperty(PropertyName.PASSWORD).equals(pwd);
     }
     
     @Override
     public boolean matchUsername(String username){
-        try {
-            return this.getProperty(PropertyName.USERNAME).equals(username);
-        } catch (PropertyException ex) {
-            return false;
-        }
+        return this.getProperty(PropertyName.USERNAME).equals(username);
+    }
+    
+    @Override
+    public boolean matchProperty(PropertyName key, String value) {
+        return this.getProperty(key).equals(value);
+    }
+    
+    @Override
+    public boolean isEmptyProperty(PropertyName key, String value) {
+        return this.getProperty(key).equals(this.EMPTY_PROPERTY);
     }
     
 // ================================================================================
@@ -110,18 +110,15 @@ public class User implements IUser {
     }
     
 // ================================================================================
+    @Override
     public boolean isMyBirthDay(LocalDate date){
-        try {
-            LocalDate myBirth = LocalDate.parse(this.getProperty(PropertyName.BIRTH), formatter);
-            return date.getMonthValue() == myBirth.getMonthValue() &&
-                   date.getYear()       == myBirth.getYear()       &&
-                   date.getDayOfMonth() == myBirth.getDayOfMonth();
-        } catch (PropertyException ex) {
-            return false;
-        }
-        
+        LocalDate myBirth = LocalDate.parse(this.getProperty(PropertyName.BIRTH), formatter);
+        return date.getMonthValue() == myBirth.getMonthValue() &&
+               date.getYear()       == myBirth.getYear()       &&
+               date.getDayOfMonth() == myBirth.getDayOfMonth();
     }
     
+    @Override
     public DateTimeFormatter getFormatter(){
         return this.formatter;
     }
