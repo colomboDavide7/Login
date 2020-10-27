@@ -11,6 +11,10 @@ package login.users;
  */
 public abstract class UserRequest {
     
+    public enum RequestType{
+        SIGN_UP, LOGIN, LOGOUT;
+    }
+    
     public static UserRequest loginRequest(String username, String pwd){
         return new LoginRequest(username, pwd);
     }

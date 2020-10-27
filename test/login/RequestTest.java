@@ -48,7 +48,6 @@ public class RequestTest {
         }catch(PropertyException ex){
             assertEquals(PropertyException.ErrorCode.NOT_FOUND, ex.getErrorCode());
         }
-        
     }
     
 }

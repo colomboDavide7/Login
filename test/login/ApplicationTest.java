@@ -24,12 +24,14 @@ public class ApplicationTest {
 
     private ApplicationRepository repo;
     private ApplicationManager manager;
+    private Application application;
     
     // This snippet of code is always executed before running every single test
     @Before
     public void setup(){
         this.repo = new ApplicationRepository();
         this.manager = new ApplicationManager();
+        this.application = new Application(manager, repo);
     }
     
 // ================================================================================
@@ -356,7 +358,7 @@ public class ApplicationTest {
         String user = "testUser";
         String pwd  = "Test1!";
         
-        boolean sended = this.manager.sendSignUpRequest(user, pwd);
+        boolean sended = this.application.sendSignUpRequest(user, pwd);
         Assert.assertTrue(sended);
     }
     
@@ -366,10 +368,10 @@ public class ApplicationTest {
         String user = "testUser";
         String pwd  = "Test1!";
         
-        boolean sended = this.manager.sendSignUpRequest(user, pwd);
+        boolean sended = this.application.sendSignUpRequest(user, pwd);
         Assert.assertTrue(sended);
         
-        sended = this.manager.sendLoginRequest(user, pwd);
+        sended = this.application.sendLoginRequest(user, pwd);
         Assert.assertTrue(sended);
     }
     
@@ -379,13 +381,13 @@ public class ApplicationTest {
         String user = "testUser";
         String pwd  = "Test1!";
         
-        boolean sended = this.manager.sendSignUpRequest(user, pwd);
+        boolean sended = this.application.sendSignUpRequest(user, pwd);
         Assert.assertTrue(sended);
         
-        sended = this.manager.sendLoginRequest(user, pwd);
+        sended = this.application.sendLoginRequest(user, pwd);
         Assert.assertTrue(sended);
         
-        sended = this.manager.sendLogoutRequest(user, pwd);
+        sended = this.application.sendLogoutRequest(user, pwd);
         Assert.assertTrue(sended);
     }
     

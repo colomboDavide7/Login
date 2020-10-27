@@ -7,9 +7,10 @@ package login;
 
 import java.util.ArrayList;
 import java.util.List;
-import login.repository.ApplicationRepository;
 import login.repository.QueryException;
 import login.tools.CredentialException;
+import login.tools.UserValidator;
+import login.users.User;
 import login.users.UserRequest;
 
 /**
@@ -17,28 +18,39 @@ import login.users.UserRequest;
  * @author davidecolombo
  */
 public class ApplicationManager {
+        
+    private List<User> users = new ArrayList<>();
     
-    private ApplicationRepository repo;
-    private List<UserRequest> requests;
-    
-    public ApplicationManager(){
-        this.requests = new ArrayList<>();
-        this.repo     = new ApplicationRepository();
+    public User parseSignUpRequest(UserRequest r) throws CredentialException {
+        UserValidator.isValidUsername(r.getUsername());
+        UserValidator.isValidPassword(r.getPassword());
+        UserValidator.isSignedUp(users.iterator(), new User(r.getUsername(), r.getPassword()));
+        User signed = new User(r.getUsername(), r.getPassword());
+        users.add(signed);
+        return signed;
     }
     
-    public boolean sendLoginRequest(String username, String pwd) throws QueryException {
-        this.repo.parseLoginRequest(UserRequest.loginRequest(username, pwd));
-        return true;
+    public User parseLoginRequest(UserRequest r) throws QueryException {
+        for(User u : users)
+            if(u.matchUsername(r.getUsername()))
+                if(u.matchPassword(r.getPassword()))
+                    if(u.isLoggedOut())
+                        return u.login();
+                    else
+                        throw new QueryException(QueryException.ErrorCode.ALREADY_LOGGED_IN);
+                else
+                    throw new QueryException(QueryException.ErrorCode.WRONG_PASSWORD);
+        throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
     }
     
-    public boolean sendSignUpRequest(String username, String pwd) throws CredentialException {
-        this.repo.parseSignUpRequest(UserRequest.signupRequest(username, pwd));
-        return true;
-    }
-    
-    public boolean sendLogoutRequest(String username, String pwd) throws QueryException {
-        this.repo.parseLogoutRequest(UserRequest.logoutRequest(username, pwd));
-        return true;
+    public User parseLogoutRequest(UserRequest r) throws QueryException {
+        for(User u : users)
+            if(u.matchUsername(r.getUsername()))
+                if(u.isLogged())
+                    return u.logout();
+                else
+                    throw new QueryException(QueryException.ErrorCode.NOT_LOGGED_IN);
+        throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
     }
     
 }

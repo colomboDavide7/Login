@@ -5,13 +5,10 @@
  */
 package login;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import login.repository.ApplicationRepository;
+import login.repository.QueryException;
 import login.tools.CredentialException;
-import login.tools.UserValidator;
+import login.users.UserRequest;
 
 /**
  *
@@ -19,61 +16,27 @@ import login.tools.UserValidator;
  */
 public class Application {
     
-    private String username = "";
-    private String password = "";
-    
-    private final String FORCED = "stop";
-    
-    public static void main(String[] args) throws CredentialException {
-        Application app = new Application();
-    }
-        
-    public Application() throws CredentialException {
-        
-        printText("Choose a Username\n");
-        
-        // Apertura stream in lettura
-        BufferedReader reader = null;
-        String line;
-        try {
-            reader = new BufferedReader(new InputStreamReader(System.in));
-            while((line = reader.readLine()) != null){
-                if(line.isEmpty())
-                    continue;
-                
-                // Usermname validation
-                if(UserValidator.isValidUsername(line)){
-                    this.username = line;
-                    System.err.println("Valid username!");
-                    System.out.println("Username = " + username);
-                }
-                
-                // Closing the stream
-                if(line.equals(FORCED)){
-                    reader.close();
-                    return;
-                }
-                
-                
-            }
-                
-                
-        } catch (IOException ex) {
-            Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            if(reader != null)
-                try {
-                    reader.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-            
+    private ApplicationRepository repository;
+    private ApplicationManager manager;
+       
+    public Application(ApplicationManager manager, ApplicationRepository repo){
+        this.manager    = manager;
+        this.repository = repo;
     }
     
-    private void printText(String text){
-        System.out.println(text);
+    public boolean sendSignUpRequest(String username, String pwd) throws CredentialException{
+        this.manager.parseSignUpRequest(UserRequest.signupRequest(username, pwd));
+        return true;
     }
     
+    public boolean sendLoginRequest(String username, String pwd) throws QueryException{
+        this.manager.parseLoginRequest(UserRequest.signupRequest(username, pwd));
+        return true;
+    }
     
+    public boolean sendLogoutRequest(String username, String pwd) throws QueryException{
+        this.manager.parseLogoutRequest(UserRequest.signupRequest(username, pwd));
+        return true;
+    }
+ 
 }

@@ -20,6 +20,12 @@ public class ApplicationRepository {
     
     private List<User> users = new ArrayList<>();
     
+    private List<UserRequest> requests = new ArrayList();
+    
+    public void addRequest(UserRequest r){
+        
+    }
+    
     public User parseSignUpRequest(UserRequest r) throws CredentialException {
         UserValidator.isValidUsername(r.getUsername());
         UserValidator.isValidPassword(r.getPassword());
