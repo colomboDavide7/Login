@@ -59,6 +59,8 @@ public class RequestTest {
             
             String myBirth = u.getProperty(User.PropertyName.BIRTH);
             String myCity  = u.getProperty(User.PropertyName.CITY);
+            
+            assertFalse(u.isEmptyProperty(User.PropertyName.BIRTH, myBirth));
             assertTrue(u.isEmptyProperty(User.PropertyName.CITY, myCity));
     }
     
@@ -82,6 +84,5 @@ public class RequestTest {
         c.setApplicationReference(this.app);
         c.sendSignUpRequest(request);
     }
-            
     
 }

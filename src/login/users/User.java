@@ -22,9 +22,11 @@ public class User implements IUser {
     
     public enum PropertyName {
         USERNAME, PASSWORD,
+        FIRST_NAME, LAST_NAME,
         BIRTH, CITY,
         AGE, GENDER, 
-        MAIN_PHONE, SECOND_PHONE;
+        MAIN_PHONE, SECOND_PHONE,
+        E_MAIL;
     }
     
 // ================================================================================
@@ -35,14 +37,21 @@ public class User implements IUser {
     private final String EMPTY_PROPERTY = "";
     
     public User(String username, String password){
+        setupProperties();
         this.addProperty(PropertyName.USERNAME, username);
         this.addProperty(PropertyName.PASSWORD, password);
     }
     
     public User(String username, String password, LocalDate birth){
+        setupProperties();
         this.addProperty(PropertyName.USERNAME, username);
         this.addProperty(PropertyName.PASSWORD, password);
         this.addProperty(PropertyName.BIRTH, birth.format(formatter));
+    }
+    
+    private void setupProperties(){
+        for(PropertyName p : PropertyName.values())
+            properties.put(p, EMPTY_PROPERTY);
     }
     
 // ================================================================================
@@ -54,9 +63,7 @@ public class User implements IUser {
     
     @Override
     public final String getProperty(PropertyName key) {
-        if(this.properties.keySet().stream().anyMatch(k -> (k == key)))
-            return this.properties.get(key);
-        return this.EMPTY_PROPERTY;
+        return this.properties.get(key);
     }
     
 // ================================================================================
