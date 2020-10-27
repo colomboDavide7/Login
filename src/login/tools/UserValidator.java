@@ -7,7 +7,7 @@ package login.tools;
 
 import java.util.Iterator;
 import login.tools.CredentialException.ErrorCode;
-import login.users.User;
+import login.users.IUser;
 
 /**
  *
@@ -33,7 +33,7 @@ public class UserValidator {
         return true;
     }
     
-    public static boolean isSignedUp(Iterator<User> userIter, User specificUser) throws CredentialException {
+    public static boolean isSignedUp(Iterator<IUser> userIter, IUser specificUser) throws CredentialException {
         for (; userIter.hasNext(); )
             if(userIter.next().equals(specificUser))
                 throw new CredentialException(ErrorCode.USERNAME_ALREADY_USED);

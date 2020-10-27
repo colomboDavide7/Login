@@ -58,7 +58,8 @@ public class User implements IUser {
     }
     
 // ================================================================================
-    public boolean equals(User user){
+    @Override
+    public boolean equals(IUser user){
         try {
             return this.getProperty(PropertyName.USERNAME)
                     .equals(user.getProperty(PropertyName.USERNAME));
@@ -67,6 +68,7 @@ public class User implements IUser {
         }
     }
     
+    @Override
     public boolean matchPassword(String pwd){
         try {
             return this.getProperty(PropertyName.PASSWORD).equals(pwd);
@@ -75,6 +77,7 @@ public class User implements IUser {
         }
     }
     
+    @Override
     public boolean matchUsername(String username){
         try {
             return this.getProperty(PropertyName.USERNAME).equals(username);
@@ -84,20 +87,24 @@ public class User implements IUser {
     }
     
 // ================================================================================
+    @Override
     public boolean isLogged(){
         return this.state == UserState.LOGGED_IN;
     }
     
+    @Override
     public boolean isLoggedOut(){
         return this.state == UserState.LOGGED_OUT;
     }
     
-    public User login(){
+    @Override
+    public IUser login(){
         this.state = UserState.LOGGED_IN;
         return this;
     }
     
-    public User logout(){
+    @Override
+    public IUser logout(){
         this.state = UserState.LOGGED_OUT;
         return this;
     }
