@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.users;
+package login.request;
+
+import login.request.UserRequest;
 
 /**
  *
  * @author davidecolombo
  */
-public class SignUpRequest extends UserRequest {
-
-    public SignUpRequest(String username, String pwd) {
+public class LoginRequest extends UserRequest {
+    
+    public LoginRequest(String username, String pwd) {
         super(username, pwd);
     }
     

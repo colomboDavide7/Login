@@ -8,11 +8,12 @@ package login;
 import junit.framework.Assert;
 import login.repository.ApplicationRepository;
 import login.repository.QueryException;
+import login.request.RequestAnswer;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
 import login.tools.UserValidator;
 import login.users.User;
-import login.users.UserRequest;
+import login.request.UserRequest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -193,11 +194,11 @@ public class ApplicationTest {
         String pwd  = "Test1!";
         
         UserRequest sign = UserRequest.signupRequest(user, pwd);
-        User signedUser = this.manager.parseSignUpRequest(sign);
+        RequestAnswer ans = this.manager.parseSignUpRequest(sign);
         
         // Put the double assertion in order to be sure that the test will fail.
-        Assert.assertFalse(signedUser.isLogged());
-        Assert.assertTrue(signedUser.isLoggedOut());
+        Assert.assertFalse(this.manager.isLoggedIn(new User(user, pwd)));
+        Assert.assertTrue(this.manager.isLoggedOut(new User(user, pwd)));
     }
     
 // ================================================================================
@@ -358,8 +359,8 @@ public class ApplicationTest {
         String user = "testUser";
         String pwd  = "Test1!";
         
-        boolean sended = this.application.sendSignUpRequest(user, pwd);
-        Assert.assertTrue(sended);
+        RequestAnswer ans = this.application.sendSignUpRequest(user, pwd);
+        Assert.assertTrue(ans.isAccepted());
     }
     
     @Test
@@ -368,10 +369,10 @@ public class ApplicationTest {
         String user = "testUser";
         String pwd  = "Test1!";
         
-        boolean sended = this.application.sendSignUpRequest(user, pwd);
-        Assert.assertTrue(sended);
+        RequestAnswer ans = this.application.sendSignUpRequest(user, pwd);
+        Assert.assertTrue(ans.isAccepted());
         
-        sended = this.application.sendLoginRequest(user, pwd);
+        boolean sended = this.application.sendLoginRequest(user, pwd);
         Assert.assertTrue(sended);
     }
     
@@ -381,10 +382,10 @@ public class ApplicationTest {
         String user = "testUser";
         String pwd  = "Test1!";
         
-        boolean sended = this.application.sendSignUpRequest(user, pwd);
-        Assert.assertTrue(sended);
+        RequestAnswer ans = this.application.sendSignUpRequest(user, pwd);
+        Assert.assertTrue(ans.isAccepted());
         
-        sended = this.application.sendLoginRequest(user, pwd);
+        boolean sended = this.application.sendLoginRequest(user, pwd);
         Assert.assertTrue(sended);
         
         sended = this.application.sendLogoutRequest(user, pwd);

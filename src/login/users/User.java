@@ -51,7 +51,7 @@ public class User implements IUser {
     }
     
     @Override
-    public final String getProperty(PropertyName key) throws PropertyException{
+    public final String getProperty(PropertyName key) throws PropertyException {
         if(this.properties.keySet().stream().anyMatch(k -> (k == key)))
             return this.properties.get(key);
         throw new PropertyException(PropertyException.ErrorCode.NOT_FOUND);

@@ -7,8 +7,9 @@ package login;
 
 import login.repository.ApplicationRepository;
 import login.repository.QueryException;
+import login.request.RequestAnswer;
 import login.tools.CredentialException;
-import login.users.UserRequest;
+import login.request.UserRequest;
 
 /**
  *
@@ -24,9 +25,8 @@ public class Application {
         this.repository = repo;
     }
     
-    public boolean sendSignUpRequest(String username, String pwd) throws CredentialException{
-        this.manager.parseSignUpRequest(UserRequest.signupRequest(username, pwd));
-        return true;
+    public RequestAnswer sendSignUpRequest(String username, String pwd) throws CredentialException{
+        return this.manager.parseSignUpRequest(UserRequest.signupRequest(username, pwd));
     }
     
     public boolean sendLoginRequest(String username, String pwd) throws QueryException{

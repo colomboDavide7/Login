@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.users;
+package login.request;
 
 /**
  *
  * @author davidecolombo
  */
-public class LogoutRequest extends UserRequest{
+public class RequestAnswer {
     
-    public LogoutRequest(String username, String pwd) {
-        super(username, pwd);
+    public boolean isAccepted(){
+        return true;
     }
     
 }
