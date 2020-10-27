@@ -6,6 +6,7 @@
 package login;
 
 import junit.framework.Assert;
+import static junit.framework.Assert.*;
 import login.repository.QueryException;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
@@ -237,7 +238,22 @@ public class CustomerTest {
         UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
         IUser loggedOut = this.manager.parseLogoutRequest(logout);
         
-        Assert.assertTrue(loggedOut.matchPassword(pwd) && loggedOut.matchUsername(user));
+        Assert.assertTrue(loggedOut.matchProperty(User.PropertyName.PASSWORD, pwd) && 
+                          loggedOut.matchProperty(User.PropertyName.USERNAME, user));
+    }
+    
+    @Test
+    public void shouldBeMandatory(){
+        System.out.println("* User Property: shouldBeMandatory()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        IUser basicUser = new User(user, pwd);
+        assertTrue(basicUser.isMandatoryProperty(User.PropertyName.USERNAME));
+        assertTrue(basicUser.isMandatoryProperty(User.PropertyName.PASSWORD));
+        assertFalse(basicUser.isMandatoryProperty(User.PropertyName.E_MAIL));
+        assertFalse(basicUser.isMandatoryProperty(User.PropertyName.MAIN_PHONE));
+        assertTrue(basicUser.isOptionalProperty(User.PropertyName.E_MAIL));
+        assertTrue(basicUser.isOptionalProperty(User.PropertyName.MAIN_PHONE));
     }
     
     

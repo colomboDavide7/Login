@@ -13,12 +13,12 @@ public interface IComparable {
     
     public boolean equals(IUser user);
     
-    public boolean matchPassword(String pwd);
-    
-    public boolean matchUsername(String username);
-    
     boolean matchProperty(User.PropertyName key, String value);
     
     boolean isEmptyProperty(User.PropertyName key, String value);
+    
+    boolean isMandatoryProperty(User.PropertyName key);
+    
+    boolean isOptionalProperty(User.PropertyName key);
     
 }

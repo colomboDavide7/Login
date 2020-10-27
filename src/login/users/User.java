@@ -29,29 +29,46 @@ public class User implements IUser {
         E_MAIL;
     }
     
-// ================================================================================
+    // Initialization of instance variables
+    {
+        setupPriority();
+        setupProperties();
+    }
     
-    private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-    private Map<PropertyName, String> properties = new HashMap<>();
-    private UserState state = UserState.LOGGED_OUT;
+// ================================================================================
+    private final String MANDATORY = "M";
+    private final String OPTIONAL  = "O";
     private final String EMPTY_PROPERTY = "";
+    private UserState state = UserState.LOGGED_OUT;
+    private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+    private Map<PropertyName, String> properties;
+    private Map<PropertyName, String> priority;
     
     public User(String username, String password){
-        setupProperties();
         this.addProperty(PropertyName.USERNAME, username);
         this.addProperty(PropertyName.PASSWORD, password);
     }
     
     public User(String username, String password, LocalDate birth){
-        setupProperties();
         this.addProperty(PropertyName.USERNAME, username);
         this.addProperty(PropertyName.PASSWORD, password);
         this.addProperty(PropertyName.BIRTH, birth.format(formatter));
     }
     
     private void setupProperties(){
+        this.properties = new HashMap<>();
         for(PropertyName p : PropertyName.values())
             properties.put(p, EMPTY_PROPERTY);
+    }
+    
+    private void setupPriority(){
+        this.priority = new HashMap<>();
+        for(PropertyName p : PropertyName.values())
+            if(p == PropertyName.USERNAME  || p == PropertyName.PASSWORD ||
+               p == PropertyName.LAST_NAME || p == PropertyName.FIRST_NAME)
+            priority.put(p, MANDATORY);
+        else
+            priority.put(p, OPTIONAL);
     }
     
 // ================================================================================
@@ -74,16 +91,6 @@ public class User implements IUser {
     }
     
     @Override
-    public boolean matchPassword(String pwd){
-        return this.getProperty(PropertyName.PASSWORD).equals(pwd);
-    }
-    
-    @Override
-    public boolean matchUsername(String username){
-        return this.getProperty(PropertyName.USERNAME).equals(username);
-    }
-    
-    @Override
     public boolean matchProperty(PropertyName key, String value) {
         return this.getProperty(key).equals(value);
     }
@@ -91,6 +98,16 @@ public class User implements IUser {
     @Override
     public boolean isEmptyProperty(PropertyName key, String value) {
         return this.getProperty(key).equals(this.EMPTY_PROPERTY);
+    }
+    
+    @Override
+    public boolean isMandatoryProperty(PropertyName key) {
+        return this.priority.get(key).equals(this.MANDATORY);
+    }
+    
+    @Override
+    public boolean isOptionalProperty(PropertyName key) {
+        return this.priority.get(key).equals(this.OPTIONAL);
     }
     
 // ================================================================================
