@@ -7,11 +7,8 @@ package login.users;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -30,7 +27,7 @@ public class User {
     }
     
 // ================================================================================
-
+    
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
     private Map<PropertyName, String> properties = new HashMap<>();
     private UserState state = UserState.LOGGED_OUT;
@@ -43,33 +40,48 @@ public class User {
     public User(String username, String password, LocalDate birth){
         this.addProperty(PropertyName.USERNAME, username);
         this.addProperty(PropertyName.PASSWORD, password);
-        this.addProperty(PropertyName.BIRTH, birth.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        this.addProperty(PropertyName.BIRTH, birth.format(formatter));
     }
     
+// ================================================================================
     public final User addProperty(PropertyName key, String value){
         this.properties.put(key, value);
         return this;
     }
     
-    public final String getProperty(PropertyName key){
+    public final String getProperty(PropertyName key) throws PropertyException{
         if(this.properties.keySet().stream().anyMatch(k -> (k == key)))
             return this.properties.get(key);
-        return "";
+        throw new PropertyException(PropertyException.ErrorCode.NOT_FOUND);
     }
     
+// ================================================================================
     public boolean equals(User user){
-        return this.getProperty(PropertyName.USERNAME)
-                   .equals(user.getProperty(PropertyName.USERNAME));
+        try {
+            return this.getProperty(PropertyName.USERNAME)
+                    .equals(user.getProperty(PropertyName.USERNAME));
+        } catch (PropertyException ex) {
+            return false;
+        }
     }
     
     public boolean matchPassword(String pwd){
-        return this.getProperty(PropertyName.PASSWORD).equals(pwd);
+        try {
+            return this.getProperty(PropertyName.PASSWORD).equals(pwd);
+        } catch (PropertyException ex) {
+            return false;
+        }
     }
     
     public boolean matchUsername(String username){
-        return this.getProperty(PropertyName.USERNAME).equals(username);
+        try {
+            return this.getProperty(PropertyName.USERNAME).equals(username);
+        } catch (PropertyException ex) {
+            return false;
+        }
     }
     
+// ================================================================================
     public boolean isLogged(){
         return this.state == UserState.LOGGED_IN;
     }
@@ -88,16 +100,23 @@ public class User {
         return this;
     }
     
+// ================================================================================
     public boolean isMyBirthDay(LocalDate date){
-        LocalDate myBirth = LocalDate.parse(this.getProperty(PropertyName.BIRTH), formatter);
+        try {
+            LocalDate myBirth = LocalDate.parse(this.getProperty(PropertyName.BIRTH), formatter);
+            return date.getMonthValue() == myBirth.getMonthValue() &&
+                   date.getYear()       == myBirth.getYear()       &&
+                   date.getDayOfMonth() == myBirth.getDayOfMonth();
+        } catch (PropertyException ex) {
+            return false;
+        }
         
-        return date.getMonthValue() == myBirth.getMonthValue() &&
-               date.getYear()       == myBirth.getYear()       &&
-               date.getDayOfMonth() == myBirth.getDayOfMonth();
     }
     
     public DateTimeFormatter getFormatter(){
         return this.formatter;
     }
+    
+// ================================================================================
     
 }

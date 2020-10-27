@@ -6,8 +6,8 @@
 package login;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import login.users.PropertyException;
 import login.users.User;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -36,17 +36,19 @@ public class RequestTest {
         String username = "valid";
         String pwd      = "Test_1";
         
-        User u = new User(username, pwd);
-        LocalDate birth = LocalDate.of(1976, 5, 23);
-        DateTimeFormatter formatter = u.getFormatter();
-        String formattedBirth = birth.format(formatter);
-        u.addProperty(User.PropertyName.BIRTH, formattedBirth);
+        try{
+            User u = new User(username, pwd);
+            LocalDate birth = LocalDate.of(1976, 5, 23);
+            DateTimeFormatter formatter = u.getFormatter();
+            String formattedBirth = birth.format(formatter);
+            u.addProperty(User.PropertyName.BIRTH, formattedBirth);
+            
+            String myBirth = u.getProperty(User.PropertyName.BIRTH);
+            String myCity  = u.getProperty(User.PropertyName.CITY);
+        }catch(PropertyException ex){
+            assertEquals(PropertyException.ErrorCode.NOT_FOUND, ex.getErrorCode());
+        }
         
-        String myBirth = u.getProperty(User.PropertyName.BIRTH);
-        String myCity  = u.getProperty(User.PropertyName.CITY);
-        
-        assertFalse(myBirth .equals(""));
-        assertTrue(myCity.equals(""));
     }
     
 }
