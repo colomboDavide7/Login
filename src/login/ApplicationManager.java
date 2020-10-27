@@ -20,6 +20,7 @@ import login.users.UserRequest;
 public class ApplicationManager {
         
     private List<User> users = new ArrayList<>();
+    private List<UserRequest> requests = new ArrayList();
     
     public User parseSignUpRequest(UserRequest r) throws CredentialException {
         UserValidator.isValidUsername(r.getUsername());
