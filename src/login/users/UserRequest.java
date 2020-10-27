@@ -6,8 +6,6 @@
 package login.users;
 
 import java.util.List;
-import login.users.IUser;
-import login.users.User;
 
 /**
  *
@@ -19,15 +17,7 @@ public class UserRequest {
         SIGN_UP, LOGIN, LOGOUT;
     }
     
-    public static UserRequest signupRequest(IUser u, RequestType t){
-        return new UserRequest(u, t);
-    }
-    
-    public static UserRequest loginRequest(IUser u, RequestType t){
-        return new UserRequest(u, t);
-    }
-    
-    public static UserRequest logoutRequest(IUser u, RequestType t){
+    public static UserRequest createRequestByType(IUser u, RequestType t){
         return new UserRequest(u, t);
     }
     

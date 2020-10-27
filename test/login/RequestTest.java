@@ -71,7 +71,7 @@ public class RequestTest {
         String pwd      = "Test_1";
         
         IUser u       = new User(username, pwd);
-        UserRequest r = UserRequest.signupRequest(u, UserRequest.RequestType.SIGN_UP);
+        UserRequest r = UserRequest.createRequestByType(u, UserRequest.RequestType.SIGN_UP);
         assertTrue(r.matchType(UserRequest.RequestType.SIGN_UP));
     }
     

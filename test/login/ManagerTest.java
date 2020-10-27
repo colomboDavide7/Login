@@ -42,7 +42,7 @@ public class ManagerTest {
         String pwd  = "Test1!";
         
         IUser basicUser = new User(user, pwd);
-        UserRequest r = UserRequest.signupRequest(basicUser, UserRequest.RequestType.SIGN_UP);
+        UserRequest r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
         boolean ans = this.application.sendSignUpRequest(r);
         Assert.assertTrue(ans);
     }
@@ -54,12 +54,12 @@ public class ManagerTest {
         String pwd  = "Test1!";
         
         IUser basicUser = new User(user, pwd);
-        UserRequest r = UserRequest.signupRequest(basicUser, UserRequest.RequestType.SIGN_UP);
+        UserRequest r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
         
         boolean ans = this.application.sendSignUpRequest(r);
         Assert.assertTrue(ans);
         
-        r = UserRequest.loginRequest(basicUser, UserRequest.RequestType.LOGIN);
+        r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
         boolean sended = this.application.sendLoginRequest(r);
         Assert.assertTrue(sended);
     }
@@ -71,15 +71,15 @@ public class ManagerTest {
         String pwd  = "Test1!";
         
         IUser basicUser = new User(user, pwd);
-        UserRequest r = UserRequest.signupRequest(basicUser, UserRequest.RequestType.SIGN_UP);
+        UserRequest r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
         boolean ans = this.application.sendSignUpRequest(r);
         Assert.assertTrue(ans);
         
-        r = UserRequest.loginRequest(basicUser, UserRequest.RequestType.LOGIN);
+        r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
         boolean sended = this.application.sendLoginRequest(r);
         Assert.assertTrue(sended);
         
-        r = UserRequest.logoutRequest(basicUser, UserRequest.RequestType.LOGOUT);
+        r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
         sended = this.application.sendLogoutRequest(r);
         Assert.assertTrue(sended);
     }
