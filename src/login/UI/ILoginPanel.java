@@ -11,12 +11,12 @@ import javax.swing.JButton;
  *
  * @author davidecolombo
  */
-public interface IAppUI {
+public interface ILoginPanel {
     
-    JButton getSignupButton();
+    JButton getLoginButton();
     
-    JButton getLogoutButton();
+    String getUsernameField();
     
-    ILoginPanel getLoginPanel();
+    String getPasswordField();
     
 }

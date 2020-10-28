@@ -3,20 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.UI;
+package login;
 
-import javax.swing.JButton;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author davidecolombo
  */
-public interface IAppUI {
+public class UITest {
     
-    JButton getSignupButton();
-    
-    JButton getLogoutButton();
-    
-    ILoginPanel getLoginPanel();
-    
+
 }

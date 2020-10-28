@@ -56,7 +56,7 @@ public class UIController {
     }
     
     private void pressLogin(UserRequest.RequestType t){
-        JButton login = ui.getLoginButton();
+        JButton login = ui.getLoginPanel().getLoginButton();
         login.addActionListener((ActionEvent e) -> {
             try {
                 IUser newCustomer = this.createNewCustomer();

@@ -3,20 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.UI;
+package login;
 
-import javax.swing.JButton;
+import login.UI.IAppUI;
+import login.UI.UIFrame;
 
 /**
  *
  * @author davidecolombo
  */
-public interface IAppUI {
+public class Main {
     
-    JButton getSignupButton();
-    
-    JButton getLogoutButton();
-    
-    ILoginPanel getLoginPanel();
+    public static void main(String[] args){
+        IAppUI frame = new UIFrame();
+        
+    }
     
 }
