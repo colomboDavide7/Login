@@ -49,12 +49,12 @@ public class UIFrame extends JFrame implements IAppUI {
     
     @Override
     public JButton getSignupButton() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new JButton("Sign Up");
     }
 
     @Override
     public JButton getLogoutButton() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new JButton("Log Out");
     }
 
     @Override

@@ -17,8 +17,9 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
 
 /**
  *
@@ -29,6 +30,8 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     private JButton loginB;
     private JTextField username;
     private JPasswordField pwd;
+    private JTextArea errorCommunicationField;
+    private JScrollPane scroll;
     
     public LoginPanel(int w, int h){
         initialize(w, h);
@@ -45,7 +48,8 @@ public class LoginPanel extends JPanel implements ILoginPanel {
         initButton();
         initUsername();
         initPassword();
-        
+        initErrorCommunicationField();
+                
         // Layout
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
@@ -58,6 +62,7 @@ public class LoginPanel extends JPanel implements ILoginPanel {
                       .addComponent(this.username)
                       .addComponent(this.pwd)
                       .addComponent(this.loginB)
+                      .addComponent(this.scroll)
         );
         
         layout.setVerticalGroup(
@@ -68,7 +73,10 @@ public class LoginPanel extends JPanel implements ILoginPanel {
                         .addComponent(this.pwd, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addGap(30)
                         .addComponent(this.loginB)
+                        .addGap(50)
+                        .addComponent(this.scroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(20, 100)
+                        
         );
         
     }
@@ -92,6 +100,17 @@ public class LoginPanel extends JPanel implements ILoginPanel {
         this.pwd.setPreferredSize(new Dimension(20, 20));
     }
     
+    private void initErrorCommunicationField(){
+        
+        this.errorCommunicationField = new JTextArea(20, 200);
+        this.errorCommunicationField.setPreferredSize(new Dimension(200, 20));
+        this.errorCommunicationField.setForeground(Color.red);
+        
+        this.scroll = new JScrollPane(this.errorCommunicationField);
+        this.scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        this.scroll.setPreferredSize(new Dimension(50, 40));
+    }
+    
     @Override
     public JButton getLoginButton() {
         return this.loginB;
@@ -105,6 +124,11 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     @Override
     public String getPasswordField() {
         return Arrays.toString(this.pwd.getPassword());
+    }
+
+    @Override
+    public JTextArea getErrorArea() {
+        return this.errorCommunicationField;
     }
     
 }

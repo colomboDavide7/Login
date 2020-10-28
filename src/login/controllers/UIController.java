@@ -59,13 +59,17 @@ public class UIController {
         JButton login = ui.getLoginPanel().getLoginButton();
         login.addActionListener((ActionEvent e) -> {
             try {
+                System.err.println("\n\npressed!\n\n");
                 IUser newCustomer = this.createNewCustomer();
                 UserRequest r     = UserRequest.createRequestByType(newCustomer, t);
                 this.app.sendLoginRequest(r);
             } catch (CustomerCreationException ex) {
                 System.err.println("error creating the custumer");
             } catch (QueryException ex) {
-                System.out.println("query exception has occured");
+                switch(ex.getErrorCode()){
+                    case NOT_SIGNED_UP:
+                        this.ui.getLoginPanel().getErrorArea().setText("You cannot logged in if you are not signed up");
+                }
             }
         });
     }

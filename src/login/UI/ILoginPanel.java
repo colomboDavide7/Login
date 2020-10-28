@@ -6,6 +6,7 @@
 package login.UI;
 
 import javax.swing.JButton;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -18,5 +19,7 @@ public interface ILoginPanel {
     String getUsernameField();
     
     String getPasswordField();
+    
+    JTextArea getErrorArea();
     
 }
