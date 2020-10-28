@@ -5,20 +5,14 @@
  */
 package login.UI;
 
-import javax.swing.JButton;
+import javax.swing.JLabel;
 
 /**
  *
  * @author davidecolombo
  */
-public interface IAppUI {
+public interface ITitlePanel {
     
-    JButton getLogoutButton();
-    
-    ILoginPanel getLoginPanel();
-    
-    ITitlePanel getTitlePanel();
-    
-    ISignupPanel getSignupPanel();
+    JLabel getTitleLabel();
     
 }

@@ -5,6 +5,7 @@
  */
 package login.UI;
 
+import com.sun.xml.internal.ws.api.server.InstanceResolver;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import javax.swing.JButton;
@@ -18,9 +19,8 @@ import javax.swing.JPanel;
 public class UIFrame extends JFrame implements IAppUI {
     
     private ILoginPanel loginPanel;
-    private JPanel signupPanel;
-    private JPanel descPanel;
-    private JPanel titlePanel;
+    private ISignupPanel signupPanel;
+    private ITitlePanel titlePanel;
             
     private final int heigthInPixel = 500;
     private final int widthInPixel  = 500;
@@ -38,8 +38,14 @@ public class UIFrame extends JFrame implements IAppUI {
     private void initialize(){
         setLayout(new BorderLayout());
         
+        createTitlePanel();
         createLoginPanel();
-        
+        createSignupPanel();
+    }
+    
+    private void createTitlePanel(){
+        this.titlePanel = new TitlePanel("Home Page", widthInPixel, Math.round(this.heigthInPixel / 3));
+        this.getContentPane().add((Component) titlePanel, BorderLayout.NORTH);
     }
     
     private void createLoginPanel(){
@@ -47,9 +53,11 @@ public class UIFrame extends JFrame implements IAppUI {
         this.getContentPane().add((Component) this.loginPanel, BorderLayout.EAST);
     }
     
-    @Override
-    public JButton getSignupButton() {
-        return new JButton("Sign Up");
+    private void createSignupPanel(){
+        this.signupPanel = new SignupPanel(
+                                    Math.round(2*widthInPixel / 3), 
+                                    Math.round(2*heigthInPixel / 3));
+        this.getContentPane().add((Component) signupPanel, BorderLayout.CENTER);
     }
 
     @Override
@@ -60,6 +68,16 @@ public class UIFrame extends JFrame implements IAppUI {
     @Override
     public ILoginPanel getLoginPanel() {
         return this.loginPanel;
+    }
+
+    @Override
+    public ITitlePanel getTitlePanel() {
+        return this.titlePanel;
+    }
+
+    @Override
+    public ISignupPanel getSignupPanel() {
+        return this.signupPanel;
     }
     
 }

@@ -18,7 +18,7 @@ public interface ILoginPanel {
     
     String getUsernameField();
     
-    String getPasswordField();
+    char[] getPasswordField();
     
     JTextArea getErrorArea();
     

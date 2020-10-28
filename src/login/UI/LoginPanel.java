@@ -8,13 +8,10 @@ package login.UI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.Arrays;
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -32,24 +29,27 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     private JPasswordField pwd;
     private JTextArea errorCommunicationField;
     private JScrollPane scroll;
+    private JLabel info;
     
     public LoginPanel(int w, int h){
         initialize(w, h);
     }
     
     private void initialize(int w, int h){
-        setPreferredSize(new Dimension(w, h));
+        setPreferredSize(new Dimension(w+100, h));
         setMinimumSize(new Dimension(w, h));
-        setMaximumSize(new Dimension(w, h));
+        setMaximumSize(new Dimension(w+100, h));
         setName("");
         setOpaque(false);
+//        setBorder(BorderFactory.createLineBorder(Color.BLACK, 5, true));
         
         // Init components
         initButton();
         initUsername();
         initPassword();
         initErrorCommunicationField();
-                
+        initInfoLabel();
+        
         // Layout
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
@@ -59,6 +59,7 @@ public class LoginPanel extends JPanel implements ILoginPanel {
         
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                      .addComponent(this.info)
                       .addComponent(this.username)
                       .addComponent(this.pwd)
                       .addComponent(this.loginB)
@@ -68,17 +69,36 @@ public class LoginPanel extends JPanel implements ILoginPanel {
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addContainerGap(20, 100)
-                        .addComponent(this.username, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(this.info, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE)
+                        .addGap(45)
+                        .addComponent(this.username, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE)
                         .addGap(30)
-                        .addComponent(this.pwd, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(this.pwd, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE)
                         .addGap(30)
                         .addComponent(this.loginB)
                         .addGap(50)
-                        .addComponent(this.scroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(20, 100)
-                        
+                        .addComponent(this.scroll, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(20, 100)      
         );
         
+    }
+    
+    private void initInfoLabel(){
+        this.info = new JLabel("Enter your user credential...");
+        this.info.setFont(new Font("Tahoma", 3, 15));
+        this.info.setPreferredSize(new Dimension(75, 20));
     }
     
     private void initButton(){
@@ -101,7 +121,6 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     }
     
     private void initErrorCommunicationField(){
-        
         this.errorCommunicationField = new JTextArea(20, 200);
         this.errorCommunicationField.setPreferredSize(new Dimension(200, 20));
         this.errorCommunicationField.setForeground(Color.red);
@@ -122,8 +141,8 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     }
 
     @Override
-    public String getPasswordField() {
-        return Arrays.toString(this.pwd.getPassword());
+    public char[] getPasswordField() {
+        return this.pwd.getPassword();
     }
 
     @Override

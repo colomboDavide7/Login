@@ -6,19 +6,16 @@
 package login.UI;
 
 import javax.swing.JButton;
+import javax.swing.JTextArea;
 
 /**
  *
  * @author davidecolombo
  */
-public interface IAppUI {
+public interface ISignupPanel {
     
-    JButton getLogoutButton();
+    JButton getSignupButton();
     
-    ILoginPanel getLoginPanel();
-    
-    ITitlePanel getTitlePanel();
-    
-    ISignupPanel getSignupPanel();
+    JTextArea getErrorCommunicationField();
     
 }
