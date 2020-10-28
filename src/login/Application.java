@@ -14,7 +14,7 @@ import login.users.UserRequest;
  *
  * @author davidecolombo
  */
-public class Application {
+public class Application implements IAppModel {
     
     private ApplicationRepository repository;
     private ApplicationManager manager;
@@ -24,16 +24,19 @@ public class Application {
         this.repository = repo;
     }
     
+    @Override
     public boolean sendSignUpRequest(UserRequest r) throws CredentialException {
         this.manager.parseSignUpRequest(r);
         return true;
     }
     
+    @Override
     public boolean sendLoginRequest(UserRequest r) throws QueryException{
         this.manager.parseLoginRequest(r);
         return true;
     }
     
+    @Override
     public boolean sendLogoutRequest(UserRequest r) throws QueryException{
         this.manager.parseLogoutRequest(r);
         return true;
