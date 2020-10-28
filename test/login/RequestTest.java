@@ -7,8 +7,13 @@ package login;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import login.controllers.RequestController;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.repository.ApplicationRepository;
+import login.tools.UserProperty;
+import login.users.CustomerCreationException;
 import login.users.UserRequest;
 import login.users.IUser;
 import login.users.User;
@@ -38,43 +43,57 @@ public class RequestTest {
         System.out.println("* User property: shouldCreateUserWithBirthday()\n");
         String username = "valid";
         String pwd      = "Test_1";
-        LocalDate birth = LocalDate.of(1987, 5, 23);        
-        IUser u = new User(username, pwd, birth);
+        String firstName = "Mario";
+        String lastName = "Rossi";
         
-        assertTrue(u.isMyBirthDay(birth));
-        assertFalse(u.isMyBirthDay(LocalDate.of(1997, 2, 25)));
+        LocalDate birth = LocalDate.of(1987, 5, 23);
+        String formatter = birth.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, username);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+            basicProperties.put(UserProperty.LAST_NAME, lastName);
+            basicProperties.put(UserProperty.BIRTH, formatter);
+
+        try {
+            IUser customer = User.getBasicUser(basicProperties);
+            assertTrue(customer.isMyBirthDay(birth));
+            assertFalse(customer.isMyBirthDay(LocalDate.of(1997, 2, 25)));
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(RequestTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }
     
     @Test
-    public void shouldAddBirthdayProperty(){
+    public void shouldAddBirthdayProperty() throws CustomerCreationException {
         System.out.println("* User property: shouldAddBirthdayProperty()\n");
         String username = "valid";
         String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
-            IUser u = new User(username, pwd);
-            LocalDate birth = LocalDate.of(1976, 5, 23);
-            DateTimeFormatter formatter = u.getFormatter();
-            String formattedBirth = birth.format(formatter);
-            u.addProperty(User.PropertyName.BIRTH, formattedBirth);
-            
-            String myBirth = u.getProperty(User.PropertyName.BIRTH);
-            String myCity  = u.getProperty(User.PropertyName.CITY);
-            
-            assertFalse(u.isEmptyProperty(User.PropertyName.BIRTH, myBirth));
-            assertTrue(u.isEmptyProperty(User.PropertyName.CITY, myCity));
+        IUser customer = User.getBasicUser(basicProperties);
+
+        LocalDate birth = LocalDate.of(1976, 5, 23);
+        DateTimeFormatter formatter = customer.getFormatter();
+        String formattedBirth = birth.format(formatter);
+        customer.addProperty(UserProperty.BIRTH, formattedBirth);
+
+        String myBirth = customer.getProperty(UserProperty.BIRTH);
+        String myCity  = customer.getProperty(UserProperty.CITY);
+
+        assertFalse(customer.isEmptyProperty(UserProperty.BIRTH, myBirth));
+        assertTrue(customer.isEmptyProperty(UserProperty.CITY, myCity));
     }
-    
-    @Test
-    public void shouldBeSignUpRequest(){
-        System.out.println("* User property: shouldBeSignUpRequest()\n");
-        String username = "valid";
-        String pwd      = "Test_1";
         
-        IUser u       = new User(username, pwd);
-        UserRequest r = UserRequest.createRequestByType(u, UserRequest.RequestType.SIGN_UP);
-        assertTrue(r.matchType(UserRequest.RequestType.SIGN_UP));
-    }
-    
 // ================================================================================
     // Controllers 
     

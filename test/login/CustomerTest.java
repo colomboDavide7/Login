@@ -5,6 +5,10 @@
  */
 package login;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 import static junit.framework.Assert.*;
 import login.repository.QueryException;
@@ -13,6 +17,8 @@ import login.tools.CredentialException.ErrorCode;
 import login.users.User;
 import login.users.UserRequest;
 import login.users.IUser;
+import login.tools.UserProperty;
+import login.users.CustomerCreationException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,45 +39,45 @@ public class CustomerTest {
 // ================================================================================
     // User registration
     @Test
-    public void shouldSignUpNewUser() throws QueryException, CredentialException {
+    public void shouldSignUpNewUser() throws QueryException, CredentialException, CustomerCreationException {
         System.out.println("* User SignUp: shouldSignUpNewUser()\n");
-        String validUsername = "rossiMario97";
-        String validPassword = "tEst!1";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
-        IUser basicUser = new User(validUsername, validPassword);
-        UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+        IUser customer = User.getBasicUser(basicProperties);
+        UserRequest sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
         this.manager.parseSignUpRequest(sign);
         IUser searchedUser = manager.parseLoginRequest(sign);
-        Assert.assertTrue(basicUser.equals(searchedUser));
+        Assert.assertTrue(customer.equals(searchedUser));
     }
     
     @Test
-    public void shouldRejectNewUser() {
-        System.out.println("* User SignUp: shouldRejectNewUser()\n");
-        String validUsername   = "rossiMario97";
-        String invalidPassword = "test";
-        
-        try {
-            IUser basicUser = new User(validUsername, invalidPassword);
-            UserRequest loginRequest = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
-            this.manager.parseSignUpRequest(loginRequest);
-        } catch (CredentialException ex) {
-            Assert.assertEquals(ErrorCode.INVALID_PASSWORD, ex.getErrorCode());
-        }
-    }
-    
-    @Test
-    public void shouldRejectUserWithSameName() throws QueryException {
+    public void shouldRejectUserWithSameName() throws QueryException, CustomerCreationException {
         System.out.println("* User SignUp: shouldRejectUserWithSameName()\n");
-        String sameUsername = "rossiMario97";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
+        
+        IUser customer = User.getBasicUser(basicProperties);
         
         try {
-            IUser basicUser = new User(sameUsername, "Test_1");
-            UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+            UserRequest sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
-            basicUser = new User(sameUsername, "anotherValid_23");
-            sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+            sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
         } catch (CredentialException ex) {
@@ -80,16 +86,23 @@ public class CustomerTest {
     }
     
     @Test
-    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws CredentialException, QueryException{
+    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws CredentialException, QueryException, CustomerCreationException{
         System.out.println("* User SignUp: shouldHaveTheLoggedInStateOnAfterLogin()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
-        IUser basicUser = new User(user, pwd);
-        UserRequest r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+        IUser customer = User.getBasicUser(basicProperties);
+        UserRequest r = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
         this.manager.parseSignUpRequest(r);
-        boolean isLogged = this.manager.isLoggedIn(basicUser);
-        boolean isLoggedOut = this.manager.isLoggedOut(basicUser);
+        boolean isLogged = this.manager.isLoggedIn(customer);
+        boolean isLoggedOut = this.manager.isLoggedOut(customer);
         
         // Put the double assertion in order to be sure that the test will fail.
         Assert.assertFalse(isLogged);
@@ -99,14 +112,22 @@ public class CustomerTest {
 // ================================================================================
     // User login
     @Test
-    public void shouldRefuseNotSignedUpUsers() {
+    public void shouldRefuseNotSignedUpUsers() throws CustomerCreationException {
         System.out.println("* User Login: shouldRefuseNotSignedUpUsers()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
+        
+        IUser customer = User.getBasicUser(basicProperties);
         
         try{
-            IUser basicUser = new User(user, pwd);
-            UserRequest r = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
+            UserRequest r = UserRequest.createRequestByType(customer, UserRequest.RequestType.LOGIN);
             this.manager.parseLoginRequest(r);
         }catch(QueryException ex){
             Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
@@ -116,48 +137,74 @@ public class CustomerTest {
     @Test
     public void shouldRefuseWrongPassword() throws CredentialException {
         System.out.println("* User Login: shouldRefuseWrongPassword()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
         try{
-            IUser basicUser = new User(user, pwd);
-            UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+            IUser customer = User.getBasicUser(basicProperties);
+            UserRequest sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
-            basicUser = new User(user, "wrongPwd");
-            UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
+            basicProperties.put(UserProperty.PASSWORD, "wrong");
+            customer = User.getBasicUser(basicProperties);
+            UserRequest login = UserRequest.createRequestByType(customer, UserRequest.RequestType.LOGIN);
             this.manager.parseLoginRequest(login);
         }catch(QueryException ex){
             Assert.assertEquals(QueryException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @Test
     public void shouldRefuseWrongUsername() throws CredentialException, QueryException{
         System.out.println("* User Login: shouldRefuseWrongUsername()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
         try{
-            IUser basicUser = new User(user, pwd);
+            IUser basicUser = User.getBasicUser(basicProperties);
             UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
 
-            basicUser = new User("anotherUser", pwd);
+            basicProperties.put(UserProperty.USERNAME, "anotherUSer");
+            basicUser = User.getBasicUser(basicProperties);
             UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
             this.manager.parseLoginRequest(login);
         }catch(QueryException ex){
             Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @Test
-    public void shouldBeSuccessfullyLoggedIn() throws CredentialException, QueryException{
+    public void shouldBeSuccessfullyLoggedIn() throws CredentialException, QueryException, CustomerCreationException{
         System.out.println("* User Login: shouldBeSuccessfullLogin()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
-        
-        IUser basicUser = new User(user, pwd);
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
+        IUser basicUser = User.getBasicUser(basicProperties);
         UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
         this.manager.parseSignUpRequest(sign);
         
@@ -169,11 +216,18 @@ public class CustomerTest {
     @Test
     public void shouldRefuseLoginRequestWhenAlreadyLoggedIn() throws CredentialException, QueryException{
         System.out.println("* User Login: shouldRefuseLoginRequestWhenAlreadyLoggedIn()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
         try{
-            IUser basicUser = new User(user, pwd);
+            IUser basicUser = User.getBasicUser(basicProperties);
             UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
@@ -182,19 +236,28 @@ public class CustomerTest {
             this.manager.parseLoginRequest(login);
         }catch(QueryException ex){
             Assert.assertEquals(QueryException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
 // ================================================================================
     // User logout
     @Test
-    public void shouldRefuseLogoutWhenNotLoggedIn() throws CredentialException, QueryException{
+    public void shouldRefuseLogoutWhenNotLoggedIn() throws CredentialException, QueryException {
         System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
         try{
-            IUser basicUser = new User(user, pwd);
+            IUser basicUser = User.getBasicUser(basicProperties);
             UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
@@ -202,6 +265,8 @@ public class CustomerTest {
             this.manager.parseLogoutRequest(logout);
         }catch(QueryException ex){
             Assert.assertEquals(QueryException.ErrorCode.NOT_LOGGED_IN, ex.getErrorCode());
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
@@ -209,24 +274,41 @@ public class CustomerTest {
     @Test
     public void shouldRefuseLogoutWhenNotSignedUp(){
         System.out.println("* User Logout: shouldRefuseLogoutWhenNotSignedUp()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
         
         try{
-            IUser basicUser = new User(user, pwd);
+            IUser basicUser = User.getBasicUser(basicProperties);
             UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
             this.manager.parseLogoutRequest(logout);
         }catch(QueryException ex){
             Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @Test
-    public void shouldAcceptLogoutWhenLoggedIn() throws CredentialException, QueryException{
+    public void shouldAcceptLogoutWhenLoggedIn() throws CredentialException, QueryException, CustomerCreationException{
         System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
-        IUser basicUser = new User(user, pwd);
+        String username = "valid";
+        String pwd      = "Test_1";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        basicProperties.put(UserProperty.USERNAME, username);
+        basicProperties.put(UserProperty.PASSWORD, pwd);
+        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+        basicProperties.put(UserProperty.LAST_NAME, lastName);
+        
+        IUser basicUser = User.getBasicUser(basicProperties);
         
         // Signing up
         UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
@@ -238,23 +320,43 @@ public class CustomerTest {
         UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
         IUser loggedOut = this.manager.parseLogoutRequest(logout);
         
-        Assert.assertTrue(loggedOut.matchProperty(User.PropertyName.PASSWORD, pwd) && 
-                          loggedOut.matchProperty(User.PropertyName.USERNAME, user));
+        Assert.assertTrue(loggedOut.matchProperty(UserProperty.PASSWORD, pwd) && 
+                          loggedOut.matchProperty(UserProperty.USERNAME, username));
     }
     
+// ================================================================================
+    // User property
     @Test
     public void shouldBeMandatory(){
         System.out.println("* User Property: shouldBeMandatory()\n");
-        String user = "testUser";
-        String pwd  = "Test1!";
-        IUser basicUser = new User(user, pwd);
-        assertTrue(basicUser.isMandatoryProperty(User.PropertyName.USERNAME));
-        assertTrue(basicUser.isMandatoryProperty(User.PropertyName.PASSWORD));
-        assertFalse(basicUser.isMandatoryProperty(User.PropertyName.E_MAIL));
-        assertFalse(basicUser.isMandatoryProperty(User.PropertyName.MAIN_PHONE));
-        assertTrue(basicUser.isOptionalProperty(User.PropertyName.E_MAIL));
-        assertTrue(basicUser.isOptionalProperty(User.PropertyName.MAIN_PHONE));
+        assertTrue(UserProperty.isMandatory(UserProperty.USERNAME));
+        assertTrue(UserProperty.isMandatory(UserProperty.PASSWORD));
+        assertFalse(UserProperty.isMandatory(UserProperty.E_MAIL));
+        assertFalse(UserProperty.isMandatory(UserProperty.MAIN_PHONE));
+        assertTrue(UserProperty.isOptional(UserProperty.E_MAIL));
+        assertTrue(UserProperty.isOptional(UserProperty.MAIN_PHONE));
     }
     
+// ================================================================================
+    // User factory
+    @Test
+    public void shouldReturnMissingMandatoryError(){
+        System.out.println("* User Property: shouldReturnMissingMandatoryError()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        String firstName = "Mario";
+        
+        try{
+            Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, user);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+
+            IUser customer = User.getBasicUser(basicProperties);
+        }catch(CustomerCreationException ex){
+            assertEquals(CustomerCreationException.ErrorCode.MISSING_MANDATORY, ex.getErrorCode());
+        }
+        
+    }
     
 }

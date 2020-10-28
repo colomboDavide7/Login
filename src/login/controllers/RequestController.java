@@ -5,10 +5,16 @@
  */
 package login.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.Application;
 import login.repository.QueryException;
 import login.users.UserRequest;
 import login.tools.CredentialException;
+import login.tools.UserProperty;
+import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
 
@@ -35,6 +41,8 @@ public class RequestController {
             this.app.sendSignUpRequest(r);
         } catch (CredentialException ex) {
             // Update the view
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(RequestController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -45,6 +53,8 @@ public class RequestController {
             this.app.sendLoginRequest(r);
         } catch (QueryException ex) {
             // Update the view
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(RequestController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -55,21 +65,20 @@ public class RequestController {
             this.app.sendLogoutRequest(r);
         } catch (QueryException ex) {
             // Update the view
+        } catch (CustomerCreationException ex) {
+            Logger.getLogger(RequestController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private IUser createNewCustomer(){
+    private IUser createNewCustomer() throws CustomerCreationException{
         // All these fields will be dinamically take from the GUI
         String username = "rossiMario99";
         String pwd = "Test1&";
         String firstName = "Mario";
         String lastName  = "Rossi";
         String email     = "rossimario99@ecommerce.com";
-        
-        return new User(username, pwd)
-                    .addProperty(User.PropertyName.FIRST_NAME, firstName)
-                    .addProperty(User.PropertyName.LAST_NAME, lastName)
-                    .addProperty(User.PropertyName.E_MAIL, email);
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+        return User.getBasicUser(basicProperties);
     }
     
 }

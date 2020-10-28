@@ -6,6 +6,7 @@
 package login.users;
 
 import java.util.List;
+import login.tools.UserProperty;
 
 /**
  *
@@ -25,7 +26,7 @@ public class UserRequest {
     private IUser u;
     private RequestType t;
     
-    public UserRequest(IUser u, RequestType t){
+    private UserRequest(IUser u, RequestType t){
         this.u = u;
         this.t = t;
     }
@@ -34,7 +35,7 @@ public class UserRequest {
         return this.t == t;
     }
     
-    public String getUserProperty(User.PropertyName prop) {
+    public String getUserProperty(UserProperty prop) {
         return this.u.getProperty(prop);
     }
     
@@ -42,7 +43,7 @@ public class UserRequest {
         return this.u.equals(u);
     }
     
-    public boolean matchUserProperty(User.PropertyName key, String value){
+    public boolean matchUserProperty(UserProperty key, String value){
         return this.u.matchProperty(key, value);
     }
     

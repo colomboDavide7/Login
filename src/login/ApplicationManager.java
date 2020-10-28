@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import login.repository.QueryException;
 import login.tools.CredentialException;
+import login.tools.UserProperty;
 import login.tools.UserValidator;
-import login.users.User;
 import login.users.UserRequest;
 import login.users.IUser;
 
@@ -23,8 +23,8 @@ public class ApplicationManager {
     private List<IUser> users = new ArrayList<>();
     
     public void parseSignUpRequest(UserRequest r) throws CredentialException {
-        UserValidator.isValidUsername(r.getUserProperty(User.PropertyName.USERNAME));
-        UserValidator.isValidPassword(r.getUserProperty(User.PropertyName.PASSWORD));
+        UserValidator.isValidUsername(r.getUserProperty(UserProperty.USERNAME));
+        UserValidator.isValidPassword(r.getUserProperty(UserProperty.PASSWORD));
         UserValidator.isSignedUp(users.iterator(), r);
         r.addUserToList(users);
     }
@@ -43,13 +43,12 @@ public class ApplicationManager {
     }
     
     private boolean matchUsernameProperty(IUser u, UserRequest r){
-        return r.matchUserProperty(User.PropertyName.USERNAME, u.getProperty(User.PropertyName.USERNAME));
+        return r.matchUserProperty(UserProperty.USERNAME, u.getProperty(UserProperty.USERNAME));
     }
     
     private boolean matchPasswordProperty(IUser u, UserRequest r){
-        return r.matchUserProperty(User.PropertyName.PASSWORD, u.getProperty(User.PropertyName.PASSWORD));
+        return r.matchUserProperty(UserProperty.PASSWORD, u.getProperty(UserProperty.PASSWORD));
     }
-    
     
     public IUser parseLogoutRequest(UserRequest r) throws QueryException {
         for(IUser u : users)
@@ -63,14 +62,14 @@ public class ApplicationManager {
     
     public boolean isLoggedIn(IUser u){
         for(IUser user : users)
-            if(user.matchProperty(User.PropertyName.USERNAME, u.getProperty(User.PropertyName.USERNAME)))
+            if(user.matchProperty(UserProperty.USERNAME, u.getProperty(UserProperty.USERNAME)))
                 return user.isLogged();
         return false;
     }
     
     public boolean isLoggedOut(IUser u){
         for(IUser user : users)
-            if(user.matchProperty(User.PropertyName.USERNAME, u.getProperty(User.PropertyName.USERNAME)))
+            if(user.matchProperty(UserProperty.USERNAME, u.getProperty(UserProperty.USERNAME)))
                 return user.isLoggedOut();
         return false;
     }

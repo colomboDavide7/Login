@@ -5,6 +5,8 @@
  */
 package login.users;
 
+import login.tools.UserProperty;
+
 /**
  *
  * @author davidecolombo
@@ -13,12 +15,8 @@ public interface IComparable {
     
     public boolean equals(IUser user);
     
-    boolean matchProperty(User.PropertyName key, String value);
+    boolean matchProperty(UserProperty key, String value);
     
-    boolean isEmptyProperty(User.PropertyName key, String value);
-    
-    boolean isMandatoryProperty(User.PropertyName key);
-    
-    boolean isOptionalProperty(User.PropertyName key);
+    boolean isEmptyProperty(UserProperty key, String value);
     
 }

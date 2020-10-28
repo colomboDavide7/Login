@@ -5,14 +5,16 @@
  */
 package login.users;
 
+import login.tools.UserProperty;
+
 /**
  *
  * @author davidecolombo
  */
 public interface IUser extends ILogin, IComparable, IUserDate {
     
-    IUser addProperty(User.PropertyName key, String value);
+    IUser addProperty(UserProperty key, String value);
     
-    String getProperty(User.PropertyName key);
+    String getProperty(UserProperty key);
 
 }

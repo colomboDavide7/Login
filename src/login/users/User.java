@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import login.tools.UserProperty;
 
 /**
  *
@@ -20,94 +21,56 @@ public class User implements IUser {
         LOGGED_IN, LOGGED_OUT;
     }
     
-    public enum PropertyName {
-        USERNAME, PASSWORD,
-        FIRST_NAME, LAST_NAME,
-        BIRTH, CITY,
-        AGE, GENDER, 
-        MAIN_PHONE, SECOND_PHONE,
-        E_MAIL;
-    }
-    
-    // Initialization of instance variables
-    {
-        setupPriority();
-        setupProperties();
-    }
-    
-// ================================================================================
-    private final String MANDATORY = "M";
-    private final String OPTIONAL  = "O";
-    private final String EMPTY_PROPERTY = "";
-    private UserState state = UserState.LOGGED_OUT;
-    private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-    private Map<PropertyName, String> properties;
-    private Map<PropertyName, String> priority;
-    
-    public User(String username, String password){
-        this.addProperty(PropertyName.USERNAME, username);
-        this.addProperty(PropertyName.PASSWORD, password);
-    }
-    
-    public User(String username, String password, LocalDate birth){
-        this.addProperty(PropertyName.USERNAME, username);
-        this.addProperty(PropertyName.PASSWORD, password);
-        this.addProperty(PropertyName.BIRTH, birth.format(formatter));
+    public static IUser getBasicUser(Map<UserProperty, String> basicProperties) throws CustomerCreationException{
+        if(UserProperty.isMissingMandatory(basicProperties))
+            throw new CustomerCreationException(CustomerCreationException.ErrorCode.MISSING_MANDATORY);
+        return new User(basicProperties);
     }
     
     private void setupProperties(){
         this.properties = new HashMap<>();
-        for(PropertyName p : PropertyName.values())
+        for(UserProperty p : UserProperty.values())
             properties.put(p, EMPTY_PROPERTY);
     }
     
-    private void setupPriority(){
-        this.priority = new HashMap<>();
-        for(PropertyName p : PropertyName.values())
-            if(p == PropertyName.USERNAME  || p == PropertyName.PASSWORD ||
-               p == PropertyName.LAST_NAME || p == PropertyName.FIRST_NAME)
-            priority.put(p, MANDATORY);
-        else
-            priority.put(p, OPTIONAL);
+// ================================================================================
+    private final String EMPTY_PROPERTY = "";
+    private UserState state = UserState.LOGGED_OUT;
+    private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+    private Map<UserProperty, String> properties;
+    
+    private User(Map<UserProperty, String> basicProperties){
+        setupProperties();
+        basicProperties.keySet().forEach(p -> properties.put(p, basicProperties.get(p)));
     }
     
 // ================================================================================
     @Override
-    public final IUser addProperty(PropertyName key, String value){
+    public final IUser addProperty(UserProperty key, String value){
         this.properties.put(key, value);
         return this;
     }
     
     @Override
-    public final String getProperty(PropertyName key) {
+    public final String getProperty(UserProperty key) {
         return this.properties.get(key);
     }
     
 // ================================================================================
     @Override
     public boolean equals(IUser user){
-            return this.getProperty(PropertyName.USERNAME)
-                    .equals(user.getProperty(PropertyName.USERNAME));
+            return this.getProperty(UserProperty.USERNAME)
+                    .equals(user.getProperty(UserProperty.USERNAME));
     }
     
     @Override
-    public boolean matchProperty(PropertyName key, String value) {
+    public boolean matchProperty(UserProperty key, String value) {
         return this.getProperty(key).equals(value);
     }
     
     @Override
-    public boolean isEmptyProperty(PropertyName key, String value) {
+    public boolean isEmptyProperty(UserProperty key, String value) {
         return this.getProperty(key).equals(this.EMPTY_PROPERTY);
-    }
-    
-    @Override
-    public boolean isMandatoryProperty(PropertyName key) {
-        return this.priority.get(key).equals(this.MANDATORY);
-    }
-    
-    @Override
-    public boolean isOptionalProperty(PropertyName key) {
-        return this.priority.get(key).equals(this.OPTIONAL);
     }
     
 // ================================================================================
@@ -136,7 +99,7 @@ public class User implements IUser {
 // ================================================================================
     @Override
     public boolean isMyBirthDay(LocalDate date){
-        LocalDate myBirth = LocalDate.parse(this.getProperty(PropertyName.BIRTH), formatter);
+        LocalDate myBirth = LocalDate.parse(this.getProperty(UserProperty.BIRTH), formatter);
         return date.getMonthValue() == myBirth.getMonthValue() &&
                date.getYear()       == myBirth.getYear()       &&
                date.getDayOfMonth() == myBirth.getDayOfMonth();
