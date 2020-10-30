@@ -11,8 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import static junit.framework.Assert.*;
-import login.UI.ISignupPanel;
-import login.UI.SignupPanel;
 import login.repository.QueryException;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
@@ -357,6 +355,47 @@ public class CustomerTest {
             IUser customer = User.getBasicUser(basicProperties);
         }catch(CustomerCreationException ex){
             assertEquals(CustomerCreationException.ErrorCode.MISSING_MANDATORY, ex.getErrorCode());
+        }
+    }
+    
+    @Test
+    public void shouldContainsLastNameProperty(){
+        System.out.println("* User Property: shouldContainsLastNameProperty()\n");
+        String user = "testUser";
+        String pwd  = "Test1!";
+        String firstName = "Mario";
+        
+        try{
+            Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, user);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+
+            IUser customer = User.getBasicUser(basicProperties);
+        }catch(CustomerCreationException ex){
+            assertTrue(ex.getMissingMandatoryList().contains(UserProperty.LAST_NAME));
+        }
+    }
+    
+    @Test
+    public void shouldContainsEmptyProperty(){
+        System.out.println("* User Property: shouldContainsEmptyProperty()\n");
+        String user = "testUser";
+        String pwd  = "";
+        String firstName = "Mario";
+        String lastName = "Rossi";
+        
+        try{
+            Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, user);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+            basicProperties.put(UserProperty.LAST_NAME, lastName);
+
+            IUser customer = User.getBasicUser(basicProperties);
+            assertFalse(true);
+        }catch(CustomerCreationException ex){
+            assertTrue(ex.getMissingMandatoryList().contains(UserProperty.PASSWORD));
         }
     }
     

@@ -5,6 +5,7 @@
  */
 package login.UI;
 
+import java.util.List;
 import java.util.Map;
 import javax.swing.text.JTextComponent;
 import login.tools.UserProperty;
@@ -18,5 +19,7 @@ public interface ISignupForm {
     JTextComponent getPropertyField(UserProperty p);
     
     Map<UserProperty, String> getInsertedProperties();
+    
+    void highlightMissing(List<UserProperty> missing);
     
 }

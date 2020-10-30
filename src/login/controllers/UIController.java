@@ -53,6 +53,7 @@ public class UIController {
                 this.setSignupMessageTextAndColor("Your request was successfully sent", Color.GREEN);
             } catch (CustomerCreationException ex) {
                 this.setSignupMessageTextAndColor("Missing mandatory", Color.RED);
+                this.ui.getSignupPanel().highlightMissing(ex.getMissingMandatoryList());
             } catch (CredentialException ex) {
                 switch(ex.getErrorCode()){
                     case INVALID_PASSWORD:
@@ -120,17 +121,13 @@ public class UIController {
     
     private IUser createLoginCustomer() throws CustomerCreationException {
         String username  = this.ui.getLoginPanel().getUsernameField();
-        char[] pwd       = this.ui.getLoginPanel().getPasswordField();
+        String pwd       = this.ui.getLoginPanel().getPasswordField();
         String firstName = "LOGIN";
         String lastName  = "LOGIN";
         
-        StringBuilder passBuilder = new StringBuilder();
-        for(int ch = 0; ch < pwd.length; ch++)
-            passBuilder.append(pwd[ch]);
-        
         Map<UserProperty, String> basicProperties = new HashMap<>();
             basicProperties.put(UserProperty.USERNAME, username);
-            basicProperties.put(UserProperty.PASSWORD, passBuilder.toString());
+            basicProperties.put(UserProperty.PASSWORD, pwd);
             basicProperties.put(UserProperty.FIRST_NAME, firstName);
             basicProperties.put(UserProperty.LAST_NAME, lastName);
         return User.getBasicUser(basicProperties);

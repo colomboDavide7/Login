@@ -8,6 +8,7 @@ package login.users;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import login.tools.UserProperty;
 
@@ -23,8 +24,9 @@ public class User implements IUser {
     
     public static IUser getBasicUser(Map<UserProperty, String> basicProperties) throws CustomerCreationException{
         //printMap(basicProperties);
-        if(UserProperty.isMissingMandatory(basicProperties))
-            throw new CustomerCreationException(CustomerCreationException.ErrorCode.MISSING_MANDATORY);
+        List<UserProperty> missing = UserProperty.isMissingMandatory(basicProperties);
+        if(!missing.isEmpty())
+            throw new CustomerCreationException(missing, CustomerCreationException.ErrorCode.MISSING_MANDATORY);
         return new User(basicProperties);
     }
     

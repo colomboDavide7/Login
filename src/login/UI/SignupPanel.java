@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -179,6 +180,11 @@ public class SignupPanel extends JPanel implements ISignupPanel {
     @Override
     public Map<UserProperty, String> getInsertedProperties() {
         return this.form.getInsertedProperties();
+    }
+
+    @Override
+    public void highlightMissing(List<UserProperty> missing) {
+        this.form.highlightMissing(missing);
     }
     
 }

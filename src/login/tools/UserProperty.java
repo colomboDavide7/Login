@@ -51,12 +51,13 @@ public enum UserProperty {
         return false;
     }
     
-    public static boolean isMissingMandatory(Map<UserProperty, String> basicProp){
+    public static List<UserProperty> isMissingMandatory(Map<UserProperty, String> basicProp){
+        List<UserProperty> missing = new ArrayList<>();
         for(UserProperty p : priority.keySet())
             if(priority.get(p).equals(MANDATORY))
-                if(!mandatoryPropertyFound(p, basicProp))
-                    return true;
-        return false;
+                if(!mandatoryPropertyFound(p, basicProp) || mandatoryFoundButEmpty(p, basicProp))
+                    missing.add(p);
+        return missing;
     }
     
     private static boolean mandatoryPropertyFound(
@@ -65,4 +66,12 @@ public enum UserProperty {
         return basicProp.keySet().stream().anyMatch(p -> (p == mandatoryProp));
     }
     
+    private static boolean mandatoryFoundButEmpty(
+            UserProperty mandatoryProp, Map<UserProperty, String> basicProp
+    ){
+        if(basicProp.containsKey(mandatoryProp))
+            if(basicProp.get(mandatoryProp).isEmpty())
+                return true;
+        return false;
+    }
 }

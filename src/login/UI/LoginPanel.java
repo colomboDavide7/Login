@@ -141,8 +141,8 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     }
 
     @Override
-    public char[] getPasswordField() {
-        return this.pwd.getPassword();
+    public String getPasswordField() {
+        return this.pwd.getText();
     }
 
     @Override

@@ -5,12 +5,16 @@
  */
 package login.UI;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javafx.scene.layout.Border;
+import javax.swing.BorderFactory;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
@@ -53,6 +57,9 @@ public class SignupForm implements ISignupForm {
             public void focusGained(FocusEvent e) {
                 if(c.getText().equals(p.toString()))
                     c.setText("");
+                
+                if(!c.getBorder().equals(Border.EMPTY))
+                    c.setBorder(BorderFactory.createEmptyBorder());
             }
 
             @Override
@@ -81,6 +88,14 @@ public class SignupForm implements ISignupForm {
                      .filter(p -> (!form.get(p).getText().equals(p.toString())))
                      .forEach(p -> properties.put(p, form.get(p).getText())); 
         return properties;
+    }
+
+    @Override
+    public void highlightMissing(List<UserProperty> missing) {
+        form.keySet().stream()
+                     .filter(p -> (missing.contains(p)))
+                     .forEach(p -> form.get(p).setBorder(
+                                BorderFactory.createEtchedBorder(Color.RED, Color.RED)));
     }
     
 }
