@@ -111,13 +111,13 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     }
 
     private void initUsername(){
-        this.username = new JTextField(20);
-        this.username.setPreferredSize(new Dimension(20, 20));
+        this.username = new JTextField(30);
+        this.username.setPreferredSize(new Dimension(30, 20));
     }
     
     private void initPassword(){
-        this.pwd = new JPasswordField(20);
-        this.pwd.setPreferredSize(new Dimension(20, 20));
+        this.pwd = new JPasswordField(30);
+        this.pwd.setPreferredSize(new Dimension(30, 20));
     }
     
     private void initErrorCommunicationField(){

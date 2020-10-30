@@ -8,14 +8,18 @@ package login.UI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle;
+import javax.swing.text.JTextComponent;
+import login.tools.UserProperty;
 
 /**
  *
@@ -23,9 +27,12 @@ import javax.swing.LayoutStyle;
  */
 public class SignupPanel extends JPanel implements ISignupPanel {
     
+    private final String explanatoryMsg = 
+            "The errors that could occur in the signup process will be displaied here...";
+    
     private JButton signupB;
     private JLabel info;
-    private JTable form;
+    private ISignupForm form;
     private JTextArea errorCommunicationField;
     private JScrollPane scroll;
     
@@ -54,10 +61,25 @@ public class SignupPanel extends JPanel implements ISignupPanel {
         
         layout.setHorizontalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                    .addComponent(this.info)
-                    .addComponent(this.form)
-                    .addComponent(this.signupB)
-                    .addComponent(this.scroll)
+                .addComponent(this.info)
+                .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(this.form.getPropertyField(UserProperty.USERNAME))
+                                        .addComponent(this.form.getPropertyField(UserProperty.FIRST_NAME))
+                                        .addComponent(this.form.getPropertyField(UserProperty.AGE))
+                                        .addComponent(this.form.getPropertyField(UserProperty.MAIN_PHONE)))
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(this.form.getPropertyField(UserProperty.LAST_NAME))
+                                        .addComponent(this.form.getPropertyField(UserProperty.GENDER))
+                                        .addComponent(this.form.getPropertyField(UserProperty.SECOND_PHONE)))
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(this.form.getPropertyField(UserProperty.PASSWORD))
+                                        .addComponent(this.form.getPropertyField(UserProperty.BIRTH))
+                                        .addComponent(this.form.getPropertyField(UserProperty.CITY))
+                                        .addComponent(this.form.getPropertyField(UserProperty.E_MAIL)))
+                )
+               .addComponent(this.signupB)
+               .addComponent(this.scroll)
         );
         
         layout.setVerticalGroup(
@@ -68,11 +90,31 @@ public class SignupPanel extends JPanel implements ISignupPanel {
                                   GroupLayout.PREFERRED_SIZE,
                                   GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(this.form)
+                    .addGroup(layout.createParallelGroup()
+                                .addComponent(this.form.getPropertyField(UserProperty.USERNAME), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.form.getPropertyField(UserProperty.PASSWORD), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup()
+                                .addComponent(this.form.getPropertyField(UserProperty.FIRST_NAME), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.form.getPropertyField(UserProperty.LAST_NAME), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.form.getPropertyField(UserProperty.BIRTH), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup()
+                                .addComponent(this.form.getPropertyField(UserProperty.AGE), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.form.getPropertyField(UserProperty.GENDER), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.form.getPropertyField(UserProperty.CITY), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup()
+                                .addComponent(this.form.getPropertyField(UserProperty.MAIN_PHONE), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.form.getPropertyField(UserProperty.SECOND_PHONE), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.form.getPropertyField(UserProperty.E_MAIL), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(this.signupB)
                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(this.scroll)
+                    .addComponent(this.scroll,
+                                  GroupLayout.PREFERRED_SIZE, 
+                                  GroupLayout.PREFERRED_SIZE,
+                                  GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(45, 100)
         );
     }
@@ -89,9 +131,26 @@ public class SignupPanel extends JPanel implements ISignupPanel {
     }
     
     private void initErrorCommunicationArea(){
-        this.errorCommunicationField = new JTextArea(20, 200);
+        this.errorCommunicationField = new JTextArea(explanatoryMsg, 20, 200);
+        this.errorCommunicationField.setFont(new Font("Times", Font.ITALIC, 14));
         this.errorCommunicationField.setPreferredSize(new Dimension(200, 20));
         this.errorCommunicationField.setForeground(Color.red);
+        this.errorCommunicationField.addFocusListener(new FocusListener() {
+            String tempMsg = explanatoryMsg;
+            
+            @Override
+            public void focusGained(FocusEvent e) {
+                errorCommunicationField.setText(tempMsg);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(!errorCommunicationField.getText().equals(explanatoryMsg))
+                    tempMsg = errorCommunicationField.getText();
+                else
+                    tempMsg = explanatoryMsg;
+            }
+        });
         
         this.scroll = new JScrollPane(this.errorCommunicationField);
         this.scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -99,7 +158,7 @@ public class SignupPanel extends JPanel implements ISignupPanel {
     }
     
     private void initFormTable(){
-        this.form = new JTable(4, 3);
+        this.form = new SignupForm().setCommonDimension(new Dimension(30, 20));
     }
 
     @Override
@@ -110,6 +169,16 @@ public class SignupPanel extends JPanel implements ISignupPanel {
     @Override
     public JTextArea getErrorCommunicationField() {
         return this.errorCommunicationField;
+    }
+
+    @Override
+    public JTextComponent getPropertyField(UserProperty p) {
+        return this.form.getPropertyField(p);
+    }
+
+    @Override
+    public Map<UserProperty, String> getInsertedProperties() {
+        return this.form.getInsertedProperties();
     }
     
 }

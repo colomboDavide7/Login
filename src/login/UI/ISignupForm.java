@@ -6,8 +6,6 @@
 package login.UI;
 
 import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
 import login.tools.UserProperty;
 
@@ -15,14 +13,10 @@ import login.tools.UserProperty;
  *
  * @author davidecolombo
  */
-public interface ISignupPanel {
-    
-    JButton getSignupButton();
-    
-    JTextArea getErrorCommunicationField();
+public interface ISignupForm {
     
     JTextComponent getPropertyField(UserProperty p);
-            
+    
     Map<UserProperty, String> getInsertedProperties();
     
 }

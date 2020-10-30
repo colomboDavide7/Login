@@ -22,9 +22,19 @@ public class User implements IUser {
     }
     
     public static IUser getBasicUser(Map<UserProperty, String> basicProperties) throws CustomerCreationException{
+        //printMap(basicProperties);
         if(UserProperty.isMissingMandatory(basicProperties))
             throw new CustomerCreationException(CustomerCreationException.ErrorCode.MISSING_MANDATORY);
         return new User(basicProperties);
+    }
+    
+    private static void printMap(Map<UserProperty, String> basicProperties){
+        StringBuilder sb = new StringBuilder();
+        basicProperties.keySet().forEach((p) -> {
+            sb.append(p.toString()).append(" = ").append(basicProperties.get(p)).append("\n");
+        });
+        
+        System.out.println(sb.toString());
     }
     
     private void setupProperties(){

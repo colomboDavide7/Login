@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import static junit.framework.Assert.*;
+import login.UI.ISignupPanel;
+import login.UI.SignupPanel;
 import login.repository.QueryException;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
@@ -356,7 +358,6 @@ public class CustomerTest {
         }catch(CustomerCreationException ex){
             assertEquals(CustomerCreationException.ErrorCode.MISSING_MANDATORY, ex.getErrorCode());
         }
-        
     }
     
 }

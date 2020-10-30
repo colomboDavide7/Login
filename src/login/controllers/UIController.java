@@ -45,12 +45,14 @@ public class UIController {
         JButton signup = ui.getSignupPanel().getSignupButton();
         signup.addActionListener((ActionEvent e) -> {
             try {
-                IUser newCustomer = this.createNewCustomer();
-                UserRequest r     = UserRequest.createRequestByType(newCustomer, t);
-                this.app.sendSignUpRequest(r);
+                this.app.sendSignUpRequest(
+                        UserRequest.createRequestByType(
+                                this.createSignupCustomer(), t
+                        )
+                );
                 this.setSignupMessageTextAndColor("Your request was successfully sent", Color.GREEN);
             } catch (CustomerCreationException ex) {
-                System.err.println("error creating the custumer");
+                this.setSignupMessageTextAndColor("Missing mandatory", Color.RED);
             } catch (CredentialException ex) {
                 switch(ex.getErrorCode()){
                     case INVALID_PASSWORD:
@@ -74,9 +76,11 @@ public class UIController {
         JButton login = ui.getLoginPanel().getLoginButton();
         login.addActionListener((ActionEvent e) -> {
             try {
-                IUser newCustomer = this.createLoginCustomer();
-                UserRequest r     = UserRequest.createRequestByType(newCustomer, t);
-                this.app.sendLoginRequest(r);
+                this.app.sendLoginRequest(
+                        UserRequest.createRequestByType(
+                                this.createLoginCustomer(), t
+                        )
+                );
                 this.setLoginMessageTextAndColor("Successfully logged in", Color.GREEN);
             } catch (CustomerCreationException ex) {
                 this.setLoginMessageTextAndColor("An error has occurred during the customer creation process", Color.red);
@@ -132,6 +136,10 @@ public class UIController {
         return User.getBasicUser(basicProperties);
     }
     
+    private IUser createSignupCustomer() throws CustomerCreationException{
+        return User.getBasicUser(ui.getSignupPanel().getInsertedProperties());
+    }
+    
     private void setLoginMessageTextAndColor(String text, Color c){
         this.ui.getLoginPanel().getErrorArea().setText(text);
         this.ui.getLoginPanel().getErrorArea().setForeground(c);
@@ -141,7 +149,7 @@ public class UIController {
         this.ui.getSignupPanel().getErrorCommunicationField().setText(text);
         this.ui.getSignupPanel().getErrorCommunicationField().setForeground(c);
     }
-    
+
     private IUser createNewCustomer() throws CustomerCreationException {
         // All these fields will be dinamically take from the GUI
         String username  = "rossiMario99";
