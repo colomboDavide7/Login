@@ -34,9 +34,7 @@ public class SignupForm implements ISignupForm {
     
     private void initialize(){
         createFormField();
-        this.form.keySet().stream()
-                          .filter(p -> p != UserProperty.PASSWORD)
-                          .forEach(p -> createFocusListener(p, this.form.get(p)));
+        this.form.keySet().forEach(p -> createFocusListener(p, this.form.get(p)));
     }
 
     private void createFormField(){
