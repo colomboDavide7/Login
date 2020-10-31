@@ -26,4 +26,17 @@ public class QueryException extends Exception {
         return this.errorCode;
     }
     
+    public String getErrorMessage(){
+        switch(this.errorCode){
+            case NOT_SIGNED_UP:
+                return String.format("You are not signed up");
+            case NOT_LOGGED_IN:
+                return String.format("You are not logged in");
+            case WRONG_PASSWORD:
+                return String.format("Wrong password");
+            default:
+                return String.format("ErrorCode \"%s\" not found", this.errorCode.name());
+        }
+    }
+    
 }

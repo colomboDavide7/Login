@@ -55,20 +55,7 @@ public class UIController {
                 this.setSignupMessageTextAndColor("Missing mandatory", Color.RED);
                 this.ui.getSignupPanel().highlightMissing(ex.getMissingMandatoryList());
             } catch (CredentialException ex) {
-                switch(ex.getErrorCode()){
-                    case INVALID_PASSWORD:
-                        this.setSignupMessageTextAndColor("Invalid password", Color.red);
-                        break;
-                    case INVALID_USERNAME:
-                        this.setSignupMessageTextAndColor("Invalid username", Color.red);
-                        break;
-                    case USERNAME_ALREADY_USED:
-                        this.setSignupMessageTextAndColor("The username is already used", Color.red);
-                        break;
-                    default:
-                        this.setSignupMessageTextAndColor("", Color.red);
-                        break;
-                }
+                this.setSignupMessageTextAndColor(ex.getErrorMessage(), Color.red);
             }
         });
     }
@@ -86,20 +73,7 @@ public class UIController {
             } catch (CustomerCreationException ex) {
                 this.setLoginMessageTextAndColor("An error has occurred during the customer creation process", Color.red);
             } catch (QueryException ex) {
-                switch(ex.getErrorCode()){
-                    case NOT_SIGNED_UP:
-                        this.setLoginMessageTextAndColor("You are not signed up", Color.red);
-                        break;
-                    case WRONG_PASSWORD:
-                        this.setLoginMessageTextAndColor("Wrong password", Color.red);
-                        break;
-                    case ALREADY_LOGGED_IN:
-                        this.setLoginMessageTextAndColor("You are already logged in", Color.red);
-                        break;
-                    default:
-                        this.setLoginMessageTextAndColor("", Color.red);
-                        break;
-                }
+                this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.red);
             }
         });
     }
