@@ -8,7 +8,10 @@ package login.UI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.util.Arrays;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import javafx.scene.layout.Border;
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,6 +20,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
+import login.tools.UserProperty;
 
 /**
  *
@@ -24,6 +29,8 @@ import javax.swing.JTextField;
  */
 public class LoginPanel extends JPanel implements ILoginPanel {
     
+    private final String explanatoryMsg = 
+            "The errors that could occur in the login process will be displayed here...";
     private JButton loginB;
     private JTextField username;
     private JPasswordField pwd;
@@ -84,7 +91,10 @@ public class LoginPanel extends JPanel implements ILoginPanel {
                                       GroupLayout.PREFERRED_SIZE, 
                                       GroupLayout.PREFERRED_SIZE)
                         .addGap(30)
-                        .addComponent(this.loginB)
+                        .addComponent(this.loginB, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE, 
+                                      GroupLayout.PREFERRED_SIZE)
                         .addGap(50)
                         .addComponent(this.scroll, 
                                       GroupLayout.PREFERRED_SIZE, 
@@ -95,6 +105,28 @@ public class LoginPanel extends JPanel implements ILoginPanel {
         
     }
     
+    private void createFocusListener(UserProperty p, JTextComponent c){
+        c.setFocusable(true);
+        c.grabFocus();
+        c.setFont(new Font("Times", Font.ITALIC, 14));
+        c.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(c.getText().equals(p.toString()))
+                    c.setText("");
+                
+                if(!c.getBorder().equals(Border.EMPTY))
+                    c.setBorder(BorderFactory.createEmptyBorder());
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(c.getText().isEmpty())
+                    c.setText(p.name());
+            }
+        });
+    }
+    
     private void initInfoLabel(){
         this.info = new JLabel("Enter your user credential...");
         this.info.setFont(new Font("Tahoma", 3, 15));
@@ -103,16 +135,13 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     
     private void initButton(){
         loginB = new JButton("Log In");
-        loginB.setForeground(Color.BLACK);
-        loginB.setBackground(Color.GREEN);
-        loginB.setFont(new Font("Times", 12, 15));
-        loginB.setOpaque(true);
-        loginB.setBorderPainted(false);
+        loginB.setPreferredSize(new Dimension(20, 20));
     }
 
     private void initUsername(){
-        this.username = new JTextField(30);
+        this.username = new JTextField(UserProperty.USERNAME.toString(), 30);
         this.username.setPreferredSize(new Dimension(30, 20));
+        createFocusListener(UserProperty.USERNAME, username);
     }
     
     private void initPassword(){
@@ -121,9 +150,27 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     }
     
     private void initErrorCommunicationField(){
-        this.errorCommunicationField = new JTextArea(20, 200);
+        this.errorCommunicationField = new JTextArea(explanatoryMsg, 20, 200);
         this.errorCommunicationField.setPreferredSize(new Dimension(200, 20));
         this.errorCommunicationField.setForeground(Color.red);
+        this.errorCommunicationField.addFocusListener(new FocusListener() {
+            String tempMsg = explanatoryMsg;
+            
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(errorCommunicationField.getForeground() == Color.GREEN)
+                    errorCommunicationField.setForeground(Color.red);
+                errorCommunicationField.setText(tempMsg);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(!errorCommunicationField.getText().equals(explanatoryMsg))
+                    tempMsg = errorCommunicationField.getText();
+                else
+                    tempMsg = explanatoryMsg;
+            }
+        });
         
         this.scroll = new JScrollPane(this.errorCommunicationField);
         this.scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);

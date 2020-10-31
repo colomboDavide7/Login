@@ -29,7 +29,7 @@ import login.tools.UserProperty;
 public class SignupPanel extends JPanel implements ISignupPanel {
     
     private final String explanatoryMsg = 
-            "The errors that could occur in the signup process will be displaied here...";
+            "The errors that could occur in the signup process will be displayed here...";
     
     private JButton signupB;
     private JButton clearB;
@@ -147,7 +147,6 @@ public class SignupPanel extends JPanel implements ISignupPanel {
     
     private void initErrorCommunicationArea(){
         this.errorCommunicationField = new JTextArea(explanatoryMsg, 20, 200);
-        this.errorCommunicationField.setFont(new Font("Times", Font.ITALIC, 14));
         this.errorCommunicationField.setPreferredSize(new Dimension(200, 20));
         this.errorCommunicationField.setForeground(Color.red);
         this.errorCommunicationField.addFocusListener(new FocusListener() {
