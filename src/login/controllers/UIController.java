@@ -39,8 +39,16 @@ public class UIController {
         this.pressSignup(UserRequest.RequestType.SIGN_UP);
         this.pressLogin(UserRequest.RequestType.LOGIN);
         this.pressLogout(UserRequest.RequestType.LOGOUT);
+        this.pressClear();
     }
         
+    private void pressClear(){
+        JButton clear = this.ui.getSignupPanel().getClearButton();
+        clear.addActionListener((ActionEvent evt) ->{
+            this.ui.getSignupPanel().clearForm();
+        });
+    }
+    
     private void pressSignup(UserRequest.RequestType t){
         JButton signup = ui.getSignupPanel().getSignupButton();
         signup.addActionListener((ActionEvent e) -> {
@@ -50,6 +58,7 @@ public class UIController {
                                 this.createSignupCustomer(), t
                         )
                 );
+                this.ui.getSignupPanel().clearForm();
                 this.setSignupMessageTextAndColor("Your request was successfully sent", Color.GREEN);
             } catch (CustomerCreationException ex) {
                 this.setSignupMessageTextAndColor("Missing mandatory", Color.RED);

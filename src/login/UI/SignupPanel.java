@@ -32,6 +32,7 @@ public class SignupPanel extends JPanel implements ISignupPanel {
             "The errors that could occur in the signup process will be displaied here...";
     
     private JButton signupB;
+    private JButton clearB;
     private JLabel info;
     private ISignupForm form;
     private JTextArea errorCommunicationField;
@@ -50,6 +51,7 @@ public class SignupPanel extends JPanel implements ISignupPanel {
 //        setBorder(BorderFactory.createLineBorder(Color.BLACK, 5, true));
 
         initButton();
+        initClearButton();
         initInfoLabel();
         initFormTable();
         initErrorCommunicationArea();
@@ -79,7 +81,11 @@ public class SignupPanel extends JPanel implements ISignupPanel {
                                         .addComponent(this.form.getPropertyField(UserProperty.CITY))
                                         .addComponent(this.form.getPropertyField(UserProperty.E_MAIL)))
                 )
-               .addComponent(this.signupB)
+               .addGroup(layout.createSequentialGroup()
+                            .addComponent(this.signupB)
+                            .addGap(30)
+                            .addComponent(this.clearB)
+                )
                .addComponent(this.scroll)
         );
         
@@ -110,7 +116,10 @@ public class SignupPanel extends JPanel implements ISignupPanel {
                                 .addComponent(this.form.getPropertyField(UserProperty.SECOND_PHONE), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(this.form.getPropertyField(UserProperty.E_MAIL), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(this.signupB)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                            .addComponent(this.signupB, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(this.clearB, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                    )
                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(this.scroll,
                                   GroupLayout.PREFERRED_SIZE, 
@@ -122,7 +131,12 @@ public class SignupPanel extends JPanel implements ISignupPanel {
     
     private void initButton(){
         this.signupB = new JButton("Sign Up");
-        this.signupB.setPreferredSize(new Dimension(20, 15));
+        this.signupB.setPreferredSize(new Dimension(20, 20));
+    }
+    
+    private void initClearButton(){
+        this.clearB = new JButton("Clear");
+        this.clearB.setPreferredSize(new Dimension(20, 20));
     }
     
     private void initInfoLabel(){
@@ -141,6 +155,8 @@ public class SignupPanel extends JPanel implements ISignupPanel {
             
             @Override
             public void focusGained(FocusEvent e) {
+                if(errorCommunicationField.getForeground() == Color.GREEN)
+                    errorCommunicationField.setForeground(Color.red);
                 errorCommunicationField.setText(tempMsg);
             }
 
@@ -185,6 +201,16 @@ public class SignupPanel extends JPanel implements ISignupPanel {
     @Override
     public void highlightMissing(List<UserProperty> missing) {
         this.form.highlightMissing(missing);
+    }
+
+    @Override
+    public JButton getClearButton() {
+        return this.clearB;
+    }
+
+    @Override
+    public void clearForm() {
+        this.form.clear();
     }
     
 }

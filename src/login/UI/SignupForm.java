@@ -97,5 +97,15 @@ public class SignupForm implements ISignupForm {
                      .forEach(p -> form.get(p).setBorder(
                                 BorderFactory.createEtchedBorder(Color.RED, Color.RED)));
     }
+
+    @Override
+    public void clear() {
+        this.form.keySet().stream()
+                          .filter(p -> p != UserProperty.PASSWORD)
+                          .forEach(p -> this.form.get(p).setText(p.toString()));
+        this.form.keySet().stream()
+                          .filter(p -> p == UserProperty.PASSWORD)
+                          .forEach(p -> this.form.get(p).setText(""));
+    }
     
 }

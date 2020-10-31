@@ -20,6 +20,8 @@ public interface ISignupPanel {
     
     JButton getSignupButton();
     
+    JButton getClearButton();
+    
     JTextArea getErrorCommunicationField();
     
     JTextComponent getPropertyField(UserProperty p);
@@ -27,5 +29,7 @@ public interface ISignupPanel {
     Map<UserProperty, String> getInsertedProperties();
     
     void highlightMissing(List<UserProperty> missing);
+    
+    void clearForm();
     
 }
