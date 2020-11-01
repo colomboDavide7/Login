@@ -66,7 +66,6 @@ public class FileParser {
     public static boolean parseFile(File toParse, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException {
         if(!toParse.exists())
             throw new FileNotFoundException("toParse = " + toParse);
-        
         return openAndReadTextFile(toParse, p, value);
     }
     
@@ -87,7 +86,7 @@ public class FileParser {
             }
             
         } catch (IOException ex) { 
-            
+            System.err.println("Error reading file: " + f);
         }finally{
             if(reader != null)
                 try {

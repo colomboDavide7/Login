@@ -63,7 +63,7 @@ public class FileParserTest {
     }
     
     @Test
-    public void shouldReturnWrongKeyValueSeparatorError() throws FileNotFoundException{
+    public void shouldReturnWrongKeyValueSeparatorError() throws FileNotFoundException {
         System.out.println("* File Parser: shouldReturnWrongKeyValueSeparatorError()\n");
         File f = new File("shouldReturnWrongKeyValueSeparatorError.txt");
         
@@ -122,25 +122,14 @@ public class FileParserTest {
        
     @Test
     public void shouldInsertNewCustomerInDatabase(){
-        System.out.println("* File Parser: shouldInsertNewCustomerInDatabase()\n");
-        String username  = "newCustomer";
-        String pwd       = "Test1!";
-        String firstName = "new";
-        String lastName  = "customer";
-        
-        Map<UserProperty, String> basicProperties = new HashMap<>();
-            basicProperties.put(UserProperty.USERNAME, username);
-            basicProperties.put(UserProperty.PASSWORD, pwd);
-            basicProperties.put(UserProperty.FIRST_NAME, firstName);
-            basicProperties.put(UserProperty.LAST_NAME, lastName);
-            
+        System.out.println("* File Parser: shouldInsertNewCustomerInDatabase()\n");            
         try {
-            IUser newCustomer = User.getBasicUser(basicProperties);
+            IUser newCustomer = this.createValidUser();
             FileParser.addNewCustomer(newCustomer);
-            boolean find = FileParser.searchProperty(UserProperty.USERNAME, username) &&
-                           FileParser.searchProperty(UserProperty.PASSWORD, pwd)      &&
-                           FileParser.searchProperty(UserProperty.FIRST_NAME, firstName) &&
-                           FileParser.searchProperty(UserProperty.LAST_NAME, lastName);
+            boolean find = FileParser.searchProperty(UserProperty.USERNAME, newCustomer.getProperty(UserProperty.USERNAME)) &&
+                           FileParser.searchProperty(UserProperty.PASSWORD, newCustomer.getProperty(UserProperty.PASSWORD))      &&
+                           FileParser.searchProperty(UserProperty.FIRST_NAME, newCustomer.getProperty(UserProperty.FIRST_NAME)) &&
+                           FileParser.searchProperty(UserProperty.LAST_NAME, newCustomer.getProperty(UserProperty.LAST_NAME));
             assertTrue(find);
         } catch (CustomerCreationException | FileNotFoundException | ParserSchemeException ex) {
             assertFalse(true);
@@ -149,6 +138,7 @@ public class FileParserTest {
     }
     
 // ====================================================================================
+    // Stream opening logic
     private List<String> openAndReadedTextFile(File f){
         List<String> lines = new ArrayList<>();
         BufferedReader reader = null;
@@ -180,4 +170,32 @@ public class FileParserTest {
         return lines;
     }
     
+// ====================================================================================
+    // User creation logic
+    private IUser createValidUser() throws CustomerCreationException{
+        String username  = "newCustomer";
+        String pwd       = "Test1!";
+        String firstName = "new";
+        String lastName  = "customer";
+        
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, username);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+            basicProperties.put(UserProperty.LAST_NAME, lastName);
+        return User.getBasicUser(basicProperties);
+    }
+    
+    private IUser createInvalidUser() throws CustomerCreationException{
+        String username  = "newCustomer";
+        String pwd       = "Test";
+        
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, username);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+        return User.getBasicUser(basicProperties);
+    }
+   
+// ====================================================================================
+
 }
