@@ -12,7 +12,7 @@ package login.tools;
 public class ParserSchemeException extends Exception {
 
     public enum ErrorCode{
-        WRONG_SCHEME;
+        WRONG_SCHEME, WRONG_KEY_VALUE_SEPARATOR;
     }
     
     private ErrorCode errorCode;

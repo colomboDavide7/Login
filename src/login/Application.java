@@ -18,7 +18,7 @@ public class Application implements IAppModel {
     
     private ApplicationRepository repository;
     private ApplicationManager manager;
-       
+      
     public Application(ApplicationManager manager, ApplicationRepository repo){
         this.manager    = manager;
         this.repository = repo;

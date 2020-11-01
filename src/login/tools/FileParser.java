@@ -10,8 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -19,21 +17,17 @@ import java.util.List;
  */
 public class FileParser {
     
-    private static final char CUSTOMER_SEPARATOR = '#';
-    private static ParserScheme currentScheme = ParserScheme.KEY_EQUALS_VALUE;
+    private static ParserScheme currentScheme = ParserScheme.VALID;
     
-    public static boolean parseFile(File toParse) throws FileNotFoundException, ParserSchemeException {
+    public static boolean parseFile(File toParse, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException {
         if(!toParse.exists())
             throw new FileNotFoundException("toParse = " + toParse);
         
-        List<String> lines = openAndReadTextFile(toParse);
-        
-        return true;
+        return openAndReadTextFile(toParse, p, value);
     }
     
-    private static List<String> openAndReadTextFile(File f) throws ParserSchemeException {
-        List<String> lines = new ArrayList<>();
-        BufferedReader reader;
+    private static boolean openAndReadTextFile(File f, UserProperty p, String value) throws ParserSchemeException {
+        BufferedReader reader = null;
         String line;
         try {
             reader = new BufferedReader(new FileReader(f));
@@ -44,26 +38,41 @@ public class FileParser {
                     break;
                 }
                 
-                if(!line.startsWith(String.valueOf(CUSTOMER_SEPARATOR)))
-                    if(parseLine(line))
-                        lines.add(line);
+                if(parseLine(line, p, value))
+                    return true;
             }
             
         } catch (IOException ex) { 
             
         }
         
-        return lines;
+        return false;
     }
     
-    private static boolean parseLine(String line) throws ParserSchemeException {
-        if(!line.contains(currentScheme.getSeparator()))
+    private static boolean parseLine(String line, UserProperty toMatch, String value) throws ParserSchemeException {
+        if(!line.contains(currentScheme.getPropertySeparator()))
             throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_SCHEME);
-        return true;
+        
+        String[] customerProperties = line.split(currentScheme.getPropertySeparator());
+        for(String p : customerProperties){
+            if(!p.contains(currentScheme.getKeyValueSeparator()))
+                throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_KEY_VALUE_SEPARATOR);
+            if(parseProperty(p.split(currentScheme.getKeyValueSeparator()), toMatch, value))
+                return true;
+        }
+        
+        return false;
+    }
+    
+    private static boolean parseProperty(String[] keyValuePair, UserProperty p, String value){
+        if(keyValuePair[0].trim().equals(p.name()))
+            if(keyValuePair[1].trim().equals(value))
+                return true;
+        return false;
     }
     
     public static ParserScheme getDefaultParserScheme(){
-        return ParserScheme.KEY_EQUALS_VALUE;
+        return ParserScheme.VALID;
     }    
     
 }

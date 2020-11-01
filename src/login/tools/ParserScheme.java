@@ -11,16 +11,22 @@ package login.tools;
  */
 public enum ParserScheme {
     
-    KEY_EQUALS_VALUE("=");
+    VALID("=", ";");
     
-    private String separator;
+    private String keyValueSeparator;
+    private String propertySeparator;
     
-    ParserScheme(String separator){
-        this.separator = separator;
+    ParserScheme(String keyValueSeparator, String propertySeparator){
+        this.keyValueSeparator = keyValueSeparator;
+        this.propertySeparator = propertySeparator;
     }
     
-    public String getSeparator(){
-        return this.separator;
+    public String getKeyValueSeparator(){
+        return this.keyValueSeparator;
+    }
+    
+    public String getPropertySeparator(){
+        return this.propertySeparator;
     }
     
 }

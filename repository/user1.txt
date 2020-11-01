@@ -1,1 +1,1 @@
-username = davide
+USERNAME = marioRossi; password = hfbcbusbvcnic23929; first_name = Mario; last_name = Rossi;
