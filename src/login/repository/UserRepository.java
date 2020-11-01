@@ -5,12 +5,7 @@
  */
 package login.repository;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +50,13 @@ public class UserRepository {
     }
     
 // ====================================================================================
-    // Verify
+    // Verify TOTAL transaction
     public boolean verifyTransactionExistence(String transaction){
         return transactions.stream().anyMatch((t) -> (t.equals(transaction)));
     }
     
+// ====================================================================================
+    // Verify one and only one Signup transaction
     public boolean verifyExistanceOfOneAndOnlyOneSignupTransaction(){
         int counter = 0;
         for(String line : transactions)
@@ -73,7 +70,7 @@ public class UserRepository {
                .equals(t.name());
     }
     
-    private String getTransactionValueByKey(String transaction, String key){
+    public static String getTransactionValueByKey(String transaction, String key){
         for(String keyValuePair : transaction.split(ParserScheme.VALID.getPropertySeparator())){
             String[] tokens = keyValuePair.split(ParserScheme.VALID.getKeyValueSeparator());
             if(tokens[0].equals(key))
@@ -82,6 +79,8 @@ public class UserRepository {
         return "";
     }
     
+// ====================================================================================
+    // Verify last login transaction
     public boolean verifyLastLoginTransactionDateAndTime(){
         String t = findLatestTransaction();
         String transactionType = getTransactionValueByKey(t, SystemProperty.TRANSACTION_TYPE.name());

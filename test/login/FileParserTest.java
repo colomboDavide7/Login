@@ -199,7 +199,6 @@ public class FileParserTest {
             this.repo.login(loginRequest);
             boolean logged = this.repo.isLogged(loginRequest);
             assertTrue(logged);
-            
         } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
         }
@@ -252,6 +251,47 @@ public class FileParserTest {
         }
     }
     
+    @Test
+    public void shouldReturnNotSignedupError(){
+        System.out.println("* File Parser: shouldReturnNotSignedupError()\n");
+        try {
+            IUser newCustomer1 = this.createValidUser();
+            // Login
+            UserRequest wrong = 
+                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGIN);
+            this.repo.login(wrong);
+            assertTrue(false);
+        } catch (CustomerCreationException ex) {
+            assertTrue(false);
+        } catch (TransactionException ex) {
+            assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        }
+    }
+    
+    @Test
+    public void shouldReturnWrongPasswordError(){
+        System.out.println("* File Parser: shouldReturnWrongPasswordError()\n");
+        try {
+            // Signup
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            // Login
+            UserRequest wrong = 
+                    UserRequest.createRequestByType(
+                            this.createValidUsernameWithWrongPassword(), UserRequest.RequestType.LOGIN
+                    );
+            this.repo.login(wrong);
+            assertTrue(false);
+        } catch (CustomerCreationException | CredentialException ex) {
+            assertTrue(false);
+        } catch (TransactionException ex) {
+            assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        }
+    }
         
 // ====================================================================================
     // Stream opening logic
@@ -323,6 +363,20 @@ public class FileParserTest {
         Map<UserProperty, String> basicProperties = new HashMap<>();
             basicProperties.put(UserProperty.USERNAME, username);
             basicProperties.put(UserProperty.PASSWORD, pwd);
+        return User.getBasicUser(basicProperties);
+    }
+    
+    private IUser createValidUsernameWithWrongPassword() throws CustomerCreationException{
+        String username  = "newCustomer";
+        String pwd       = "wrongpassword";
+        String firstName = "new";
+        String lastName  = "customer";
+        
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, username);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+            basicProperties.put(UserProperty.LAST_NAME, lastName);
         return User.getBasicUser(basicProperties);
     }
     

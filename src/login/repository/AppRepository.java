@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import login.tools.CredentialException;
+import login.tools.FileParser;
 import login.tools.UserProperty;
 import login.users.UserRequest;
 
@@ -44,15 +45,7 @@ public class AppRepository implements IAppRepository {
         if(!isAppendMode)
             isAppendMode = true;
     }
-    
-    @Override
-    public boolean isSignedUp(UserRequest r) {
-        for(UserRepository repo : this.usersRepo)
-            if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
-                return repo.verifyExistanceOfOneAndOnlyOneSignupTransaction();
-        return false;
-    }
-
+   
     @Override
     public void login(UserRequest r) throws TransactionException {
         if(!isWrongRequestType(r, UserRequest.RequestType.LOGIN))
@@ -61,9 +54,23 @@ public class AppRepository implements IAppRepository {
         if(isLogged(r))
             throw new TransactionException(TransactionException.ErrorCode.ALREADY_LOGGED_IN);
         
+        if(!isSignedUp(r))
+            throw new TransactionException(TransactionException.ErrorCode.NOT_SIGNED_UP);
+        
+        if(isWrongPassword(r))
+            throw new TransactionException(TransactionException.ErrorCode.WRONG_PASSWORD);
+        
         this.usersRepo.stream()
                       .filter((repo) -> (repo.matchOwner(r.getUserProperty(UserProperty.USERNAME))))
                       .forEachOrdered(repo -> repo.addTransaction(r));
+    }
+    
+    @Override
+    public boolean isSignedUp(UserRequest r) {
+        for(UserRepository repo : this.usersRepo)
+            if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
+                return repo.verifyExistanceOfOneAndOnlyOneSignupTransaction();
+        return false;
     }
 
     @Override
@@ -76,6 +83,20 @@ public class AppRepository implements IAppRepository {
     
     private boolean isWrongRequestType(UserRequest r, UserRequest.RequestType toMatch){
         return r.matchType(toMatch);
+    }
+    
+    private boolean isWrongPassword(UserRequest r){
+        List<String> lines = FileParser.openAndReadTextFile(subscriptions);
+        return lines.stream().noneMatch((sub) -> (verifyEntityIdentity(sub, r)));
+    }
+    
+    private boolean verifyEntityIdentity(String sub, UserRequest r){
+        String username = UserRepository.getTransactionValueByKey(
+                sub, UserProperty.USERNAME.name());
+        String password = UserRepository.getTransactionValueByKey(
+                sub, UserProperty.PASSWORD.name());
+        return r.matchUserProperty(UserProperty.USERNAME, username) &&
+               r.matchUserProperty(UserProperty.PASSWORD, password);
     }
     
 }

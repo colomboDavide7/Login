@@ -7,7 +7,9 @@ package login;
 
 import java.util.ArrayList;
 import java.util.List;
-import login.repository.AppRepository;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import login.repository.IAppRepository;
 import login.repository.TransactionException;
 import login.tools.CredentialException;
 import login.tools.UserProperty;
@@ -22,13 +24,18 @@ import login.users.IUser;
 public class ApplicationManager {
         
     private List<IUser> users = new ArrayList<>();
-    private AppRepository repo;
+    private IAppRepository repo;
     
     public void parseSignUpRequest(UserRequest r) throws CredentialException {
-        UserValidator.isValidUsername(r.getUserProperty(UserProperty.USERNAME));
-        UserValidator.isValidPassword(r.getUserProperty(UserProperty.PASSWORD));
-        UserValidator.isSignedUp(users.iterator(), r);
-        r.addUserToList(users);
+        try {
+            UserValidator.isValidUsername(r.getUserProperty(UserProperty.USERNAME));
+            UserValidator.isValidPassword(r.getUserProperty(UserProperty.PASSWORD));
+            repo.addNewCustomer(r);
+        } catch (TransactionException ex) {
+            System.err.println("Transaction exception has occurred\n"
+                             + "Bad error, quit application.");
+            System.exit(-1);
+        }
     }
     
     public IUser parseLoginRequest(UserRequest r) throws TransactionException {
