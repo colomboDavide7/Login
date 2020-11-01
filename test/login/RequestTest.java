@@ -28,12 +28,12 @@ import org.junit.Test;
 public class RequestTest {
     
     private Application app;
-    private ApplicationManager manager;
+    private AppManager manager;
     private AppRepository repo;
     
     @Before
     public void setup(){
-        this.manager = new ApplicationManager();
+        this.manager = new AppManager();
         this.repo    = new AppRepository();
         this.app = new Application(manager, repo);
     }

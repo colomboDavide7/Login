@@ -20,7 +20,7 @@ public class Main {
         IAppUI frame = new UIFrame();
         
         IAppModel app = new Application(
-                new ApplicationManager(), new AppRepository()
+                new AppManager(), new AppRepository()
         );
         
         UIController uiController = new UIController(app, frame);

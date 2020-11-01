@@ -28,12 +28,12 @@ import org.junit.Test;
  */
 public class CustomerTest {
 
-    private ApplicationManager manager;
+    private AppManager manager;
     
     // This snippet of code is always executed before running every single test
     @Before
     public void setup(){
-        this.manager = new ApplicationManager();
+        this.manager = new AppManager();
     }
     
 // ================================================================================
@@ -303,34 +303,36 @@ public class CustomerTest {
         }
     }
     
-    @Test
-    public void shouldAcceptLogoutWhenLoggedIn() throws CredentialException, TransactionException, CustomerCreationException{
-        System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
-        String username = "valid";
-        String pwd      = "Test_1";
-        String firstName = "Mario";
-        String lastName = "Rossi";
-        Map<UserProperty, String> basicProperties = new HashMap<>();
-        basicProperties.put(UserProperty.USERNAME, username);
-        basicProperties.put(UserProperty.PASSWORD, pwd);
-        basicProperties.put(UserProperty.FIRST_NAME, firstName);
-        basicProperties.put(UserProperty.LAST_NAME, lastName);
-        
-        IUser basicUser = User.getBasicUser(basicProperties);
-        
-        // Signing up
-        UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
-        this.manager.parseSignUpRequest(sign);
-        // Login
-        UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
-        this.manager.parseLoginRequest(login);
-        // Logout
-        UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
-        IUser loggedOut = this.manager.parseLogoutRequest(logout);
-        
-        Assert.assertTrue(loggedOut.matchProperty(UserProperty.PASSWORD, pwd) && 
-                          loggedOut.matchProperty(UserProperty.USERNAME, username));
-    }
+    // This test is already covered in FileParserTest
+//    @Deprecated
+//    @Test
+//    public void shouldAcceptLogoutWhenLoggedIn() throws CredentialException, TransactionException, CustomerCreationException{
+//        System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
+//        String username = "valid";
+//        String pwd      = "Test_1";
+//        String firstName = "Mario";
+//        String lastName = "Rossi";
+//        Map<UserProperty, String> basicProperties = new HashMap<>();
+//        basicProperties.put(UserProperty.USERNAME, username);
+//        basicProperties.put(UserProperty.PASSWORD, pwd);
+//        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+//        basicProperties.put(UserProperty.LAST_NAME, lastName);
+//        
+//        IUser basicUser = User.getBasicUser(basicProperties);
+//        
+//        // Signing up
+//        UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+//        this.manager.parseSignUpRequest(sign);
+//        // Login
+//        UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
+//        this.manager.parseLoginRequest(login);
+//        // Logout
+//        UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
+//        IUser loggedOut = this.manager.parseLogoutRequest(logout);
+//        
+//        Assert.assertTrue(loggedOut.matchProperty(UserProperty.PASSWORD, pwd) && 
+//                          loggedOut.matchProperty(UserProperty.USERNAME, username));
+//    }
     
 // ================================================================================
     // User property

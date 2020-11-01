@@ -17,9 +17,9 @@ import login.users.UserRequest;
 public class Application implements IAppModel {
     
     private AppRepository repository;
-    private ApplicationManager manager;
+    private AppManager manager;
       
-    public Application(ApplicationManager manager, AppRepository repo){
+    public Application(AppManager manager, AppRepository repo){
         this.manager    = manager;
         this.repository = repo;
     }

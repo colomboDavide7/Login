@@ -51,14 +51,30 @@ public class AppRepository implements IAppRepository {
         if(isWrongRequestType(r, UserRequest.RequestType.LOGIN))
             throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
+        if(!isSignedUp(r))
+            throw new TransactionException(TransactionException.ErrorCode.NOT_SIGNED_UP);
+        
         if(isLogged(r))
             throw new TransactionException(TransactionException.ErrorCode.ALREADY_LOGGED_IN);
+        
+        if(isWrongPassword(r))
+            throw new TransactionException(TransactionException.ErrorCode.WRONG_PASSWORD);
+        
+        this.usersRepo.stream()
+                      .filter((repo) -> (repo.matchOwner(r.getUserProperty(UserProperty.USERNAME))))
+                      .forEachOrdered(repo -> repo.addTransaction(r));
+    }
+    
+    @Override
+    public void logout(UserRequest r) throws TransactionException {
+        if(isWrongRequestType(r, UserRequest.RequestType.LOGOUT))
+            throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
         if(!isSignedUp(r))
             throw new TransactionException(TransactionException.ErrorCode.NOT_SIGNED_UP);
         
-        if(isWrongPassword(r))
-            throw new TransactionException(TransactionException.ErrorCode.WRONG_PASSWORD);
+        if(!isLogged(r))
+            throw new TransactionException(TransactionException.ErrorCode.NOT_LOGGED_IN);
         
         this.usersRepo.stream()
                       .filter((repo) -> (repo.matchOwner(r.getUserProperty(UserProperty.USERNAME))))
@@ -98,5 +114,5 @@ public class AppRepository implements IAppRepository {
         return r.matchUserProperty(UserProperty.USERNAME, username) &&
                r.matchUserProperty(UserProperty.PASSWORD, password);
     }
-    
+
 }

@@ -18,6 +18,8 @@ public interface IAppRepository {
     
     void login(UserRequest r) throws TransactionException;
     
+    void logout(UserRequest r) throws TransactionException;
+    
     boolean isSignedUp(UserRequest r);
     
     boolean isLogged(UserRequest r);

@@ -6,18 +6,14 @@
 package login;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import login.repository.AppRepository;
 import login.repository.IAppRepository;
 import login.repository.TransactionException;
@@ -31,6 +27,7 @@ import login.users.User;
 import login.users.UserRequest;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  *
@@ -40,7 +37,8 @@ public class FileParserTest {
     
     private IAppRepository repo;
     
-    public FileParserTest(){
+    @Before
+    public void setup(){
         this.repo = new AppRepository();
     }
     
@@ -290,6 +288,63 @@ public class FileParserTest {
             assertTrue(false);
         } catch (TransactionException ex) {
             assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        }
+    }
+    
+    @Test
+    public void shouldReturnNotLoggedInError(){
+        System.out.println("* File Parser: shouldReturnNotLoggedInError()\n");
+        try {
+            // Signup
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            // Logut
+            UserRequest wrong = 
+                    UserRequest.createRequestByType(
+                            this.createValidUsernameWithWrongPassword(), UserRequest.RequestType.LOGOUT
+                    );
+            this.repo.logout(wrong);
+            assertTrue(false);
+        } catch (CustomerCreationException | CredentialException ex) {
+            assertTrue(false);
+        } catch (TransactionException ex) {
+            assertEquals(TransactionException.ErrorCode.NOT_LOGGED_IN, ex.getErrorCode());
+        }
+    }
+    
+    @Test
+    public void shouldLoggedOutSuccessfully(){
+        System.out.println("* File Parser: shouldLoggedOutSuccessfully()\n");
+        try {
+            // Signup
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            // Login
+            UserRequest login = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.LOGIN
+            );
+            this.repo.login(login);
+            
+            // Logut
+            UserRequest logout = 
+                    UserRequest.createRequestByType(
+                            this.createValidUsernameWithWrongPassword(), UserRequest.RequestType.LOGOUT
+                    );
+            this.repo.logout(logout);
+            boolean isLoggedOut = !this.repo.isLogged(logout);
+            assertTrue(isLoggedOut);
+            
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
+            System.out.println(ex);
+            assertTrue(false);
         }
     }
         
