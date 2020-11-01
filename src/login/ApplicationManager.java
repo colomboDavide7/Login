@@ -8,7 +8,7 @@ package login;
 import java.util.ArrayList;
 import java.util.List;
 import login.repository.AppRepository;
-import login.repository.QueryException;
+import login.repository.TransactionException;
 import login.tools.CredentialException;
 import login.tools.UserProperty;
 import login.tools.UserValidator;
@@ -31,17 +31,17 @@ public class ApplicationManager {
         r.addUserToList(users);
     }
     
-    public IUser parseLoginRequest(UserRequest r) throws QueryException {
+    public IUser parseLoginRequest(UserRequest r) throws TransactionException {
         for(IUser u : users)
             if(matchUsernameProperty(u, r))
                 if(matchPasswordProperty(u, r))
                     if(u.isLoggedOut())
                         return u.login();
                     else
-                        throw new QueryException(QueryException.ErrorCode.ALREADY_LOGGED_IN);
+                        throw new TransactionException(TransactionException.ErrorCode.ALREADY_LOGGED_IN);
                 else
-                    throw new QueryException(QueryException.ErrorCode.WRONG_PASSWORD);
-        throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
+                    throw new TransactionException(TransactionException.ErrorCode.WRONG_PASSWORD);
+        throw new TransactionException(TransactionException.ErrorCode.NOT_SIGNED_UP);
     }
     
     private boolean matchUsernameProperty(IUser u, UserRequest r){
@@ -52,14 +52,14 @@ public class ApplicationManager {
         return r.matchUserProperty(UserProperty.PASSWORD, u.getProperty(UserProperty.PASSWORD));
     }
     
-    public IUser parseLogoutRequest(UserRequest r) throws QueryException {
+    public IUser parseLogoutRequest(UserRequest r) throws TransactionException {
         for(IUser u : users)
             if(matchUsernameProperty(u, r))
                 if(u.isLogged())
                     return u.logout();
                 else
-                    throw new QueryException(QueryException.ErrorCode.NOT_LOGGED_IN);
-        throw new QueryException(QueryException.ErrorCode.NOT_SIGNED_UP);
+                    throw new TransactionException(TransactionException.ErrorCode.NOT_LOGGED_IN);
+        throw new TransactionException(TransactionException.ErrorCode.NOT_SIGNED_UP);
     }
     
     public boolean isLoggedIn(IUser u){

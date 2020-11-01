@@ -6,7 +6,7 @@
 package login;
 
 import login.repository.AppRepository;
-import login.repository.QueryException;
+import login.repository.TransactionException;
 import login.tools.CredentialException;
 import login.users.UserRequest;
 
@@ -31,13 +31,13 @@ public class Application implements IAppModel {
     }
     
     @Override
-    public boolean sendLoginRequest(UserRequest r) throws QueryException{
+    public boolean sendLoginRequest(UserRequest r) throws TransactionException{
         this.manager.parseLoginRequest(r);
         return true;
     }
     
     @Override
-    public boolean sendLogoutRequest(UserRequest r) throws QueryException{
+    public boolean sendLogoutRequest(UserRequest r) throws TransactionException{
         this.manager.parseLogoutRequest(r);
         return true;
     }

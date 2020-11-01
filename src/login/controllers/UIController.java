@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import login.IAppModel;
 import login.UI.IAppUI;
-import login.repository.QueryException;
+import login.repository.TransactionException;
 import login.users.UserRequest;
 import login.tools.CredentialException;
 import login.tools.UserProperty;
@@ -81,7 +81,7 @@ public class UIController {
                 this.setLoginMessageTextAndColor("Successfully logged in", Color.GREEN);
             } catch (CustomerCreationException ex) {
                 this.setLoginMessageTextAndColor("An error has occurred during the customer creation process", Color.red);
-            } catch (QueryException ex) {
+            } catch (TransactionException ex) {
                 this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.red);
             }
         });
@@ -96,7 +96,7 @@ public class UIController {
                 this.app.sendLogoutRequest(r);
             } catch (CustomerCreationException ex) {
                 System.err.println("error creating the custumer");
-            } catch (QueryException ex) {
+            } catch (TransactionException ex) {
                 System.out.println("query exception has occured");
             }
         });

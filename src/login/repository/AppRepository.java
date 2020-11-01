@@ -22,7 +22,7 @@ public class AppRepository implements IAppRepository {
     private final String SUBSCRIPTION_FILE = "subscriptions.txt";
     
     private File subscriptions;
-    private boolean IS_APPEND_MODE = true;
+    private boolean isAppendMode = false;
     private List<UserRepository> usersRepo;
     
     public AppRepository(){
@@ -31,11 +31,18 @@ public class AppRepository implements IAppRepository {
     }
             
     @Override
-    public void addNewCustomer(UserRequest r) throws CredentialException {
+    public void addNewCustomer(UserRequest r) throws CredentialException, TransactionException {
+        if(!isWrongRequestType(r, UserRequest.RequestType.SIGN_UP))
+            throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
+        
         if(isSignedUp(r))
             throw new CredentialException(CredentialException.ErrorCode.USERNAME_ALREADY_USED);
-        r.processSignupRequest(subscriptions, IS_APPEND_MODE);
+        
+        r.processSignupRequest(subscriptions, isAppendMode);
         this.usersRepo.add(UserRepository.createUserRepository(r));
+        
+        if(!isAppendMode)
+            isAppendMode = true;
     }
     
     @Override
@@ -47,11 +54,12 @@ public class AppRepository implements IAppRepository {
     }
 
     @Override
-    public void login(UserRequest r) {
-        if(isLogged(r)){
-            System.err.println("already logged");
-            return;
-        }
+    public void login(UserRequest r) throws TransactionException {
+        if(!isWrongRequestType(r, UserRequest.RequestType.LOGIN))
+            throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
+        
+        if(isLogged(r))
+            throw new TransactionException(TransactionException.ErrorCode.ALREADY_LOGGED_IN);
         
         this.usersRepo.stream()
                       .filter((repo) -> (repo.matchOwner(r.getUserProperty(UserProperty.USERNAME))))
@@ -64,6 +72,10 @@ public class AppRepository implements IAppRepository {
             if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
                 return repo.verifyLastLoginTransactionDateAndTime();
         return false;
+    }
+    
+    private boolean isWrongRequestType(UserRequest r, UserRequest.RequestType toMatch){
+        return r.matchType(toMatch);
     }
     
 }

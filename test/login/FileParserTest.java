@@ -16,8 +16,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.repository.AppRepository;
 import login.repository.IAppRepository;
+import login.repository.TransactionException;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserSchemeException;
@@ -28,7 +31,6 @@ import login.users.User;
 import login.users.UserRequest;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
 
 /**
  *
@@ -36,17 +38,10 @@ import org.junit.Before;
  */
 public class FileParserTest {
     
-    private File f;
     private IAppRepository repo;
     
     public FileParserTest(){
-        this.f = new File("customer.txt");
         this.repo = new AppRepository();
-    }
-    
-    @Before
-    public void setupCustomerFile(){
-        clearFile();
     }
     
     @Test
@@ -79,22 +74,6 @@ public class FileParserTest {
         
     }
     
-//    @Test
-//    public void shouldMatchUserNameProperty() {
-//        System.out.println("* File Parser: shouldMatchUserNameProperty()\n");
-//        String toMatch = "marioRossi";
-//        File f = new File("user1.txt");
-//        
-//        try{
-//            boolean match = FileParser.existsProperty(f, UserProperty.USERNAME, toMatch);
-//            assertTrue(match);
-//            match = FileParser.existsProperty(f, UserProperty.USERNAME, "notPresent");
-//            assertFalse(match);
-//        }catch(ParserSchemeException | FileNotFoundException ex){
-//            assertTrue(false);
-//        }
-//    }
-    
     @Test
     public void shouldValidateUserRecord(){
         System.out.println("* File Parser: shouldValidateUserRecord()\n");
@@ -118,10 +97,8 @@ public class FileParserTest {
             
             boolean exists = repo.isSignedUp(r);
             assertTrue(exists);
-        } catch (CustomerCreationException ex) {
+        } catch (CustomerCreationException | TransactionException | CredentialException ex) {
             assertFalse(true);
-        } catch (CredentialException ex) {
-            assertTrue(false);
         }
         
     }
@@ -144,7 +121,7 @@ public class FileParserTest {
             );
             
             assertTrue(false);
-        } catch (CustomerCreationException ex) {
+        } catch (CustomerCreationException | TransactionException ex) {
             assertTrue(false);
         } catch (CredentialException ex) {
             assertEquals(CredentialException.ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
@@ -168,7 +145,7 @@ public class FileParserTest {
             boolean exists2 = this.repo.isSignedUp(req2);
             assertTrue(exists1 && exists2);
             
-        } catch (CustomerCreationException ex) {
+        } catch (CustomerCreationException | TransactionException ex) {
             assertTrue(false);
         } catch (CredentialException ex) {
             assertEquals(CredentialException.ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
@@ -186,7 +163,7 @@ public class FileParserTest {
             this.repo.addNewCustomer(r);
             boolean exists = this.repo.isSignedUp(r);
             assertTrue(exists);
-        } catch (CustomerCreationException | CredentialException ex) {
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
         }
     }
@@ -202,7 +179,7 @@ public class FileParserTest {
             this.repo.addNewCustomer(r);
             boolean signedUp = this.repo.isSignedUp(r);
             assertTrue(signedUp);
-        } catch (CustomerCreationException | CredentialException ex) {
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
         }
     }
@@ -222,10 +199,59 @@ public class FileParserTest {
             this.repo.login(loginRequest);
             boolean logged = this.repo.isLogged(loginRequest);
             assertTrue(logged);
-        } catch (CustomerCreationException | CredentialException ex) {
+            
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
         }
     }
+    
+    @Test
+    public void shouldThrowTransactionException(){
+        System.out.println("* File Parser: shouldSendLoginTransaction()\n");
+        try {
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            UserRequest loginRequest = 
+                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGIN);
+            this.repo.login(loginRequest);
+            this.repo.login(loginRequest);
+            
+            assertTrue(false);
+            
+        } catch (CustomerCreationException | CredentialException ex) {
+            assertTrue(false);
+        } catch (TransactionException ex) {
+            assertEquals(TransactionException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
+        }
+    }
+    
+    @Test
+    public void shouldRefuseWrongTransaction(){
+        System.out.println("* File Parser: shouldRefuseWrongTransaction()\n");
+        try {
+            // Signup
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            // Login
+            UserRequest wrong = 
+                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGOUT);
+            this.repo.login(wrong);
+            
+        } catch (CustomerCreationException | CredentialException ex) {
+            assertTrue(false);
+        } catch (TransactionException ex) {
+            assertEquals(TransactionException.ErrorCode.WRONG_REQUEST, ex.getErrorCode());
+        }
+    }
+    
         
 // ====================================================================================
     // Stream opening logic
@@ -259,27 +285,7 @@ public class FileParserTest {
         
         return lines;
     }
-    
-// ====================================================================================
-    // Clear file logic
-    private void clearFile(){
-        BufferedWriter writer = null;
-        try{
-            writer = new BufferedWriter(new FileWriter(this.f));
-            writer.append("");
-            writer.close();
-        }catch(IOException ex){
-            System.err.println("Error reading the file\n");
-        }finally{
-            if(writer != null)
-                try {
-                    writer.close();
-            } catch (IOException ex) {
-                    System.err.println("Error closing the file\n");
-            }
-        }
-    }
-    
+        
 // ====================================================================================
     // User creation logic
     private IUser createValidUser() throws CustomerCreationException{

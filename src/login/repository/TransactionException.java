@@ -9,16 +9,18 @@ package login.repository;
  *
  * @author davidecolombo
  */
-public class QueryException extends Exception {
+public class TransactionException extends Exception {
 
     public enum ErrorCode{
-        NOT_SIGNED_UP, WRONG_PASSWORD, NOT_LOGGED_IN, ALREADY_LOGGED_IN;
+        NOT_SIGNED_UP, WRONG_PASSWORD, 
+        NOT_LOGGED_IN, ALREADY_LOGGED_IN,
+        WRONG_REQUEST;
     }
     
 // ================================================================================
     private ErrorCode errorCode;
     
-    public QueryException(ErrorCode code){
+    public TransactionException(ErrorCode code){
         this.errorCode = code;
     }
     

@@ -14,9 +14,9 @@ import login.users.UserRequest;
  */
 public interface IAppRepository {
         
-    void addNewCustomer(UserRequest r) throws CredentialException;
+    void addNewCustomer(UserRequest r) throws CredentialException, TransactionException;
     
-    void login(UserRequest r);
+    void login(UserRequest r) throws TransactionException;
     
     boolean isSignedUp(UserRequest r);
     

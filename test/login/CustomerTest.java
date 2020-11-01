@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import static junit.framework.Assert.*;
-import login.repository.QueryException;
+import login.repository.TransactionException;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
 import login.users.User;
@@ -39,7 +39,7 @@ public class CustomerTest {
 // ================================================================================
     // User registration
     @Test
-    public void shouldSignUpNewUser() throws QueryException, CredentialException, CustomerCreationException {
+    public void shouldSignUpNewUser() throws TransactionException, CredentialException, CustomerCreationException {
         System.out.println("* User SignUp: shouldSignUpNewUser()\n");
         String username = "valid";
         String pwd      = "Test_1";
@@ -59,7 +59,7 @@ public class CustomerTest {
     }
     
     @Test
-    public void shouldRejectUserWithSameName() throws QueryException, CustomerCreationException {
+    public void shouldRejectUserWithSameName() throws TransactionException, CustomerCreationException {
         System.out.println("* User SignUp: shouldRejectUserWithSameName()\n");
         String username = "valid";
         String pwd      = "Test_1";
@@ -86,7 +86,7 @@ public class CustomerTest {
     }
     
     @Test
-    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws CredentialException, QueryException, CustomerCreationException{
+    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws CredentialException, TransactionException, CustomerCreationException{
         System.out.println("* User SignUp: shouldHaveTheLoggedInStateOnAfterLogin()\n");
         String username = "valid";
         String pwd      = "Test_1";
@@ -129,8 +129,8 @@ public class CustomerTest {
         try{
             UserRequest r = UserRequest.createRequestByType(customer, UserRequest.RequestType.LOGIN);
             this.manager.parseLoginRequest(r);
-        }catch(QueryException ex){
-            Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        }catch(TransactionException ex){
+            Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
         }
     }
     
@@ -156,15 +156,15 @@ public class CustomerTest {
             customer = User.getBasicUser(basicProperties);
             UserRequest login = UserRequest.createRequestByType(customer, UserRequest.RequestType.LOGIN);
             this.manager.parseLoginRequest(login);
-        }catch(QueryException ex){
-            Assert.assertEquals(QueryException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        }catch(TransactionException ex){
+            Assert.assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
         } catch (CustomerCreationException ex) {
             Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @Test
-    public void shouldRefuseWrongUsername() throws CredentialException, QueryException{
+    public void shouldRefuseWrongUsername() throws CredentialException, TransactionException{
         System.out.println("* User Login: shouldRefuseWrongUsername()\n");
         String username = "valid";
         String pwd      = "Test_1";
@@ -185,15 +185,15 @@ public class CustomerTest {
             basicUser = User.getBasicUser(basicProperties);
             UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
             this.manager.parseLoginRequest(login);
-        }catch(QueryException ex){
-            Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        }catch(TransactionException ex){
+            Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
         } catch (CustomerCreationException ex) {
             Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @Test
-    public void shouldBeSuccessfullyLoggedIn() throws CredentialException, QueryException, CustomerCreationException{
+    public void shouldBeSuccessfullyLoggedIn() throws CredentialException, TransactionException, CustomerCreationException{
         System.out.println("* User Login: shouldBeSuccessfullLogin()\n");
         String username = "valid";
         String pwd      = "Test_1";
@@ -214,7 +214,7 @@ public class CustomerTest {
     }   
     
     @Test
-    public void shouldRefuseLoginRequestWhenAlreadyLoggedIn() throws CredentialException, QueryException{
+    public void shouldRefuseLoginRequestWhenAlreadyLoggedIn() throws CredentialException, TransactionException{
         System.out.println("* User Login: shouldRefuseLoginRequestWhenAlreadyLoggedIn()\n");
         String username = "valid";
         String pwd      = "Test_1";
@@ -234,8 +234,8 @@ public class CustomerTest {
             this.manager.parseLoginRequest(login);
             login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
             this.manager.parseLoginRequest(login);
-        }catch(QueryException ex){
-            Assert.assertEquals(QueryException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
+        }catch(TransactionException ex){
+            Assert.assertEquals(TransactionException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
         } catch (CustomerCreationException ex) {
             Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -244,7 +244,7 @@ public class CustomerTest {
 // ================================================================================
     // User logout
     @Test
-    public void shouldRefuseLogoutWhenNotLoggedIn() throws CredentialException, QueryException {
+    public void shouldRefuseLogoutWhenNotLoggedIn() throws CredentialException, TransactionException {
         System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
         String username = "valid";
         String pwd      = "Test_1";
@@ -263,8 +263,8 @@ public class CustomerTest {
             
             UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
             this.manager.parseLogoutRequest(logout);
-        }catch(QueryException ex){
-            Assert.assertEquals(QueryException.ErrorCode.NOT_LOGGED_IN, ex.getErrorCode());
+        }catch(TransactionException ex){
+            Assert.assertEquals(TransactionException.ErrorCode.NOT_LOGGED_IN, ex.getErrorCode());
         } catch (CustomerCreationException ex) {
             Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -288,15 +288,15 @@ public class CustomerTest {
             IUser basicUser = User.getBasicUser(basicProperties);
             UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
             this.manager.parseLogoutRequest(logout);
-        }catch(QueryException ex){
-            Assert.assertEquals(QueryException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        }catch(TransactionException ex){
+            Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
         } catch (CustomerCreationException ex) {
             Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @Test
-    public void shouldAcceptLogoutWhenLoggedIn() throws CredentialException, QueryException, CustomerCreationException{
+    public void shouldAcceptLogoutWhenLoggedIn() throws CredentialException, TransactionException, CustomerCreationException{
         System.out.println("* User Logout: shouldRefuseLogoutWhenNotLoggedIn()\n");
         String username = "valid";
         String pwd      = "Test_1";
