@@ -14,9 +14,7 @@ import login.users.UserRequest;
  */
 public interface IAppRepository {
         
-    boolean addNewCustomer(UserRequest r) throws CredentialException;
-    
-    boolean existsCustomerRepository(UserRequest r) throws QueryException;
+    void addNewCustomer(UserRequest r) throws CredentialException;
     
     boolean isSignedUp(UserRequest r);
     

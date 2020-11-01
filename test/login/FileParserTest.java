@@ -16,12 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import login.repository.AppRepository;
 import login.repository.IAppRepository;
 import login.repository.QueryException;
-import login.repository.UserRepository;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserSchemeException;
@@ -113,22 +110,16 @@ public class FileParserTest {
     }
        
     @Test
-    public void shouldInsertNewCustomerInDatabase(){
-        System.out.println("* File Parser: shouldInsertNewCustomerInDatabase()\n");            
+    public void shouldExistsAfterSignup(){
+        System.out.println("* File Parser: shouldExistsAfterSignup()\n");            
         try {
             IUser newCustomer = this.createValidUser();
-            this.repo.addNewCustomer(
-                    UserRequest.createRequestByType(
-                            newCustomer, UserRequest.RequestType.SIGN_UP
-                    )
-            );
+            UserRequest r = UserRequest.createRequestByType(newCustomer, UserRequest.RequestType.SIGN_UP);
+            this.repo.addNewCustomer(r);
             
-            boolean exists = FileParser.existsProperty(f, UserProperty.USERNAME, newCustomer.getProperty(UserProperty.USERNAME)) &&
-                           FileParser.existsProperty(f, UserProperty.PASSWORD, newCustomer.getProperty(UserProperty.PASSWORD))      &&
-                           FileParser.existsProperty(f, UserProperty.FIRST_NAME, newCustomer.getProperty(UserProperty.FIRST_NAME)) &&
-                           FileParser.existsProperty(f, UserProperty.LAST_NAME, newCustomer.getProperty(UserProperty.LAST_NAME));
+            boolean exists = repo.isSignedUp(r);
             assertTrue(exists);
-        } catch (CustomerCreationException | FileNotFoundException | ParserSchemeException ex) {
+        } catch (CustomerCreationException ex) {
             assertFalse(true);
         } catch (CredentialException ex) {
             assertTrue(false);
@@ -174,11 +165,11 @@ public class FileParserTest {
             UserRequest req2   = UserRequest.createRequestByType(newCustomer2, UserRequest.RequestType.SIGN_UP);
             this.repo.addNewCustomer(req2);
             
-            boolean exists1 = this.repo.existsCustomerRepository(req1);
-            boolean exists2 = this.repo.existsCustomerRepository(req2);
+            boolean exists1 = this.repo.isSignedUp(req1);
+            boolean exists2 = this.repo.isSignedUp(req2);
             assertTrue(exists1 && exists2);
             
-        } catch (CustomerCreationException | QueryException ex) {
+        } catch (CustomerCreationException ex) {
             assertTrue(false);
         } catch (CredentialException ex) {
             assertEquals(CredentialException.ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
@@ -194,9 +185,9 @@ public class FileParserTest {
                     newCustomer1, UserRequest.RequestType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
-            boolean exists = this.repo.existsCustomerRepository(r);
+            boolean exists = this.repo.isSignedUp(r);
             assertTrue(exists);
-        } catch (CustomerCreationException | CredentialException | QueryException ex) {
+        } catch (CustomerCreationException | CredentialException ex) {
             assertTrue(false);
         }
     }
@@ -216,7 +207,7 @@ public class FileParserTest {
             assertTrue(false);
         }
     }
-    
+        
 // ====================================================================================
     // Stream opening logic
     private List<String> openAndReadedTextFile(File f){

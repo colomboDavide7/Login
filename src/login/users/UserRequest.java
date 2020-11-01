@@ -58,7 +58,7 @@ public class UserRequest {
         list.add(this.u);
     }
     
-    public void addNewCustomerToCustomerFile(File file){
+    public void processSignupRequest(File file){
         FileParser.addNewCustomer(file, this.u.createRecord());
     }
     
@@ -78,5 +78,5 @@ public class UserRequest {
           .append(ParserScheme.VALID.getPropertySeparator());
         return sb.toString();
     }
-    
+
 }

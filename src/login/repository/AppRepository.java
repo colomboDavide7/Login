@@ -20,55 +20,30 @@ import login.users.UserRequest;
  */
 public class AppRepository implements IAppRepository {
 
-    private final String CUSTOMER_FILE = "customer.txt";
+    private final String SUBSCRIPTION_FILE = "subscriptions.txt";
     
-    private List<File> files;
+    private File subscriptions;
     private List<UserRepository> usersRepo;
     
     public AppRepository(){
-        files     = new ArrayList<>();
-        usersRepo = new ArrayList<>();
-        setup();
+        subscriptions = new File(SUBSCRIPTION_FILE);
+        usersRepo     = new ArrayList<>();
+    }
+            
+    @Override
+    public void addNewCustomer(UserRequest r) throws CredentialException {
+        if(isSignedUp(r))
+            throw new CredentialException(CredentialException.ErrorCode.USERNAME_ALREADY_USED);
+        r.processSignupRequest(subscriptions);
+        this.usersRepo.add(UserRepository.createUserRepository(r));
     }
     
-    private void setup(){
-        this.files.add(new File(CUSTOMER_FILE));
-    }
-        
-    @Override
-    public boolean addNewCustomer(UserRequest r) throws CredentialException {
-        try {
-            if(existsCustomerRepository(r))
-                throw new CredentialException(CredentialException.ErrorCode.USERNAME_ALREADY_USED);
-            r.addNewCustomerToCustomerFile(getFileByName(CUSTOMER_FILE));
-            this.usersRepo.add(UserRepository.createUserRepository(r));
-        } catch (FileNotFoundException ex) {
-            System.err.println("File: \"" + CUSTOMER_FILE + "\" not found");
-            System.exit(-1);
-        }
-        
-        return true;
-    }
-    
-    private File getFileByName(String filename) throws FileNotFoundException{
-        for(File f : files)
-            if(f.getName().equals(filename))
-                return f;
-        throw new FileNotFoundException(filename);
-    }
-
-    @Override
-    public boolean existsCustomerRepository(UserRequest req) {
-        return this.usersRepo.stream()
-                             .anyMatch((r) -> (r.matchOwner(req.getUserProperty(UserProperty.USERNAME))));
-    }
-
     @Override
     public boolean isSignedUp(UserRequest r) {
         for(UserRepository repo : this.usersRepo)
             if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
-                return repo.verifyTransactionExistence(r.createTransaction());
+                return repo.verifyExistanceOfOneAndOnlyOneSignupTransaction();
         return false;
     }
-        
+            
 }

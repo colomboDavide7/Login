@@ -13,6 +13,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import login.SystemProperty;
+import login.tools.ParserScheme;
 import login.tools.UserProperty;
 import login.users.UserRequest;
 
@@ -28,13 +30,14 @@ public class UserRepository {
     
     private File repository;
     private String ownerUser;
-    private List<String> lines;
+    private boolean created = false;
+    private List<String> transactions = new ArrayList<>();
     
     private UserRepository(UserRequest r){
         ownerUser = r.getUserProperty(UserProperty.USERNAME);
         repository = new File(ownerUser + ".txt");
         addTransaction(r.createTransaction());
-        lines = new ArrayList<>();
+        created = true;
     }
     
 // ====================================================================================
@@ -42,7 +45,7 @@ public class UserRepository {
     public final void addTransaction(String transaction){
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(this.repository, true));
+            writer = new BufferedWriter(new FileWriter(this.repository, created));
             writer.append(transaction);
             writer.newLine();
             writer.close();
@@ -56,6 +59,9 @@ public class UserRepository {
                     System.err.println("Error closing the writer\n");
             }
         }
+        
+        // Update the file content
+        openAndReadTextFile();
     }
     
     public boolean matchOwner(String toMatch){
@@ -65,10 +71,22 @@ public class UserRepository {
 // ====================================================================================
     // Verify
     public boolean verifyTransactionExistence(String transaction){
-        return openAndReadTextFile(transaction);
+        return transactions.stream().anyMatch((t) -> (t.equals(transaction)));
     }
     
-    private boolean openAndReadTextFile(String transaction){
+    public boolean verifyExistanceOfOneAndOnlyOneSignupTransaction(){
+        int counter = 0;
+        for(String line : transactions){
+            System.out.println("t: " + line);
+            if(matchRequestType(line, UserRequest.RequestType.SIGN_UP))
+                counter++;
+        }
+        
+        System.out.println("counter = " + counter);
+        return (counter == 1);
+    }
+    
+    private void openAndReadTextFile(){
         BufferedReader reader = null;
         String line;
         try {
@@ -79,10 +97,7 @@ public class UserRepository {
                     reader.close();
                     break;
                 }
-                
-                if(line.equals(transaction))
-                    return true;
-                
+                this.transactions.add(line);
             }
             
         } catch (IOException ex) { 
@@ -95,8 +110,22 @@ public class UserRepository {
                     System.err.println("Error closing the stream\n");
             }
         }
-        
-        return false;
     }
+    
+    private boolean matchRequestType(String line, UserRequest.RequestType t){
+        return getTransactionValueByKey(line, SystemProperty.TRANSACTION_TYPE.name())
+               .equals(t.name());
+    }
+    
+    private String getTransactionValueByKey(String transaction, String key){
+        for(String keyValuePair : transaction.split(ParserScheme.VALID.getPropertySeparator())){
+            String[] tokens = keyValuePair.split(ParserScheme.VALID.getKeyValueSeparator());
+            if(tokens[0].equals(key))
+                return tokens[1];
+        }
+        return "";
+    }
+    
+// ====================================================================================
     
 }
