@@ -37,7 +37,9 @@ public class AppRepository implements IAppRepository {
             throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
         if(isSignedUp(r))
-            throw new CredentialException(CredentialException.ErrorCode.USERNAME_ALREADY_USED);
+            throw new CredentialException(
+                    CredentialException.ErrorCode.USERNAME_ALREADY_USED, UserProperty.USERNAME
+            );
         
         r.processSignupRequest(subscriptions, isAppendMode);
         this.usersRepo.add(UserRepository.createUserRepository(r));

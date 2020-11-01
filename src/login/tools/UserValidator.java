@@ -5,12 +5,7 @@
  */
 package login.tools;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Iterator;
-import login.users.UserRequest;
 import login.tools.CredentialException.ErrorCode;
-import login.users.IUser;
 
 /**
  *
@@ -23,7 +18,7 @@ public class UserValidator {
     public static boolean isValidUsername(String username) throws CredentialException {
         if(username.isEmpty() || !Character.isLetter(username.charAt(0)) || 
            username.contains(" "))
-            throw new CredentialException(ErrorCode.INVALID_USERNAME);
+            throw new CredentialException(ErrorCode.INVALID_USERNAME, UserProperty.USERNAME);
         return true;
     }
     
@@ -33,15 +28,8 @@ public class UserValidator {
            !testString(input -> Character.isLetter(input), pwd)    ||
            !testString(input -> findSymbol(input), pwd)            ||
            pwd.isEmpty())
-            throw new CredentialException(ErrorCode.INVALID_PASSWORD);
+            throw new CredentialException(ErrorCode.INVALID_PASSWORD, UserProperty.PASSWORD);
         return true;
-    }
-    
-    public static boolean isSignedUp(Iterator<IUser> userIter, UserRequest r) throws CredentialException {
-        for (; userIter.hasNext(); )
-            if(r.matchUser(userIter.next()))
-                throw new CredentialException(ErrorCode.USERNAME_ALREADY_USED);
-        return false;
     }
     
 // ================================================================================

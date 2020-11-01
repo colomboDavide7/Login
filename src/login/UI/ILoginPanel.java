@@ -5,8 +5,10 @@
  */
 package login.UI;
 
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
+import login.tools.UserProperty;
 
 /**
  *
@@ -21,5 +23,7 @@ public interface ILoginPanel {
     String getPasswordField();
     
     JTextArea getErrorArea();
+    
+    void highlightMissing(List<UserProperty> missing);
     
 }

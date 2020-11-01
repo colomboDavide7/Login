@@ -55,7 +55,9 @@ public enum UserProperty {
         List<UserProperty> missing = new ArrayList<>();
         for(UserProperty p : priority.keySet())
             if(priority.get(p).equals(MANDATORY))
-                if(!mandatoryPropertyFound(p, basicProp) || mandatoryFoundButEmpty(p, basicProp))
+                if(!mandatoryPropertyFound(p, basicProp) || 
+                   mandatoryFoundButEmpty(p, basicProp) || 
+                   mandatoryFoundButNotCompiled(p, basicProp))
                     missing.add(p);
         return missing;
     }
@@ -71,6 +73,15 @@ public enum UserProperty {
     ){
         if(basicProp.containsKey(mandatoryProp))
             if(basicProp.get(mandatoryProp).isEmpty())
+                return true;
+        return false;
+    }
+    
+    private static boolean mandatoryFoundButNotCompiled(
+            UserProperty p, Map<UserProperty, String> basicProp
+    ){
+        if(basicProp.containsKey(p))
+            if(basicProp.get(p).equals(p.name()))
                 return true;
         return false;
     }

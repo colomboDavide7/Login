@@ -62,7 +62,7 @@ public class SignupForm implements ISignupForm {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if(c.getText().isEmpty())
+                if(c.getText().isEmpty() && p != UserProperty.PASSWORD)
                     c.setText(p.name());
             }
         });

@@ -5,7 +5,6 @@
  */
 package login;
 
-import login.repository.AppRepository;
 import login.repository.TransactionException;
 import login.tools.CredentialException;
 import login.users.UserRequest;
@@ -16,12 +15,10 @@ import login.users.UserRequest;
  */
 public class Application implements IAppModel {
     
-    private AppRepository repository;
     private AppManager manager;
       
-    public Application(AppManager manager, AppRepository repo){
+    public Application(AppManager manager){
         this.manager    = manager;
-        this.repository = repo;
     }
     
     @Override

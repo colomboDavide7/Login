@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.List;
 import javafx.scene.layout.Border;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -121,7 +122,7 @@ public class LoginPanel extends JPanel implements ILoginPanel {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if(c.getText().isEmpty())
+                if(c.getText().isEmpty() && p != UserProperty.PASSWORD)
                     c.setText(p.name());
             }
         });
@@ -195,6 +196,17 @@ public class LoginPanel extends JPanel implements ILoginPanel {
     @Override
     public JTextArea getErrorArea() {
         return this.errorCommunicationField;
+    }
+
+    @Override
+    public void highlightMissing(List<UserProperty> missing) {
+        for(UserProperty p : missing)
+            System.out.println("missing = " + p);
+
+        if(missing.contains(UserProperty.USERNAME))
+            this.username.setBorder(BorderFactory.createEtchedBorder(Color.RED, Color.RED));
+        if(missing.contains(UserProperty.PASSWORD))
+            this.pwd.setBorder(BorderFactory.createEtchedBorder(Color.RED, Color.RED)); 
     }
     
 }

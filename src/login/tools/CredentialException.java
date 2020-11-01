@@ -5,8 +5,6 @@
  */
 package login.tools;
 
-import java.awt.Color;
-
 /**
  *
  * @author davidecolombo
@@ -17,10 +15,12 @@ public class CredentialException extends Exception {
         USERNAME_ALREADY_USED, INVALID_PASSWORD, INVALID_USERNAME;
     }
     
+    private UserProperty wrong;
     private ErrorCode errorCode;
     
-    public CredentialException(ErrorCode code){
+    public CredentialException(ErrorCode code, UserProperty wrong){
         this.errorCode = code;
+        this.wrong = wrong;
     }
     
     public ErrorCode getErrorCode(){
@@ -43,6 +43,10 @@ public class CredentialException extends Exception {
             default:
                 return String.format("ErrorCode \"%s\" not found", this.errorCode.name());
         }
+    }
+    
+    public UserProperty getWrongField(){
+        return this.wrong;
     }
     
 }

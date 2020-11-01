@@ -7,6 +7,7 @@ package login.controllers;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
@@ -65,6 +66,7 @@ public class UIController {
                 this.ui.getSignupPanel().highlightMissing(ex.getMissingMandatoryList());
             } catch (CredentialException ex) {
                 this.setSignupMessageTextAndColor(ex.getErrorMessage(), Color.red);
+                this.ui.getSignupPanel().highlightMissing(Arrays.asList(ex.getWrongField()));
             }
         });
     }
@@ -80,7 +82,8 @@ public class UIController {
                 );
                 this.setLoginMessageTextAndColor("Successfully logged in", Color.GREEN);
             } catch (CustomerCreationException ex) {
-                this.setLoginMessageTextAndColor("An error has occurred during the customer creation process", Color.red);
+                this.setLoginMessageTextAndColor("Missing mandatory", Color.RED);
+                this.ui.getLoginPanel().highlightMissing(ex.getMissingMandatoryList());
             } catch (TransactionException ex) {
                 this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.red);
             }
