@@ -7,8 +7,7 @@ package login;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import login.repository.AppRepository;
 import login.repository.IAppRepository;
 import login.repository.TransactionException;
 import login.tools.CredentialException;
@@ -24,7 +23,7 @@ import login.users.IUser;
 public class ApplicationManager {
         
     private List<IUser> users = new ArrayList<>();
-    private IAppRepository repo;
+    private IAppRepository repo = new AppRepository();
     
     public void parseSignUpRequest(UserRequest r) throws CredentialException {
         try {
@@ -38,25 +37,8 @@ public class ApplicationManager {
         }
     }
     
-    public IUser parseLoginRequest(UserRequest r) throws TransactionException {
-        for(IUser u : users)
-            if(matchUsernameProperty(u, r))
-                if(matchPasswordProperty(u, r))
-                    if(u.isLoggedOut())
-                        return u.login();
-                    else
-                        throw new TransactionException(TransactionException.ErrorCode.ALREADY_LOGGED_IN);
-                else
-                    throw new TransactionException(TransactionException.ErrorCode.WRONG_PASSWORD);
-        throw new TransactionException(TransactionException.ErrorCode.NOT_SIGNED_UP);
-    }
-    
-    private boolean matchUsernameProperty(IUser u, UserRequest r){
-        return r.matchUserProperty(UserProperty.USERNAME, u.getProperty(UserProperty.USERNAME));
-    }
-    
-    private boolean matchPasswordProperty(IUser u, UserRequest r){
-        return r.matchUserProperty(UserProperty.PASSWORD, u.getProperty(UserProperty.PASSWORD));
+    public void parseLoginRequest(UserRequest r) throws TransactionException {
+        this.repo.login(r);
     }
     
     public IUser parseLogoutRequest(UserRequest r) throws TransactionException {
@@ -68,19 +50,9 @@ public class ApplicationManager {
                     throw new TransactionException(TransactionException.ErrorCode.NOT_LOGGED_IN);
         throw new TransactionException(TransactionException.ErrorCode.NOT_SIGNED_UP);
     }
-    
-    public boolean isLoggedIn(IUser u){
-        for(IUser user : users)
-            if(user.matchProperty(UserProperty.USERNAME, u.getProperty(UserProperty.USERNAME)))
-                return user.isLogged();
-        return false;
-    }
-    
-    public boolean isLoggedOut(IUser u){
-        for(IUser user : users)
-            if(user.matchProperty(UserProperty.USERNAME, u.getProperty(UserProperty.USERNAME)))
-                return user.isLoggedOut();
-        return false;
+        
+    private boolean matchUsernameProperty(IUser u, UserRequest r){
+        return r.matchUserProperty(UserProperty.USERNAME, u.getProperty(UserProperty.USERNAME));
     }
     
 }

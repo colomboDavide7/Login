@@ -38,25 +38,28 @@ public class CustomerTest {
     
 // ================================================================================
     // User registration
-    @Test
-    public void shouldSignUpNewUser() throws TransactionException, CredentialException, CustomerCreationException {
-        System.out.println("* User SignUp: shouldSignUpNewUser()\n");
-        String username = "valid";
-        String pwd      = "Test_1";
-        String firstName = "Mario";
-        String lastName = "Rossi";
-        Map<UserProperty, String> basicProperties = new HashMap<>();
-        basicProperties.put(UserProperty.USERNAME, username);
-        basicProperties.put(UserProperty.PASSWORD, pwd);
-        basicProperties.put(UserProperty.FIRST_NAME, firstName);
-        basicProperties.put(UserProperty.LAST_NAME, lastName);
-        
-        IUser customer = User.getBasicUser(basicProperties);
-        UserRequest sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
-        this.manager.parseSignUpRequest(sign);
-        IUser searchedUser = manager.parseLoginRequest(sign);
-        Assert.assertTrue(customer.equals(searchedUser));
-    }
+    
+    // This test is already covered in FileParserTest
+//    @Deprecated
+//    @Test
+//    public void shouldSignUpNewUser() throws TransactionException, CredentialException, CustomerCreationException {
+//        System.out.println("* User SignUp: shouldSignUpNewUser()\n");
+//        String username = "valid";
+//        String pwd      = "Test_1";
+//        String firstName = "Mario";
+//        String lastName = "Rossi";
+//        Map<UserProperty, String> basicProperties = new HashMap<>();
+//        basicProperties.put(UserProperty.USERNAME, username);
+//        basicProperties.put(UserProperty.PASSWORD, pwd);
+//        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+//        basicProperties.put(UserProperty.LAST_NAME, lastName);
+//        
+//        IUser customer = User.getBasicUser(basicProperties);
+//        UserRequest sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
+//        this.manager.parseSignUpRequest(sign);
+//        IUser searchedUser = manager.parseLoginRequest(sign);
+//        Assert.assertTrue(customer.equals(searchedUser));
+//    }
     
     @Test
     public void shouldRejectUserWithSameName() throws TransactionException, CustomerCreationException {
@@ -85,29 +88,31 @@ public class CustomerTest {
         }
     }
     
-    @Test
-    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws CredentialException, TransactionException, CustomerCreationException{
-        System.out.println("* User SignUp: shouldHaveTheLoggedInStateOnAfterLogin()\n");
-        String username = "valid";
-        String pwd      = "Test_1";
-        String firstName = "Mario";
-        String lastName = "Rossi";
-        Map<UserProperty, String> basicProperties = new HashMap<>();
-        basicProperties.put(UserProperty.USERNAME, username);
-        basicProperties.put(UserProperty.PASSWORD, pwd);
-        basicProperties.put(UserProperty.FIRST_NAME, firstName);
-        basicProperties.put(UserProperty.LAST_NAME, lastName);
-        
-        IUser customer = User.getBasicUser(basicProperties);
-        UserRequest r = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
-        this.manager.parseSignUpRequest(r);
-        boolean isLogged = this.manager.isLoggedIn(customer);
-        boolean isLoggedOut = this.manager.isLoggedOut(customer);
-        
-        // Put the double assertion in order to be sure that the test will fail.
-        Assert.assertFalse(isLogged);
-        Assert.assertTrue(isLoggedOut);
-    }
+    // This test is already covered in FileParserTest
+//    @Deprecated
+//    @Test
+//    public void shouldHaveTheLoggedOutStateAfterSigningUp() throws CredentialException, TransactionException, CustomerCreationException{
+//        System.out.println("* User SignUp: shouldHaveTheLoggedInStateOnAfterLogin()\n");
+//        String username = "valid";
+//        String pwd      = "Test_1";
+//        String firstName = "Mario";
+//        String lastName = "Rossi";
+//        Map<UserProperty, String> basicProperties = new HashMap<>();
+//        basicProperties.put(UserProperty.USERNAME, username);
+//        basicProperties.put(UserProperty.PASSWORD, pwd);
+//        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+//        basicProperties.put(UserProperty.LAST_NAME, lastName);
+//        
+//        IUser customer = User.getBasicUser(basicProperties);
+//        UserRequest r = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
+//        this.manager.parseSignUpRequest(r);
+//        boolean isLogged = this.manager.isLoggedIn(customer);
+//        boolean isLoggedOut = this.manager.isLoggedOut(customer);
+//        
+//        // Put the double assertion in order to be sure that the test will fail.
+//        Assert.assertFalse(isLogged);
+//        Assert.assertTrue(isLoggedOut);
+//    }
     
 // ================================================================================
     // User login
@@ -192,26 +197,29 @@ public class CustomerTest {
         }
     }
     
-    @Test
-    public void shouldBeSuccessfullyLoggedIn() throws CredentialException, TransactionException, CustomerCreationException{
-        System.out.println("* User Login: shouldBeSuccessfullLogin()\n");
-        String username = "valid";
-        String pwd      = "Test_1";
-        String firstName = "Mario";
-        String lastName = "Rossi";
-        Map<UserProperty, String> basicProperties = new HashMap<>();
-        basicProperties.put(UserProperty.USERNAME, username);
-        basicProperties.put(UserProperty.PASSWORD, pwd);
-        basicProperties.put(UserProperty.FIRST_NAME, firstName);
-        basicProperties.put(UserProperty.LAST_NAME, lastName);
-        IUser basicUser = User.getBasicUser(basicProperties);
-        UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
-        this.manager.parseSignUpRequest(sign);
-        
-        UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
-        IUser loggedIn = this.manager.parseLoginRequest(login);
-        Assert.assertTrue(loggedIn.isLogged());
-    }   
+    
+    // This test is already covered in FileParserTest
+//    @Deprecated
+//    @Test
+//    public void shouldBeSuccessfullyLoggedIn() throws CredentialException, TransactionException, CustomerCreationException{
+//        System.out.println("* User Login: shouldBeSuccessfullLogin()\n");
+//        String username = "valid";
+//        String pwd      = "Test_1";
+//        String firstName = "Mario";
+//        String lastName = "Rossi";
+//        Map<UserProperty, String> basicProperties = new HashMap<>();
+//        basicProperties.put(UserProperty.USERNAME, username);
+//        basicProperties.put(UserProperty.PASSWORD, pwd);
+//        basicProperties.put(UserProperty.FIRST_NAME, firstName);
+//        basicProperties.put(UserProperty.LAST_NAME, lastName);
+//        IUser basicUser = User.getBasicUser(basicProperties);
+//        UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+//        this.manager.parseSignUpRequest(sign);
+//        
+//        UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
+//        IUser loggedIn = this.manager.parseLoginRequest(login);
+//        Assert.assertTrue(loggedIn.isLogged());
+//    }   
     
     @Test
     public void shouldRefuseLoginRequestWhenAlreadyLoggedIn() throws CredentialException, TransactionException{
