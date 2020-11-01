@@ -17,6 +17,6 @@ public interface IUser extends ILogin, IComparable, IUserDate {
     
     String getProperty(UserProperty key);
 
-    StringBuilder createRecord();
+    String createRecord();
     
 }

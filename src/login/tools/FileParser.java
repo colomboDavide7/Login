@@ -12,8 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import login.users.IUser;
 
 /**
@@ -23,8 +21,10 @@ import login.users.IUser;
 public class FileParser {
     
     private static ParserScheme currentScheme = ParserScheme.VALID;
-    private static File customerFile = new File("user1.txt");
+    private static File customerFile = new File("customer_repo.txt");
     
+// ================================================================================
+    // Record validation
     public static boolean isValidRecord(String customerRecord) throws ParserSchemeException{
         if(!customerRecord.contains(currentScheme.getPropertySeparator()))
             throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_SCHEME);
@@ -36,22 +36,33 @@ public class FileParser {
         return true;
     }
     
+// ================================================================================
+    // Writing a new record
     public static void addNewCustomer(IUser newCustomer){
-        
+        BufferedWriter writer = null;
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(customerFile));
+            writer = new BufferedWriter(new FileWriter(customerFile));
+            writer.append(newCustomer.createRecord());
+            writer.newLine();
+            writer.close();
         } catch (IOException ex) {
-            
+            System.err.println("Error writing a record\n");
+        }finally{
+            if(writer != null)
+                try {
+                    writer.close();
+            } catch (IOException ex) {
+                    System.err.println("Error closing the writer\n");
+            }
         }
     }
     
-    private StringBuilder createUserRecord(IUser newCustomer){
-        StringBuilder sb = new StringBuilder();
-        
-        return sb;
+    public static boolean searchProperty(UserProperty p, String value) throws FileNotFoundException, ParserSchemeException{
+        return parseFile(customerFile, p, value);
     }
     
-    
+// ================================================================================
+    // Parse property
     public static boolean parseFile(File toParse, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException {
         if(!toParse.exists())
             throw new FileNotFoundException("toParse = " + toParse);
@@ -103,8 +114,11 @@ public class FileParser {
         return false;
     }
     
+// ================================================================================
     public static ParserScheme getDefaultParserScheme(){
         return ParserScheme.VALID;
     }    
+    
+// ================================================================================
     
 }

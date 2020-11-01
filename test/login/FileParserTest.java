@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.tools.FileParser;
 import login.tools.ParserScheme;
 import login.tools.ParserSchemeException;
@@ -110,45 +112,41 @@ public class FileParserTest {
             
         try {
             IUser newCustomer = User.getBasicUser(basicProperties);
-            StringBuilder sb = newCustomer.createRecord();
-            boolean isValid = FileParser.isValidRecord(sb.toString());
+            boolean isValid = FileParser.isValidRecord(newCustomer.createRecord());
             assertTrue(isValid);
         } catch (CustomerCreationException | ParserSchemeException ex) {
             assertFalse(true);
         }
         
     }
+       
+    @Test
+    public void shouldInsertNewCustomerInDatabase(){
+        System.out.println("* File Parser: shouldInsertNewCustomerInDatabase()\n");
+        String username  = "newCustomer";
+        String pwd       = "Test1!";
+        String firstName = "new";
+        String lastName  = "customer";
+        
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, username);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+            basicProperties.put(UserProperty.LAST_NAME, lastName);
             
-            
-//    @Test
-//    public void shouldInsertNewCustomerInDatabase(){
-//        System.out.println("* File Parser: shouldInsertNewCustomerInDatabase()\n");
-//        File f = new File("user1.txt");
-//        
-//        String username  = "newCustomer";
-//        String pwd       = "Test1!";
-//        String firstName = "new";
-//        String lastName  = "customer";
-//        
-//        Map<UserProperty, String> basicProperties = new HashMap<>();
-//            basicProperties.put(UserProperty.USERNAME, username);
-//            basicProperties.put(UserProperty.PASSWORD, pwd);
-//            basicProperties.put(UserProperty.FIRST_NAME, firstName);
-//            basicProperties.put(UserProperty.LAST_NAME, lastName);
-//            
-//        try {
-//            IUser newCustomer = User.getBasicUser(basicProperties);
-//            FileParser.addNewCustomer(newCustomer);
-//            FileParser.searchProperty(UserProperty.USERNAME, username);
-//            FileParser.searchProperty(UserProperty.PASSWORD, pwd);
-//            FileParser.searchProperty(UserProperty.FIRST_NAME, firstName);
-//            FileParser.searchProperty(UserProperty.LAST_NAME, lastName);
-//            
-//        } catch (CustomerCreationException ex) {
-//            assertFalse(true);
-//        }
-//        
-//    }
+        try {
+            IUser newCustomer = User.getBasicUser(basicProperties);
+            FileParser.addNewCustomer(newCustomer);
+            boolean find = FileParser.searchProperty(UserProperty.USERNAME, username) &&
+                           FileParser.searchProperty(UserProperty.PASSWORD, pwd)      &&
+                           FileParser.searchProperty(UserProperty.FIRST_NAME, firstName) &&
+                           FileParser.searchProperty(UserProperty.LAST_NAME, lastName);
+            assertTrue(find);
+        } catch (CustomerCreationException | FileNotFoundException | ParserSchemeException ex) {
+            assertFalse(true);
+        }
+        
+    }
     
 // ====================================================================================
     private List<String> openAndReadedTextFile(File f){

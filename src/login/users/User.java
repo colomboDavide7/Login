@@ -19,17 +19,6 @@ import login.tools.UserProperty;
  */
 public class User implements IUser {
 
-    @Override
-    public StringBuilder createRecord() {
-        StringBuilder sb = new StringBuilder();
-        this.properties.keySet().forEach((p) -> {
-            sb.append(p.name())
-                    .append(ParserScheme.VALID.getKeyValueSeparator())
-                    .append(properties.get(p))
-                    .append(ParserScheme.VALID.getPropertySeparator());
-        });
-        return sb;
-    }
 
     public enum UserState{
         LOGGED_IN, LOGGED_OUT;
@@ -133,6 +122,19 @@ public class User implements IUser {
     @Override
     public DateTimeFormatter getFormatter(){
         return this.formatter;
+    }
+    
+// ================================================================================
+    @Override
+    public String createRecord() {
+        StringBuilder sb = new StringBuilder();
+        this.properties.keySet().forEach((p) -> {
+            sb.append(p.name())
+                    .append(ParserScheme.VALID.getKeyValueSeparator())
+                    .append(properties.get(p))
+                    .append(ParserScheme.VALID.getPropertySeparator());
+        });
+        return sb.toString();
     }
     
 // ================================================================================
