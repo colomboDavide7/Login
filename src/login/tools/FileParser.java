@@ -6,10 +6,15 @@
 package login.tools;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import login.users.IUser;
 
 /**
  *
@@ -18,6 +23,34 @@ import java.io.IOException;
 public class FileParser {
     
     private static ParserScheme currentScheme = ParserScheme.VALID;
+    private static File customerFile = new File("user1.txt");
+    
+    public static boolean isValidRecord(String customerRecord) throws ParserSchemeException{
+        if(!customerRecord.contains(currentScheme.getPropertySeparator()))
+            throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_SCHEME);
+        
+        String[] keyValuePairs = customerRecord.split(currentScheme.getPropertySeparator());
+        for(String p : keyValuePairs)
+            if(!p.contains(currentScheme.getKeyValueSeparator()))
+                throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_KEY_VALUE_SEPARATOR);
+        return true;
+    }
+    
+    public static void addNewCustomer(IUser newCustomer){
+        
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(customerFile));
+        } catch (IOException ex) {
+            
+        }
+    }
+    
+    private StringBuilder createUserRecord(IUser newCustomer){
+        StringBuilder sb = new StringBuilder();
+        
+        return sb;
+    }
+    
     
     public static boolean parseFile(File toParse, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException {
         if(!toParse.exists())
@@ -44,23 +77,22 @@ public class FileParser {
             
         } catch (IOException ex) { 
             
+        }finally{
+            if(reader != null)
+                try {
+                    reader.close();
+            } catch (IOException ex) {
+                    System.err.println("Error closing the stream\n");
+            }
         }
         
         return false;
     }
     
     private static boolean parseLine(String line, UserProperty toMatch, String value) throws ParserSchemeException {
-        if(!line.contains(currentScheme.getPropertySeparator()))
-            throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_SCHEME);
-        
-        String[] customerProperties = line.split(currentScheme.getPropertySeparator());
-        for(String p : customerProperties){
-            if(!p.contains(currentScheme.getKeyValueSeparator()))
-                throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_KEY_VALUE_SEPARATOR);
-            if(parseProperty(p.split(currentScheme.getKeyValueSeparator()), toMatch, value))
+        for(String keyValuePair : line.split(currentScheme.getPropertySeparator()))
+            if(parseProperty(keyValuePair.split(currentScheme.getKeyValueSeparator()), toMatch, value))
                 return true;
-        }
-        
         return false;
     }
     

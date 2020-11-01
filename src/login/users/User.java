@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import login.tools.ParserScheme;
 import login.tools.UserProperty;
 
 /**
@@ -17,6 +18,18 @@ import login.tools.UserProperty;
  * @author davidecolombo
  */
 public class User implements IUser {
+
+    @Override
+    public StringBuilder createRecord() {
+        StringBuilder sb = new StringBuilder();
+        this.properties.keySet().forEach((p) -> {
+            sb.append(p.name())
+                    .append(ParserScheme.VALID.getKeyValueSeparator())
+                    .append(properties.get(p))
+                    .append(ParserScheme.VALID.getPropertySeparator());
+        });
+        return sb;
+    }
 
     public enum UserState{
         LOGGED_IN, LOGGED_OUT;
