@@ -9,13 +9,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserSchemeException;
 import login.tools.UserProperty;
-import login.tools.UserValidator;
 import login.users.UserRequest;
 
 
@@ -39,9 +36,9 @@ public class AppRepository implements IAppRepository {
     }
     
     @Override
-    public boolean searchCustomerProperty(UserProperty p, String value) {
+    public boolean existsCustomerProperty(UserProperty p, String value) {
         try {
-            return FileParser.searchProperty(getFileByName(CUSTOMER_FILE), p, value);
+            return FileParser.existsProperty(getFileByName(CUSTOMER_FILE), p, value);
         } catch (FileNotFoundException ex) {
             System.err.println("File: \"" + CUSTOMER_FILE + "\" not found");
             System.exit(-1);
@@ -52,18 +49,11 @@ public class AppRepository implements IAppRepository {
         return false;
     }
     
-    private File getFileByName(String filename) throws FileNotFoundException{
-        for(File f : files)
-            if(f.getName().equals(filename))
-                return f;
-        throw new FileNotFoundException(filename);
-    }
-
     @Override
     public boolean addNewCustomer(UserRequest r) throws CredentialException {
         try {
             
-            if(FileParser.searchProperty(
+            if(FileParser.existsProperty(
                     getFileByName(CUSTOMER_FILE), 
                     UserProperty.USERNAME, 
                     r.getUserProperty(UserProperty.USERNAME)
@@ -81,4 +71,12 @@ public class AppRepository implements IAppRepository {
         
         return true;
     }
+    
+    private File getFileByName(String filename) throws FileNotFoundException{
+        for(File f : files)
+            if(f.getName().equals(filename))
+                return f;
+        throw new FileNotFoundException(filename);
+    }
+        
 }

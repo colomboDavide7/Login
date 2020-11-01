@@ -86,9 +86,9 @@ public class FileParserTest {
         File f = new File("user1.txt");
         
         try{
-            boolean match = FileParser.searchProperty(f, UserProperty.USERNAME, toMatch);
+            boolean match = FileParser.existsProperty(f, UserProperty.USERNAME, toMatch);
             assertTrue(match);
-            match = FileParser.searchProperty(f, UserProperty.USERNAME, "notPresent");
+            match = FileParser.existsProperty(f, UserProperty.USERNAME, "notPresent");
             assertFalse(match);
         }catch(ParserSchemeException | FileNotFoundException ex){
             assertTrue(false);
@@ -119,11 +119,11 @@ public class FileParserTest {
                     )
             );
             
-            boolean find = FileParser.searchProperty(f, UserProperty.USERNAME, newCustomer.getProperty(UserProperty.USERNAME)) &&
-                           FileParser.searchProperty(f, UserProperty.PASSWORD, newCustomer.getProperty(UserProperty.PASSWORD))      &&
-                           FileParser.searchProperty(f, UserProperty.FIRST_NAME, newCustomer.getProperty(UserProperty.FIRST_NAME)) &&
-                           FileParser.searchProperty(f, UserProperty.LAST_NAME, newCustomer.getProperty(UserProperty.LAST_NAME));
-            assertTrue(find);
+            boolean exists = FileParser.existsProperty(f, UserProperty.USERNAME, newCustomer.getProperty(UserProperty.USERNAME)) &&
+                           FileParser.existsProperty(f, UserProperty.PASSWORD, newCustomer.getProperty(UserProperty.PASSWORD))      &&
+                           FileParser.existsProperty(f, UserProperty.FIRST_NAME, newCustomer.getProperty(UserProperty.FIRST_NAME)) &&
+                           FileParser.existsProperty(f, UserProperty.LAST_NAME, newCustomer.getProperty(UserProperty.LAST_NAME));
+            assertTrue(exists);
         } catch (CustomerCreationException | FileNotFoundException | ParserSchemeException ex) {
             assertFalse(true);
         } catch (CredentialException ex) {
@@ -157,7 +157,43 @@ public class FileParserTest {
         }
         
     }
+    
+    @Test
+    public void shouldContainTwoUsersInDatabase(){
+        System.out.println("* File Parser: shouldContainTwoUsersInDatabase()\n");
+        try {
+            IUser newCustomer1 = this.createValidUser();
+            this.repo.addNewCustomer(
+                    UserRequest.createRequestByType(
+                            newCustomer1, UserRequest.RequestType.SIGN_UP
+                    )
+            );
             
+            IUser newCustomer2 = this.createSecondValidUser();
+            this.repo.addNewCustomer(
+                    UserRequest.createRequestByType(
+                            newCustomer2, UserRequest.RequestType.SIGN_UP
+                    )
+            );
+            
+            boolean exists1 = this.repo.existsCustomerProperty(UserProperty.USERNAME, newCustomer1.getProperty(UserProperty.USERNAME)) &&
+                           this.repo.existsCustomerProperty(UserProperty.PASSWORD, newCustomer1.getProperty(UserProperty.PASSWORD))      &&
+                           this.repo.existsCustomerProperty(UserProperty.FIRST_NAME, newCustomer1.getProperty(UserProperty.FIRST_NAME)) &&
+                           this.repo.existsCustomerProperty(UserProperty.LAST_NAME, newCustomer1.getProperty(UserProperty.LAST_NAME));
+            
+            boolean exists2 = this.repo.existsCustomerProperty(UserProperty.USERNAME, newCustomer2.getProperty(UserProperty.USERNAME)) &&
+                           this.repo.existsCustomerProperty(UserProperty.PASSWORD, newCustomer2.getProperty(UserProperty.PASSWORD))      &&
+                           this.repo.existsCustomerProperty(UserProperty.FIRST_NAME, newCustomer2.getProperty(UserProperty.FIRST_NAME)) &&
+                           this.repo.existsCustomerProperty(UserProperty.LAST_NAME, newCustomer2.getProperty(UserProperty.LAST_NAME));
+            assertTrue(exists1 && exists2);
+            
+        } catch (CustomerCreationException ex) {
+            assertTrue(false);
+        } catch (CredentialException ex) {
+            assertEquals(CredentialException.ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
+        }
+    }
+    
 // ====================================================================================
     // Stream opening logic
     private List<String> openAndReadedTextFile(File f){
@@ -218,6 +254,20 @@ public class FileParserTest {
         String pwd       = "Test1!";
         String firstName = "new";
         String lastName  = "customer";
+        
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, username);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+            basicProperties.put(UserProperty.LAST_NAME, lastName);
+        return User.getBasicUser(basicProperties);
+    }
+    
+    private IUser createSecondValidUser() throws CustomerCreationException{
+        String username  = "marioRossi99";
+        String pwd       = "Test1!";
+        String firstName = "Mario";
+        String lastName  = "Rossi";
         
         Map<UserProperty, String> basicProperties = new HashMap<>();
             basicProperties.put(UserProperty.USERNAME, username);

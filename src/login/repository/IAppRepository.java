@@ -15,7 +15,7 @@ import login.users.UserRequest;
  */
 public interface IAppRepository {
     
-    boolean searchCustomerProperty(UserProperty p, String value);
+    boolean existsCustomerProperty(UserProperty p, String value);
     
     boolean addNewCustomer(UserRequest r) throws CredentialException;
     
