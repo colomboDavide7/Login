@@ -12,7 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import login.users.IUser;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -21,28 +22,25 @@ import login.users.IUser;
 public class FileParser {
     
     private static ParserScheme currentScheme = ParserScheme.VALID;
-    private static File customerFile = new File("customer_repo.txt");
     
 // ================================================================================
     // Record validation
-    public static boolean isValidRecord(String customerRecord) throws ParserSchemeException{
+    public static boolean validateRecordScheme(String customerRecord) throws ParserSchemeException{
         if(!customerRecord.contains(currentScheme.getPropertySeparator()))
             throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_SCHEME);
-        
-        String[] keyValuePairs = customerRecord.split(currentScheme.getPropertySeparator());
-        for(String p : keyValuePairs)
-            if(!p.contains(currentScheme.getKeyValueSeparator()))
+        for(String keyValuePair : customerRecord.split(currentScheme.getPropertySeparator()))
+            if(!keyValuePair.contains(currentScheme.getKeyValueSeparator()))
                 throw new ParserSchemeException(ParserSchemeException.ErrorCode.WRONG_KEY_VALUE_SEPARATOR);
         return true;
     }
     
 // ================================================================================
     // Writing a new record
-    public static void addNewCustomer(File f, String customerRecord){
+    public static void appendRecord(File f, String record, boolean created){
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(f, true));
-            writer.append(customerRecord);
+            writer = new BufferedWriter(new FileWriter(f, created));
+            writer.append(record);
             writer.newLine();
             writer.close();
         } catch (IOException ex) {
@@ -58,18 +56,9 @@ public class FileParser {
     }
     
 // ================================================================================
-    // Parse property
-    public static boolean existsProperty(File f, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException{
-        return parseFile(f, p, value);
-    }
-    
-    private static boolean parseFile(File toParse, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException {
-        if(!toParse.exists())
-            throw new FileNotFoundException("toParse = " + toParse);
-        return openAndReadTextFile(toParse, p, value);
-    }
-    
-    private static boolean openAndReadTextFile(File f, UserProperty p, String value) throws ParserSchemeException {
+    // Open and read a text file
+    public static List<String> openAndReadTextFile(File f){
+        List<String> lines = new ArrayList<>();
         BufferedReader reader = null;
         String line;
         try {
@@ -80,9 +69,7 @@ public class FileParser {
                     reader.close();
                     break;
                 }
-                
-                if(parseLine(line, p, value))
-                    return true;
+                lines.add(line);
             }
             
         } catch (IOException ex) { 
@@ -95,22 +82,7 @@ public class FileParser {
                     System.err.println("Error closing the stream\n");
             }
         }
-        
-        return false;
-    }
-    
-    private static boolean parseLine(String line, UserProperty toMatch, String value) throws ParserSchemeException {
-        for(String keyValuePair : line.split(currentScheme.getPropertySeparator()))
-            if(parseProperty(keyValuePair.split(currentScheme.getKeyValueSeparator()), toMatch, value))
-                return true;
-        return false;
-    }
-    
-    private static boolean parseProperty(String[] keyValuePair, UserProperty p, String value){
-        if(keyValuePair[0].trim().equals(p.name()))
-            if(keyValuePair[1].trim().equals(value))
-                return true;
-        return false;
+        return lines;
     }
     
 // ================================================================================

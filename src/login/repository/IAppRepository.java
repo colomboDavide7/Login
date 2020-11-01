@@ -16,6 +16,10 @@ public interface IAppRepository {
         
     void addNewCustomer(UserRequest r) throws CredentialException;
     
+    void login(UserRequest r);
+    
     boolean isSignedUp(UserRequest r);
+    
+    boolean isLogged(UserRequest r);
     
 }

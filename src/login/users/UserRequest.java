@@ -58,8 +58,8 @@ public class UserRequest {
         list.add(this.u);
     }
     
-    public void processSignupRequest(File file){
-        FileParser.addNewCustomer(file, this.u.createRecord());
+    public void processSignupRequest(File file, boolean appendMode){
+        FileParser.appendRecord(file, this.u.createRecord(), appendMode);
     }
     
     public String createTransaction(){

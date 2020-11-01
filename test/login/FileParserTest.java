@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import login.repository.AppRepository;
 import login.repository.IAppRepository;
-import login.repository.QueryException;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserSchemeException;
@@ -57,7 +56,7 @@ public class FileParserTest {
         try{
             List<String> lines = this.openAndReadedTextFile(f);
             for(String l : lines)
-                FileParser.isValidRecord(l);
+                FileParser.validateRecordScheme(l);
             assertTrue(false);
         }catch(ParserSchemeException ex){
             assertEquals(ParserSchemeException.ErrorCode.WRONG_SCHEME, ex.getErrorCode());
@@ -72,7 +71,7 @@ public class FileParserTest {
         try{
             List<String> lines = this.openAndReadedTextFile(f);
             for(String l : lines)
-                FileParser.isValidRecord(l);
+                FileParser.validateRecordScheme(l);
             assertTrue(false);
         }catch(ParserSchemeException ex){
             assertEquals(ParserSchemeException.ErrorCode.WRONG_KEY_VALUE_SEPARATOR, ex.getErrorCode());
@@ -80,28 +79,28 @@ public class FileParserTest {
         
     }
     
-    @Test
-    public void shouldMatchUserNameProperty() {
-        System.out.println("* File Parser: shouldMatchUserNameProperty()\n");
-        String toMatch = "marioRossi";
-        File f = new File("user1.txt");
-        
-        try{
-            boolean match = FileParser.existsProperty(f, UserProperty.USERNAME, toMatch);
-            assertTrue(match);
-            match = FileParser.existsProperty(f, UserProperty.USERNAME, "notPresent");
-            assertFalse(match);
-        }catch(ParserSchemeException | FileNotFoundException ex){
-            assertTrue(false);
-        }
-    }
+//    @Test
+//    public void shouldMatchUserNameProperty() {
+//        System.out.println("* File Parser: shouldMatchUserNameProperty()\n");
+//        String toMatch = "marioRossi";
+//        File f = new File("user1.txt");
+//        
+//        try{
+//            boolean match = FileParser.existsProperty(f, UserProperty.USERNAME, toMatch);
+//            assertTrue(match);
+//            match = FileParser.existsProperty(f, UserProperty.USERNAME, "notPresent");
+//            assertFalse(match);
+//        }catch(ParserSchemeException | FileNotFoundException ex){
+//            assertTrue(false);
+//        }
+//    }
     
     @Test
     public void shouldValidateUserRecord(){
         System.out.println("* File Parser: shouldValidateUserRecord()\n");
         try {
             IUser newCustomer = this.createValidUser();
-            boolean isValid = FileParser.isValidRecord(newCustomer.createRecord());
+            boolean isValid = FileParser.validateRecordScheme(newCustomer.createRecord());
             assertTrue(isValid);
         } catch (CustomerCreationException | ParserSchemeException ex) {
             assertFalse(true);
@@ -203,6 +202,26 @@ public class FileParserTest {
             this.repo.addNewCustomer(r);
             boolean signedUp = this.repo.isSignedUp(r);
             assertTrue(signedUp);
+        } catch (CustomerCreationException | CredentialException ex) {
+            assertTrue(false);
+        }
+    }
+    
+    @Test
+    public void shouldSendLoginTransaction(){
+        System.out.println("* File Parser: shouldSendLoginTransaction()\n");
+        try {
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            UserRequest loginRequest = 
+                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGIN);
+            this.repo.login(loginRequest);
+            boolean logged = this.repo.isLogged(loginRequest);
+            assertTrue(logged);
         } catch (CustomerCreationException | CredentialException ex) {
             assertTrue(false);
         }

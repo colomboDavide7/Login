@@ -11,9 +11,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import login.SystemProperty;
+import login.tools.FileParser;
 import login.tools.ParserScheme;
 import login.tools.UserProperty;
 import login.users.UserRequest;
@@ -36,32 +38,16 @@ public class UserRepository {
     private UserRepository(UserRequest r){
         ownerUser = r.getUserProperty(UserProperty.USERNAME);
         repository = new File(ownerUser + ".txt");
-        addTransaction(r.createTransaction());
+        addTransaction(r);
         created = true;
     }
     
 // ====================================================================================
     // Add transaction logic
-    public final void addTransaction(String transaction){
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(this.repository, created));
-            writer.append(transaction);
-            writer.newLine();
-            writer.close();
-        } catch (IOException ex) {
-            System.err.println("Error writing a record\n");
-        }finally{
-            if(writer != null)
-                try {
-                    writer.close();
-            } catch (IOException ex) {
-                    System.err.println("Error closing the writer\n");
-            }
-        }
-        
+    public final void addTransaction(UserRequest r){
+        FileParser.appendRecord(repository, r.createTransaction(), created);
         // Update the file content
-        openAndReadTextFile();
+        this.transactions = FileParser.openAndReadTextFile(this.repository);
     }
     
     public boolean matchOwner(String toMatch){
@@ -76,40 +62,10 @@ public class UserRepository {
     
     public boolean verifyExistanceOfOneAndOnlyOneSignupTransaction(){
         int counter = 0;
-        for(String line : transactions){
-            System.out.println("t: " + line);
+        for(String line : transactions)
             if(matchRequestType(line, UserRequest.RequestType.SIGN_UP))
                 counter++;
-        }
-        
-        System.out.println("counter = " + counter);
         return (counter == 1);
-    }
-    
-    private void openAndReadTextFile(){
-        BufferedReader reader = null;
-        String line;
-        try {
-            reader = new BufferedReader(new FileReader(this.repository));
-            while(true){
-                line = reader.readLine();
-                if(line == null){
-                    reader.close();
-                    break;
-                }
-                this.transactions.add(line);
-            }
-            
-        } catch (IOException ex) { 
-            System.err.println("Error reading file: " + this.repository);
-        }finally{
-            if(reader != null)
-                try {
-                    reader.close();
-            } catch (IOException ex) {
-                    System.err.println("Error closing the stream\n");
-            }
-        }
     }
     
     private boolean matchRequestType(String line, UserRequest.RequestType t){
@@ -126,6 +82,31 @@ public class UserRepository {
         return "";
     }
     
+    public boolean verifyLastLoginTransactionDateAndTime(){
+        String t = findLatestTransaction();
+        String transactionType = getTransactionValueByKey(t, SystemProperty.TRANSACTION_TYPE.name());
+        return transactionType.equals(UserRequest.RequestType.LOGIN.name());
+    }
+    
+    private String findLatestTransaction(){
+        LocalDateTime latest = getTransactionTime(transactions.get(0));
+        String latestT = "";
+        for(String t : transactions)
+            if(getTransactionTime(t).isAfter(latest)){
+                latest = getTransactionTime(t);
+                latestT = t;
+            }
+        return latestT;
+    }
+    
+    private LocalDateTime getTransactionTime(String transaction){
+        return LocalDateTime.parse(
+                getTransactionValueByKey(
+                        transaction, SystemProperty.TRANSACTION_DATE_TIME.name()
+                )
+        );
+    }
+        
 // ====================================================================================
     
 }
