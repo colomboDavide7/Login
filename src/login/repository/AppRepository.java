@@ -33,7 +33,7 @@ public class AppRepository implements IAppRepository {
             
     @Override
     public void addNewCustomer(UserRequest r) throws CredentialException, TransactionException {
-        if(!isWrongRequestType(r, UserRequest.RequestType.SIGN_UP))
+        if(isWrongRequestType(r, UserRequest.RequestType.SIGN_UP))
             throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
         if(isSignedUp(r))
@@ -48,7 +48,7 @@ public class AppRepository implements IAppRepository {
    
     @Override
     public void login(UserRequest r) throws TransactionException {
-        if(!isWrongRequestType(r, UserRequest.RequestType.LOGIN))
+        if(isWrongRequestType(r, UserRequest.RequestType.LOGIN))
             throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
         if(isLogged(r))
@@ -82,7 +82,7 @@ public class AppRepository implements IAppRepository {
     }
     
     private boolean isWrongRequestType(UserRequest r, UserRequest.RequestType toMatch){
-        return r.matchType(toMatch);
+        return !r.matchType(toMatch);
     }
     
     private boolean isWrongPassword(UserRequest r){

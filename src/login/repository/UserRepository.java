@@ -88,8 +88,8 @@ public class UserRepository {
     }
     
     private String findLatestTransaction(){
-        LocalDateTime latest = getTransactionTime(transactions.get(0));
-        String latestT = "";
+        String latestT = transactions.get(0);
+        LocalDateTime latest = getTransactionTime(latestT);
         for(String t : transactions)
             if(getTransactionTime(t).isAfter(latest)){
                 latest = getTransactionTime(t);
