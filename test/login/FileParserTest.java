@@ -16,8 +16,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.repository.AppRepository;
 import login.repository.IAppRepository;
+import login.repository.QueryException;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserSchemeException;
@@ -131,7 +134,7 @@ public class FileParserTest {
         }
         
     }
-        
+    
     @Test
     public void shouldReturnUsernameAlreadyUsedError(){
         System.out.println("* File Parser: shouldReturnUsernameAlreadyUsedError()\n");
@@ -163,34 +166,37 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldContainTwoUsersInDatabase()\n");
         try {
             IUser newCustomer1 = this.createValidUser();
-            this.repo.addNewCustomer(
-                    UserRequest.createRequestByType(
-                            newCustomer1, UserRequest.RequestType.SIGN_UP
-                    )
-            );
+            UserRequest req1   = UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.SIGN_UP);
+            this.repo.addNewCustomer(req1);
             
             IUser newCustomer2 = this.createSecondValidUser();
-            this.repo.addNewCustomer(
-                    UserRequest.createRequestByType(
-                            newCustomer2, UserRequest.RequestType.SIGN_UP
-                    )
-            );
+            UserRequest req2   = UserRequest.createRequestByType(newCustomer2, UserRequest.RequestType.SIGN_UP);
+            this.repo.addNewCustomer(req2);
             
-            boolean exists1 = this.repo.existsCustomerProperty(UserProperty.USERNAME, newCustomer1.getProperty(UserProperty.USERNAME)) &&
-                           this.repo.existsCustomerProperty(UserProperty.PASSWORD, newCustomer1.getProperty(UserProperty.PASSWORD))      &&
-                           this.repo.existsCustomerProperty(UserProperty.FIRST_NAME, newCustomer1.getProperty(UserProperty.FIRST_NAME)) &&
-                           this.repo.existsCustomerProperty(UserProperty.LAST_NAME, newCustomer1.getProperty(UserProperty.LAST_NAME));
-            
-            boolean exists2 = this.repo.existsCustomerProperty(UserProperty.USERNAME, newCustomer2.getProperty(UserProperty.USERNAME)) &&
-                           this.repo.existsCustomerProperty(UserProperty.PASSWORD, newCustomer2.getProperty(UserProperty.PASSWORD))      &&
-                           this.repo.existsCustomerProperty(UserProperty.FIRST_NAME, newCustomer2.getProperty(UserProperty.FIRST_NAME)) &&
-                           this.repo.existsCustomerProperty(UserProperty.LAST_NAME, newCustomer2.getProperty(UserProperty.LAST_NAME));
+            boolean exists1 = this.repo.existsCustomerRepository(req1);
+            boolean exists2 = this.repo.existsCustomerRepository(req2);
             assertTrue(exists1 && exists2);
             
-        } catch (CustomerCreationException ex) {
+        } catch (CustomerCreationException | QueryException ex) {
             assertTrue(false);
         } catch (CredentialException ex) {
             assertEquals(CredentialException.ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
+        }
+    }
+    
+    @Test
+    public void shouldCreateUserRepository(){
+        System.out.println("* File Parser: shouldContainTwoUsersInDatabase()\n");
+        try {
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            boolean exists = this.repo.existsCustomerRepository(r);
+            assertTrue(exists);
+        } catch (CustomerCreationException | CredentialException | QueryException ex) {
+            assertTrue(false);
         }
     }
     
@@ -286,7 +292,7 @@ public class FileParserTest {
             basicProperties.put(UserProperty.PASSWORD, pwd);
         return User.getBasicUser(basicProperties);
     }
-   
+    
 // ====================================================================================
 
 }

@@ -15,8 +15,10 @@ import login.users.UserRequest;
  */
 public interface IAppRepository {
     
-    boolean existsCustomerProperty(UserProperty p, String value);
+//    boolean existsCustomerProperty(UserProperty p, String value);
     
     boolean addNewCustomer(UserRequest r) throws CredentialException;
+    
+    boolean existsCustomerRepository(UserRequest u) throws QueryException;
     
 }

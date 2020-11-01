@@ -24,10 +24,12 @@ public class AppRepository implements IAppRepository {
 
     private final String CUSTOMER_FILE = "customer.txt";
     
-    List<File> files;
+    private List<File> files;
+    private List<UserRepository> usersRepo;
     
     public AppRepository(){
-        files = new ArrayList<>();
+        files     = new ArrayList<>();
+        usersRepo = new ArrayList<>();
         setup();
     }
     
@@ -35,37 +37,29 @@ public class AppRepository implements IAppRepository {
         this.files.add(new File(CUSTOMER_FILE));
     }
     
-    @Override
-    public boolean existsCustomerProperty(UserProperty p, String value) {
-        try {
-            return FileParser.existsProperty(getFileByName(CUSTOMER_FILE), p, value);
-        } catch (FileNotFoundException ex) {
-            System.err.println("File: \"" + CUSTOMER_FILE + "\" not found");
-            System.exit(-1);
-        } catch (ParserSchemeException ex) {
-            System.err.println("Invalid parser scheme: " + ex.getErrorCode());
-            System.exit(-1);
-        }
-        return false;
-    }
+//    @Override
+//    public boolean existsCustomerProperty(UserProperty p, String value) {
+//        try {
+//            return FileParser.existsProperty(getFileByName(CUSTOMER_FILE), p, value);
+//        } catch (FileNotFoundException ex) {
+//            System.err.println("File: \"" + CUSTOMER_FILE + "\" not found");
+//            System.exit(-1);
+//        } catch (ParserSchemeException ex) {
+//            System.err.println("Invalid parser scheme: " + ex.getErrorCode());
+//            System.exit(-1);
+//        }
+//        return false;
+//    }
     
     @Override
     public boolean addNewCustomer(UserRequest r) throws CredentialException {
         try {
-            
-            if(FileParser.existsProperty(
-                    getFileByName(CUSTOMER_FILE), 
-                    UserProperty.USERNAME, 
-                    r.getUserProperty(UserProperty.USERNAME)
-            )){ throw new CredentialException(CredentialException.ErrorCode.USERNAME_ALREADY_USED);}
-            
+            if(existsCustomerRepository(r))
+                throw new CredentialException(CredentialException.ErrorCode.USERNAME_ALREADY_USED);
             r.addNewCustomerToCustomerFile(getFileByName(CUSTOMER_FILE));
-            
+            this.usersRepo.add(UserRepository.createUserRepository(r));
         } catch (FileNotFoundException ex) {
             System.err.println("File: \"" + CUSTOMER_FILE + "\" not found");
-            System.exit(-1);
-        } catch (ParserSchemeException ex) {
-            System.err.println("Invalid parser scheme: " + ex.getErrorCode());
             System.exit(-1);
         }
         
@@ -77,6 +71,12 @@ public class AppRepository implements IAppRepository {
             if(f.getName().equals(filename))
                 return f;
         throw new FileNotFoundException(filename);
+    }
+
+    @Override
+    public boolean existsCustomerRepository(UserRequest req) {
+        return this.usersRepo.stream()
+                             .anyMatch((r) -> (r.matchOwner(req.getUserProperty(UserProperty.USERNAME))));
     }
         
 }
