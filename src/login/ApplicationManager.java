@@ -7,7 +7,7 @@ package login;
 
 import java.util.ArrayList;
 import java.util.List;
-import login.repository.ApplicationRepository;
+import login.repository.AppRepository;
 import login.repository.QueryException;
 import login.tools.CredentialException;
 import login.tools.UserProperty;
@@ -22,7 +22,7 @@ import login.users.IUser;
 public class ApplicationManager {
         
     private List<IUser> users = new ArrayList<>();
-    private ApplicationRepository repo;
+    private AppRepository repo;
     
     public void parseSignUpRequest(UserRequest r) throws CredentialException {
         UserValidator.isValidUsername(r.getUserProperty(UserProperty.USERNAME));

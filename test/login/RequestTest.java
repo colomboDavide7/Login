@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import login.repository.ApplicationRepository;
+import login.repository.AppRepository;
 import login.tools.UserProperty;
 import login.users.CustomerCreationException;
 import login.users.UserRequest;
@@ -29,12 +29,12 @@ public class RequestTest {
     
     private Application app;
     private ApplicationManager manager;
-    private ApplicationRepository repo;
+    private AppRepository repo;
     
     @Before
     public void setup(){
         this.manager = new ApplicationManager();
-        this.repo    = new ApplicationRepository();
+        this.repo    = new AppRepository();
         this.app = new Application(manager, repo);
     }
     

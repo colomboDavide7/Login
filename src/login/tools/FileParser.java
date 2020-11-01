@@ -38,11 +38,11 @@ public class FileParser {
     
 // ================================================================================
     // Writing a new record
-    public static void addNewCustomer(IUser newCustomer){
+    public static void addNewCustomer(File f, String customerRecord){
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(customerFile));
-            writer.append(newCustomer.createRecord());
+            writer = new BufferedWriter(new FileWriter(f));
+            writer.append(customerRecord);
             writer.newLine();
             writer.close();
         } catch (IOException ex) {
@@ -57,13 +57,13 @@ public class FileParser {
         }
     }
     
-    public static boolean searchProperty(UserProperty p, String value) throws FileNotFoundException, ParserSchemeException{
-        return parseFile(customerFile, p, value);
+    public static boolean searchProperty(File f, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException{
+        return parseFile(f, p, value);
     }
     
 // ================================================================================
     // Parse property
-    public static boolean parseFile(File toParse, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException {
+    private static boolean parseFile(File toParse, UserProperty p, String value) throws FileNotFoundException, ParserSchemeException {
         if(!toParse.exists())
             throw new FileNotFoundException("toParse = " + toParse);
         return openAndReadTextFile(toParse, p, value);

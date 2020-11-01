@@ -5,7 +5,9 @@
  */
 package login.users;
 
+import java.io.File;
 import java.util.List;
+import login.tools.FileParser;
 import login.tools.UserProperty;
 
 /**
@@ -49,6 +51,10 @@ public class UserRequest {
     
     public void addUserToList(List<IUser> list){
         list.add(this.u);
+    }
+    
+    public void addNewCustomerToCustomerFile(File file){
+        FileParser.addNewCustomer(file, this.u.createRecord());
     }
     
 }

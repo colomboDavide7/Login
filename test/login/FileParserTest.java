@@ -16,14 +16,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import login.repository.AppRepository;
+import login.repository.IAppRepository;
 import login.tools.CredentialException;
 import login.tools.FileParser;
-import login.tools.ParserScheme;
 import login.tools.ParserSchemeException;
 import login.tools.UserProperty;
-import login.tools.UserValidator;
 import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
@@ -38,24 +36,17 @@ import org.junit.Before;
  */
 public class FileParserTest {
     
+    private File f;
+    private IAppRepository repo;
+    
+    public FileParserTest(){
+        this.f = new File("customer.txt");
+        this.repo = new AppRepository();
+    }
+    
     @Before
     public void setupCustomerFile(){
         clearFile();
-    }
-    
-    @Test (expected = FileNotFoundException.class)
-    public void shouldReturnFileNotFoundException() throws FileNotFoundException, ParserSchemeException{
-        System.out.println("* File Parser: shouldReturnFileNotFoundException()\n");
-        File f = new File("user2.txt");
-        FileParser.parseFile(f, UserProperty.USERNAME, "not used");
-    }
-    
-    @Test
-    public void shouldReturnTheValidParserScheme() throws FileNotFoundException{
-        System.out.println("* File Parser: shouldReturnTheValidParserScheme()\n");
-        File f = new File("user1.txt");
-        ParserScheme validScheme = FileParser.getDefaultParserScheme();
-        assertEquals(ParserScheme.VALID, validScheme);
     }
     
     @Test
@@ -89,17 +80,17 @@ public class FileParserTest {
     }
     
     @Test
-    public void shouldMatchUserNameProperty() throws FileNotFoundException {
+    public void shouldMatchUserNameProperty() {
         System.out.println("* File Parser: shouldMatchUserNameProperty()\n");
         String toMatch = "marioRossi";
         File f = new File("user1.txt");
         
         try{
-            boolean match = FileParser.parseFile(f, UserProperty.USERNAME, toMatch);
+            boolean match = FileParser.searchProperty(f, UserProperty.USERNAME, toMatch);
             assertTrue(match);
-            match = FileParser.parseFile(f, UserProperty.USERNAME, "notPresent");
+            match = FileParser.searchProperty(f, UserProperty.USERNAME, "notPresent");
             assertFalse(match);
-        }catch(ParserSchemeException ex){
+        }catch(ParserSchemeException | FileNotFoundException ex){
             assertTrue(false);
         }
     }
@@ -107,21 +98,8 @@ public class FileParserTest {
     @Test
     public void shouldValidateUserRecord(){
         System.out.println("* File Parser: shouldValidateUserRecord()\n");
-        File f = new File("user1.txt");
-        
-        String username  = "newCustomer";
-        String pwd       = "Test1!";
-        String firstName = "new";
-        String lastName  = "customer";
-        
-        Map<UserProperty, String> basicProperties = new HashMap<>();
-            basicProperties.put(UserProperty.USERNAME, username);
-            basicProperties.put(UserProperty.PASSWORD, pwd);
-            basicProperties.put(UserProperty.FIRST_NAME, firstName);
-            basicProperties.put(UserProperty.LAST_NAME, lastName);
-            
         try {
-            IUser newCustomer = User.getBasicUser(basicProperties);
+            IUser newCustomer = this.createValidUser();
             boolean isValid = FileParser.isValidRecord(newCustomer.createRecord());
             assertTrue(isValid);
         } catch (CustomerCreationException | ParserSchemeException ex) {
@@ -135,45 +113,42 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldInsertNewCustomerInDatabase()\n");            
         try {
             IUser newCustomer = this.createValidUser();
-            FileParser.addNewCustomer(newCustomer);
-            boolean find = FileParser.searchProperty(UserProperty.USERNAME, newCustomer.getProperty(UserProperty.USERNAME)) &&
-                           FileParser.searchProperty(UserProperty.PASSWORD, newCustomer.getProperty(UserProperty.PASSWORD))      &&
-                           FileParser.searchProperty(UserProperty.FIRST_NAME, newCustomer.getProperty(UserProperty.FIRST_NAME)) &&
-                           FileParser.searchProperty(UserProperty.LAST_NAME, newCustomer.getProperty(UserProperty.LAST_NAME));
+            this.repo.addNewCustomer(
+                    UserRequest.createRequestByType(
+                            newCustomer, UserRequest.RequestType.SIGN_UP
+                    )
+            );
+            
+            boolean find = FileParser.searchProperty(f, UserProperty.USERNAME, newCustomer.getProperty(UserProperty.USERNAME)) &&
+                           FileParser.searchProperty(f, UserProperty.PASSWORD, newCustomer.getProperty(UserProperty.PASSWORD))      &&
+                           FileParser.searchProperty(f, UserProperty.FIRST_NAME, newCustomer.getProperty(UserProperty.FIRST_NAME)) &&
+                           FileParser.searchProperty(f, UserProperty.LAST_NAME, newCustomer.getProperty(UserProperty.LAST_NAME));
             assertTrue(find);
         } catch (CustomerCreationException | FileNotFoundException | ParserSchemeException ex) {
             assertFalse(true);
+        } catch (CredentialException ex) {
+            assertTrue(false);
         }
         
     }
-    
-    @Test
-    public void shouldNotAddUserIfAlreadyExist(){
-        System.out.println("* File Parser: shouldNotAddUserIfAlreadyExist()\n");            
-        try {
-            IUser newCustomer = this.createValidUser();
-            boolean propertyFound = FileParser.searchProperty(UserProperty.USERNAME, 
-                                                              newCustomer.getProperty(UserProperty.USERNAME));
-            assertFalse(propertyFound);
-            FileParser.addNewCustomer(newCustomer);
-            propertyFound = FileParser.searchProperty(UserProperty.USERNAME, 
-                                                      newCustomer.getProperty(UserProperty.USERNAME));
-            assertTrue(propertyFound);
-        } catch (CustomerCreationException | FileNotFoundException | ParserSchemeException ex) {
-            assertFalse(true);
-        }
-    }
-    
+        
     @Test
     public void shouldReturnUsernameAlreadyUsedError(){
+        System.out.println("* File Parser: shouldReturnUsernameAlreadyUsedError()\n");
         try {
             IUser newCustomer = this.createValidUser();
-            UserRequest r     = UserRequest.createRequestByType(newCustomer, 
-                                                                UserRequest.RequestType.SIGN_UP);
-            boolean isSignedUp = UserValidator.isSignedUp(r);
-            assertFalse(isSignedUp);
-            FileParser.addNewCustomer(newCustomer);
-            UserValidator.isSignedUp(r);
+            this.repo.addNewCustomer(
+                    UserRequest.createRequestByType(
+                            newCustomer, UserRequest.RequestType.SIGN_UP
+                    )
+            );
+            
+            this.repo.addNewCustomer(
+                    UserRequest.createRequestByType(
+                            newCustomer, UserRequest.RequestType.SIGN_UP
+                    )
+            );
+            
             assertTrue(false);
         } catch (CustomerCreationException ex) {
             assertTrue(false);
@@ -182,7 +157,7 @@ public class FileParserTest {
         }
         
     }
-    
+            
 // ====================================================================================
     // Stream opening logic
     private List<String> openAndReadedTextFile(File f){
@@ -216,12 +191,12 @@ public class FileParserTest {
         return lines;
     }
     
+// ====================================================================================
+    // Clear file logic
     private void clearFile(){
         BufferedWriter writer = null;
-        String line;
-        
         try{
-            writer = new BufferedWriter(new FileWriter("customer_repo.txt"));
+            writer = new BufferedWriter(new FileWriter(this.f));
             writer.append("");
             writer.close();
         }catch(IOException ex){

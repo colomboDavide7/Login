@@ -8,7 +8,7 @@ package login;
 import login.UI.IAppUI;
 import login.UI.UIFrame;
 import login.controllers.UIController;
-import login.repository.ApplicationRepository;
+import login.repository.AppRepository;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Main {
         IAppUI frame = new UIFrame();
         
         IAppModel app = new Application(
-                new ApplicationManager(), new ApplicationRepository()
+                new ApplicationManager(), new AppRepository()
         );
         
         UIController uiController = new UIController(app, frame);
