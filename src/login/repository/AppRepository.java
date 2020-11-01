@@ -10,8 +10,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import login.tools.CredentialException;
-import login.tools.FileParser;
-import login.tools.ParserSchemeException;
 import login.tools.UserProperty;
 import login.users.UserRequest;
 
@@ -36,21 +34,7 @@ public class AppRepository implements IAppRepository {
     private void setup(){
         this.files.add(new File(CUSTOMER_FILE));
     }
-    
-//    @Override
-//    public boolean existsCustomerProperty(UserProperty p, String value) {
-//        try {
-//            return FileParser.existsProperty(getFileByName(CUSTOMER_FILE), p, value);
-//        } catch (FileNotFoundException ex) {
-//            System.err.println("File: \"" + CUSTOMER_FILE + "\" not found");
-//            System.exit(-1);
-//        } catch (ParserSchemeException ex) {
-//            System.err.println("Invalid parser scheme: " + ex.getErrorCode());
-//            System.exit(-1);
-//        }
-//        return false;
-//    }
-    
+        
     @Override
     public boolean addNewCustomer(UserRequest r) throws CredentialException {
         try {
@@ -77,6 +61,14 @@ public class AppRepository implements IAppRepository {
     public boolean existsCustomerRepository(UserRequest req) {
         return this.usersRepo.stream()
                              .anyMatch((r) -> (r.matchOwner(req.getUserProperty(UserProperty.USERNAME))));
+    }
+
+    @Override
+    public boolean isSignedUp(UserRequest r) {
+        for(UserRepository repo : this.usersRepo)
+            if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
+                return repo.verifyTransactionExistence(r.createTransaction());
+        return false;
     }
         
 }

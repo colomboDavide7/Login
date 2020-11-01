@@ -6,7 +6,6 @@
 package login.repository;
 
 import login.tools.CredentialException;
-import login.tools.UserProperty;
 import login.users.UserRequest;
 
 /**
@@ -14,11 +13,11 @@ import login.users.UserRequest;
  * @author davidecolombo
  */
 public interface IAppRepository {
-    
-//    boolean existsCustomerProperty(UserProperty p, String value);
-    
+        
     boolean addNewCustomer(UserRequest r) throws CredentialException;
     
-    boolean existsCustomerRepository(UserRequest u) throws QueryException;
+    boolean existsCustomerRepository(UserRequest r) throws QueryException;
+    
+    boolean isSignedUp(UserRequest r);
     
 }

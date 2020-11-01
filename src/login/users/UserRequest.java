@@ -6,8 +6,11 @@
 package login.users;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.List;
+import login.SystemProperty;
 import login.tools.FileParser;
+import login.tools.ParserScheme;
 import login.tools.UserProperty;
 
 /**
@@ -27,10 +30,12 @@ public class UserRequest {
 // ================================================================================
     private IUser u;
     private RequestType t;
+    private LocalDateTime requestDateTime;
     
     private UserRequest(IUser u, RequestType t){
         this.u = u;
         this.t = t;
+        this.requestDateTime = LocalDateTime.now();
     }
     
     public boolean matchType(RequestType t){
@@ -55,6 +60,23 @@ public class UserRequest {
     
     public void addNewCustomerToCustomerFile(File file){
         FileParser.addNewCustomer(file, this.u.createRecord());
+    }
+    
+    public String createTransaction(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(UserProperty.USERNAME.name())
+          .append(ParserScheme.VALID.getKeyValueSeparator())
+          .append(u.getProperty(UserProperty.USERNAME))
+          .append(ParserScheme.VALID.getPropertySeparator())
+          .append(SystemProperty.TRANSACTION_DATE_TIME)
+          .append(ParserScheme.VALID.getKeyValueSeparator())
+          .append(this.requestDateTime)
+          .append(ParserScheme.VALID.getPropertySeparator())
+          .append(SystemProperty.TRANSACTION_TYPE)
+          .append(ParserScheme.VALID.getKeyValueSeparator())
+          .append(this.t)
+          .append(ParserScheme.VALID.getPropertySeparator());
+        return sb.toString();
     }
     
 }

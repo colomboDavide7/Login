@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import login.repository.AppRepository;
 import login.repository.IAppRepository;
 import login.repository.QueryException;
+import login.repository.UserRepository;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserSchemeException;
@@ -186,7 +187,7 @@ public class FileParserTest {
     
     @Test
     public void shouldCreateUserRepository(){
-        System.out.println("* File Parser: shouldContainTwoUsersInDatabase()\n");
+        System.out.println("* File Parser: shouldCreateUserRepository()\n");
         try {
             IUser newCustomer1 = this.createValidUser();
             UserRequest r = UserRequest.createRequestByType(
@@ -196,6 +197,22 @@ public class FileParserTest {
             boolean exists = this.repo.existsCustomerRepository(r);
             assertTrue(exists);
         } catch (CustomerCreationException | CredentialException | QueryException ex) {
+            assertTrue(false);
+        }
+    }
+        
+    @Test
+    public void shouldHaveSignupTransaction(){
+        System.out.println("* File Parser: shouldHaveOneTransactionAtCreation()\n");
+        try {
+            IUser newCustomer1 = this.createValidUser();
+            UserRequest r = UserRequest.createRequestByType(
+                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            boolean signedUp = this.repo.isSignedUp(r);
+            assertTrue(signedUp);
+        } catch (CustomerCreationException | CredentialException ex) {
             assertTrue(false);
         }
     }
