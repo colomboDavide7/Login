@@ -5,7 +5,10 @@
  */
 package login.tools;
 
+import java.io.FileNotFoundException;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.users.UserRequest;
 import login.tools.CredentialException.ErrorCode;
 import login.users.IUser;
@@ -39,6 +42,16 @@ public class UserValidator {
         for (; userIter.hasNext(); )
             if(r.matchUser(userIter.next()))
                 throw new CredentialException(ErrorCode.USERNAME_ALREADY_USED);
+        return false;
+    }
+    
+    public static boolean isSignedUp(UserRequest r) throws CredentialException {
+        try {
+            if(FileParser.searchProperty(UserProperty.USERNAME, r.getUserProperty(UserProperty.USERNAME)))
+                throw new CredentialException(CredentialException.ErrorCode.USERNAME_ALREADY_USED);
+        } catch (FileNotFoundException | ParserSchemeException ex) {
+            return true;
+        }
         return false;
     }
     

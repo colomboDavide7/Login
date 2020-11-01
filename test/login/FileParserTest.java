@@ -6,9 +6,11 @@
 package login;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,15 +18,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserScheme;
 import login.tools.ParserSchemeException;
 import login.tools.UserProperty;
+import login.tools.UserValidator;
 import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
+import login.users.UserRequest;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  *
@@ -32,6 +38,10 @@ import static org.junit.Assert.*;
  */
 public class FileParserTest {
     
+    @Before
+    public void setupCustomerFile(){
+        clearFile();
+    }
     
     @Test (expected = FileNotFoundException.class)
     public void shouldReturnFileNotFoundException() throws FileNotFoundException, ParserSchemeException{
@@ -137,6 +147,42 @@ public class FileParserTest {
         
     }
     
+    @Test
+    public void shouldNotAddUserIfAlreadyExist(){
+        System.out.println("* File Parser: shouldNotAddUserIfAlreadyExist()\n");            
+        try {
+            IUser newCustomer = this.createValidUser();
+            boolean propertyFound = FileParser.searchProperty(UserProperty.USERNAME, 
+                                                              newCustomer.getProperty(UserProperty.USERNAME));
+            assertFalse(propertyFound);
+            FileParser.addNewCustomer(newCustomer);
+            propertyFound = FileParser.searchProperty(UserProperty.USERNAME, 
+                                                      newCustomer.getProperty(UserProperty.USERNAME));
+            assertTrue(propertyFound);
+        } catch (CustomerCreationException | FileNotFoundException | ParserSchemeException ex) {
+            assertFalse(true);
+        }
+    }
+    
+    @Test
+    public void shouldReturnUsernameAlreadyUsedError(){
+        try {
+            IUser newCustomer = this.createValidUser();
+            UserRequest r     = UserRequest.createRequestByType(newCustomer, 
+                                                                UserRequest.RequestType.SIGN_UP);
+            boolean isSignedUp = UserValidator.isSignedUp(r);
+            assertFalse(isSignedUp);
+            FileParser.addNewCustomer(newCustomer);
+            UserValidator.isSignedUp(r);
+            assertTrue(false);
+        } catch (CustomerCreationException ex) {
+            assertTrue(false);
+        } catch (CredentialException ex) {
+            assertEquals(CredentialException.ErrorCode.USERNAME_ALREADY_USED, ex.getErrorCode());
+        }
+        
+    }
+    
 // ====================================================================================
     // Stream opening logic
     private List<String> openAndReadedTextFile(File f){
@@ -168,6 +214,26 @@ public class FileParserTest {
         }
         
         return lines;
+    }
+    
+    private void clearFile(){
+        BufferedWriter writer = null;
+        String line;
+        
+        try{
+            writer = new BufferedWriter(new FileWriter("customer_repo.txt"));
+            writer.append("");
+            writer.close();
+        }catch(IOException ex){
+            System.err.println("Error reading the file\n");
+        }finally{
+            if(writer != null)
+                try {
+                    writer.close();
+            } catch (IOException ex) {
+                    System.err.println("Error closing the file\n");
+            }
+        }
     }
     
 // ====================================================================================

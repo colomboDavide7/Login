@@ -398,8 +398,5 @@ public class CustomerTest {
             assertTrue(ex.getMissingMandatoryList().contains(UserProperty.PASSWORD));
         }
     }
-       
-// ================================================================================
-    // User factory
-
+    
 }
