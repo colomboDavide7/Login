@@ -5,6 +5,7 @@
  */
 package login;
 
+import login.repositories.AuthorizationException;
 import login.repositories.SystemRepository;
 import login.repositories.TransactionException;
 import login.tools.CredentialException;
@@ -35,7 +36,7 @@ public class SystemManager implements ISystemManager {
     }
     
     @Override
-    public void parseLoginRequest(TransactionRequest r) throws TransactionException {
+    public void parseLoginRequest(TransactionRequest r) throws TransactionException, AuthorizationException {
         this.repo.login(r);
     }
     

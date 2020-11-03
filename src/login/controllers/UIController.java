@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import login.UI.IAppUI;
 import login.repositories.TransactionException;
@@ -20,6 +22,7 @@ import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
 import login.ISystemManager;
+import login.repositories.AuthorizationException;
 
 /**
  *
@@ -84,6 +87,8 @@ public class UIController {
                 this.ui.getLoginPanel().highlightMissing(ex.getMissingMandatoryList());
             } catch (TransactionException ex) {
                 this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.red);
+            } catch (AuthorizationException ex) {
+                // implement the logic
             }
         });
     }

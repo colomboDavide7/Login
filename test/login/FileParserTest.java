@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import login.repositories.AuthorizationException;
 import login.repositories.SystemRepository;
 import login.repositories.TransactionException;
 import login.tools.CredentialException;
@@ -190,7 +193,7 @@ public class FileParserTest {
             this.repo.login(loginRequest);
             boolean logged = this.repo.isLogged(loginRequest);
             assertTrue(logged);
-        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
+        } catch (CustomerCreationException | CredentialException | TransactionException | AuthorizationException ex) {
             assertTrue(false);
         }
     }
@@ -212,7 +215,7 @@ public class FileParserTest {
             
             assertTrue(false);
             
-        } catch (CustomerCreationException | CredentialException ex) {
+        } catch (CustomerCreationException | CredentialException | AuthorizationException ex) {
             assertTrue(false);
         } catch (TransactionException ex) {
             assertEquals(TransactionException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
@@ -234,7 +237,7 @@ public class FileParserTest {
                     TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.LOGOUT);
             this.repo.login(wrong);
             
-        } catch (CustomerCreationException | CredentialException ex) {
+        } catch (CustomerCreationException | CredentialException | AuthorizationException ex) {
             assertTrue(false);
         } catch (TransactionException ex) {
             assertEquals(TransactionException.ErrorCode.WRONG_REQUEST, ex.getErrorCode());
@@ -251,7 +254,7 @@ public class FileParserTest {
                     TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.LOGIN);
             this.repo.login(wrong);
             assertTrue(false);
-        } catch (CustomerCreationException ex) {
+        } catch (CustomerCreationException | AuthorizationException ex) {
             assertTrue(false);
         } catch (TransactionException ex) {
             assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
@@ -274,7 +277,7 @@ public class FileParserTest {
                     );
             this.repo.login(wrong);
             assertTrue(false);
-        } catch (CustomerCreationException | CredentialException ex) {
+        } catch (CustomerCreationException | CredentialException | AuthorizationException ex) {
             assertTrue(false);
         } catch (TransactionException ex) {
             assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
@@ -329,6 +332,8 @@ public class FileParserTest {
             
         } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             System.out.println(ex);
+            assertTrue(false);
+        } catch (AuthorizationException ex) {
             assertTrue(false);
         }
     }
