@@ -5,7 +5,7 @@
  */
 package login.users;
 
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *

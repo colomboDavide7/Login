@@ -18,7 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *

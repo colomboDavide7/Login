@@ -5,6 +5,8 @@
  */
 package login.tools;
 
+import login.system.UserProperty;
+
 /**
  *
  * @author davidecolombo

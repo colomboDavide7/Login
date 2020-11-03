@@ -14,20 +14,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import login.repository.AppRepository;
-import login.repository.IAppRepository;
-import login.repository.TransactionException;
+import login.repositories.SystemRepository;
+import login.repositories.TransactionException;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.tools.ParserSchemeException;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
-import login.users.UserRequest;
+import login.system.UserRequest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import login.repositories.ISystemRepository;
 
 /**
  *
@@ -35,11 +35,11 @@ import org.junit.Before;
  */
 public class FileParserTest {
     
-    private IAppRepository repo;
+    private ISystemRepository repo;
     
     @Before
     public void setup(){
-        this.repo = new AppRepository();
+        this.repo = new SystemRepository();
     }
     
     @Test

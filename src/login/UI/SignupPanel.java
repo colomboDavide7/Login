@@ -20,7 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle;
 import javax.swing.text.JTextComponent;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *

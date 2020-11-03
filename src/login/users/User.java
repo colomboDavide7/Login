@@ -11,18 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import login.tools.ParserScheme;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *
  * @author davidecolombo
  */
 public class User implements IUser {
-
-
-    public enum UserState{
-        LOGGED_IN, LOGGED_OUT;
-    }
     
     public static IUser getBasicUser(Map<UserProperty, String> basicProperties) throws CustomerCreationException{
         //printMap(basicProperties);
@@ -49,7 +44,6 @@ public class User implements IUser {
     
 // ================================================================================
     private final String EMPTY_PROPERTY = "";
-    private UserState state = UserState.LOGGED_OUT;
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
     private Map<UserProperty, String> properties;
     
@@ -85,29 +79,6 @@ public class User implements IUser {
     @Override
     public boolean isEmptyProperty(UserProperty key, String value) {
         return this.getProperty(key).equals(this.EMPTY_PROPERTY);
-    }
-    
-// ================================================================================
-    @Override
-    public boolean isLogged(){
-        return this.state == UserState.LOGGED_IN;
-    }
-    
-    @Override
-    public boolean isLoggedOut(){
-        return this.state == UserState.LOGGED_OUT;
-    }
-    
-    @Override
-    public IUser login(){
-        this.state = UserState.LOGGED_IN;
-        return this;
-    }
-    
-    @Override
-    public IUser logout(){
-        this.state = UserState.LOGGED_OUT;
-        return this;
     }
     
 // ================================================================================

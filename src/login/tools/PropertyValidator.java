@@ -5,13 +5,14 @@
  */
 package login.tools;
 
+import login.system.UserProperty;
 import login.tools.CredentialException.ErrorCode;
 
 /**
  *
  * @author davidecolombo
  */
-public class UserValidator {
+public class PropertyValidator {
     
     private static final String VALID_SYMBOLS = "!@#$%&*()_+=|<>?{}\\\\[\\\\]~-";
     

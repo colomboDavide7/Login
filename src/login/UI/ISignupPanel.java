@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *

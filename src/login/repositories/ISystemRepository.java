@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.repository;
+package login.repositories;
 
 import login.tools.CredentialException;
-import login.users.UserRequest;
+import login.system.UserRequest;
 
 /**
  *
  * @author davidecolombo
  */
-public interface IAppRepository {
+public interface ISystemRepository {
         
     void addNewCustomer(UserRequest r) throws CredentialException, TransactionException;
     

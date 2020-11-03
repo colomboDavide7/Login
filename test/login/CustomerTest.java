@@ -11,13 +11,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import static junit.framework.Assert.*;
-import login.repository.TransactionException;
+import login.repositories.TransactionException;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
 import login.users.User;
-import login.users.UserRequest;
+import login.system.UserRequest;
 import login.users.IUser;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 import login.users.CustomerCreationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,12 +28,12 @@ import org.junit.Test;
  */
 public class CustomerTest {
 
-    private AppManager manager;
+    private SystemManager manager;
     
     // This snippet of code is always executed before running every single test
     @Before
     public void setup(){
-        this.manager = new AppManager();
+        this.manager = new SystemManager();
     }
     
 // ================================================================================

@@ -5,13 +5,13 @@
  */
 package login.users;
 
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *
  * @author davidecolombo
  */
-public interface IUser extends ILogin, IComparable, IUserDate {
+public interface IUser extends IComparable, IUserDate {
     
     IUser addProperty(UserProperty key, String value);
     

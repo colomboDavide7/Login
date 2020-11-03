@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import login.repository.AppRepository;
-import login.tools.UserProperty;
+import login.repositories.SystemRepository;
+import login.system.UserProperty;
 import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
@@ -26,13 +26,11 @@ import org.junit.Test;
  */
 public class RequestTest {
     
-    private Application app;
-    private AppManager manager;
+    private SystemManager manager;
     
     @Before
     public void setup(){
-        this.manager = new AppManager();
-        this.app = new Application(manager);
+        this.manager = new SystemManager();
     }
     
     @Test 

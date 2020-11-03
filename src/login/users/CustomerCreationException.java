@@ -6,7 +6,7 @@
 package login.users;
 
 import java.util.List;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *

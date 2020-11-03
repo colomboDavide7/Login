@@ -3,22 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.repository;
+package login.repositories;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import login.tools.CredentialException;
 import login.tools.FileParser;
-import login.tools.UserProperty;
-import login.users.UserRequest;
+import login.system.UserProperty;
+import login.system.UserRequest;
 
 
 /**
  *
  * @author davidecolombo
  */
-public class AppRepository implements IAppRepository {
+public class SystemRepository implements ISystemRepository {
 
     private final String SUBSCRIPTION_FILE = "subscriptions.txt";
     
@@ -26,7 +26,7 @@ public class AppRepository implements IAppRepository {
     private boolean isAppendMode = false;
     private List<UserRepository> usersRepo;
     
-    public AppRepository(){
+    public SystemRepository(){
         subscriptions = new File(SUBSCRIPTION_FILE);
         usersRepo     = new ArrayList<>();
     }

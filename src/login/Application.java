@@ -5,38 +5,21 @@
  */
 package login;
 
-import login.repository.TransactionException;
-import login.tools.CredentialException;
-import login.users.UserRequest;
+import login.UI.IAppUI;
+import login.UI.UIFrame;
+import login.controllers.UIController;
 
 /**
  *
  * @author davidecolombo
  */
-public class Application implements IAppModel {
+public class Application {
     
-    private AppManager manager;
-      
-    public Application(AppManager manager){
-        this.manager    = manager;
-    }
-    
-    @Override
-    public boolean sendSignUpRequest(UserRequest r) throws CredentialException {
-        this.manager.parseSignUpRequest(r);
-        return true;
-    }
-    
-    @Override
-    public boolean sendLoginRequest(UserRequest r) throws TransactionException{
-        this.manager.parseLoginRequest(r);
-        return true;
-    }
-    
-    @Override
-    public boolean sendLogoutRequest(UserRequest r) throws TransactionException{
-        this.manager.parseLogoutRequest(r);
-        return true;
+    public static void main(String[] args){
+        IAppUI frame  = new UIFrame();
+        ISystemManager app = new SystemManager();
+        
+        UIController uiController = new UIController(app, frame);
     }
  
 }

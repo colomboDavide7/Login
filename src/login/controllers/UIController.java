@@ -11,15 +11,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
-import login.IAppModel;
 import login.UI.IAppUI;
-import login.repository.TransactionException;
-import login.users.UserRequest;
+import login.repositories.TransactionException;
+import login.system.UserRequest;
 import login.tools.CredentialException;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
+import login.ISystemManager;
 
 /**
  *
@@ -27,10 +27,10 @@ import login.users.User;
  */
 public class UIController {
     
-    private IAppModel app;
+    private ISystemManager app;
     private IAppUI ui;
             
-    public UIController(IAppModel app, IAppUI ui){
+    public UIController(ISystemManager app, IAppUI ui){
         this.app = app;
         this.ui  = ui;
         this.initialize();
@@ -54,7 +54,7 @@ public class UIController {
         JButton signup = ui.getSignupPanel().getSignupButton();
         signup.addActionListener((ActionEvent e) -> {
             try {
-                this.app.sendSignUpRequest(
+                this.app.parseSignUpRequest(
                         UserRequest.createRequestByType(
                                 this.createSignupCustomer(), t
                         )
@@ -75,7 +75,7 @@ public class UIController {
         JButton login = ui.getLoginPanel().getLoginButton();
         login.addActionListener((ActionEvent e) -> {
             try {
-                this.app.sendLoginRequest(
+                this.app.parseLoginRequest(
                         UserRequest.createRequestByType(
                                 this.createLoginCustomer(), t
                         )
@@ -96,7 +96,7 @@ public class UIController {
             try {
                 IUser newCustomer = this.createNewCustomer();
                 UserRequest r     = UserRequest.createRequestByType(newCustomer, t);
-                this.app.sendLogoutRequest(r);
+                this.app.parseLogoutRequest(r);
             } catch (CustomerCreationException ex) {
                 System.err.println("error creating the custumer");
             } catch (TransactionException ex) {

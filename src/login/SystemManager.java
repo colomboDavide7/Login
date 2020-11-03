@@ -5,26 +5,27 @@
  */
 package login;
 
-import login.repository.AppRepository;
-import login.repository.IAppRepository;
-import login.repository.TransactionException;
+import login.repositories.SystemRepository;
+import login.repositories.TransactionException;
 import login.tools.CredentialException;
-import login.tools.UserProperty;
-import login.tools.UserValidator;
-import login.users.UserRequest;
+import login.system.UserProperty;
+import login.tools.PropertyValidator;
+import login.system.UserRequest;
+import login.repositories.ISystemRepository;
 
 /**
  *
  * @author davidecolombo
  */
-public class AppManager {
+public class SystemManager implements ISystemManager {
     
-    private IAppRepository repo = new AppRepository();
+    private ISystemRepository repo = new SystemRepository();
     
+    @Override
     public void parseSignUpRequest(UserRequest r) throws CredentialException {
         try {
-            UserValidator.isValidUsername(r.getUserProperty(UserProperty.USERNAME));
-            UserValidator.isValidPassword(r.getUserProperty(UserProperty.PASSWORD));
+            PropertyValidator.isValidUsername(r.getUserProperty(UserProperty.USERNAME));
+            PropertyValidator.isValidPassword(r.getUserProperty(UserProperty.PASSWORD));
             repo.addNewCustomer(r);
         } catch (TransactionException ex) {
             System.err.println("Transaction exception has occurred\n"
@@ -33,6 +34,7 @@ public class AppManager {
         }
     }
     
+    @Override
     public void parseLoginRequest(UserRequest r) throws TransactionException {
         this.repo.login(r);
     }

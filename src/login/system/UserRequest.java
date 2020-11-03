@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.users;
+package login.system;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
-import login.SystemProperty;
 import login.tools.FileParser;
 import login.tools.ParserScheme;
-import login.tools.UserProperty;
+import login.users.IUser;
 
 /**
  *

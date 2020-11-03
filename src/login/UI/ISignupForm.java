@@ -8,7 +8,7 @@ package login.UI;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.JTextComponent;
-import login.tools.UserProperty;
+import login.system.UserProperty;
 
 /**
  *
