@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import login.UI.IAppUI;
 import login.repositories.TransactionException;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 import login.tools.CredentialException;
 import login.system.UserProperty;
 import login.users.CustomerCreationException;
@@ -37,9 +37,9 @@ public class UIController {
     }
     
     private void initialize(){
-        this.pressSignup(UserRequest.RequestType.SIGN_UP);
-        this.pressLogin(UserRequest.RequestType.LOGIN);
-        this.pressLogout(UserRequest.RequestType.LOGOUT);
+        this.pressSignup(TransactionRequest.TransactionType.SIGN_UP);
+        this.pressLogin(TransactionRequest.TransactionType.LOGIN);
+        this.pressLogout(TransactionRequest.TransactionType.LOGOUT);
         this.pressClear();
     }
         
@@ -50,12 +50,11 @@ public class UIController {
         });
     }
     
-    private void pressSignup(UserRequest.RequestType t){
+    private void pressSignup(TransactionRequest.TransactionType t){
         JButton signup = ui.getSignupPanel().getSignupButton();
         signup.addActionListener((ActionEvent e) -> {
             try {
-                this.app.parseSignUpRequest(
-                        UserRequest.createRequestByType(
+                this.app.parseSignUpRequest(TransactionRequest.createRequestByType(
                                 this.createSignupCustomer(), t
                         )
                 );
@@ -71,12 +70,11 @@ public class UIController {
         });
     }
     
-    private void pressLogin(UserRequest.RequestType t){
+    private void pressLogin(TransactionRequest.TransactionType t){
         JButton login = ui.getLoginPanel().getLoginButton();
         login.addActionListener((ActionEvent e) -> {
             try {
-                this.app.parseLoginRequest(
-                        UserRequest.createRequestByType(
+                this.app.parseLoginRequest(TransactionRequest.createRequestByType(
                                 this.createLoginCustomer(), t
                         )
                 );
@@ -90,12 +88,12 @@ public class UIController {
         });
     }
     
-    private void pressLogout(UserRequest.RequestType t){
+    private void pressLogout(TransactionRequest.TransactionType t){
         JButton logout = ui.getLogoutButton();
         logout.addActionListener((ActionEvent e) -> {
             try {
                 IUser newCustomer = this.createNewCustomer();
-                UserRequest r     = UserRequest.createRequestByType(newCustomer, t);
+                TransactionRequest r     = TransactionRequest.createRequestByType(newCustomer, t);
                 this.app.parseLogoutRequest(r);
             } catch (CustomerCreationException ex) {
                 System.err.println("error creating the custumer");

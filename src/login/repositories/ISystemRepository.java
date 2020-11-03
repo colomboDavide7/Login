@@ -5,8 +5,9 @@
  */
 package login.repositories;
 
+import login.system.RepositoryInfoRequest;
 import login.tools.CredentialException;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 
 /**
  *
@@ -14,14 +15,18 @@ import login.system.UserRequest;
  */
 public interface ISystemRepository {
         
-    void addNewCustomer(UserRequest r) throws CredentialException, TransactionException;
+    void addNewCustomer(TransactionRequest r) throws CredentialException, TransactionException;
     
-    void login(UserRequest r) throws TransactionException;
+    void login(TransactionRequest r) throws TransactionException, AuthorizationException;
     
-    void logout(UserRequest r) throws TransactionException;
+    void logout(TransactionRequest r) throws TransactionException;
     
-    boolean isSignedUp(UserRequest r);
+    boolean isSignedUp(TransactionRequest r);
     
-    boolean isLogged(UserRequest r);
+    boolean isLogged(TransactionRequest r);
+    
+    boolean matchRepositoryInfo(RepositoryInfoRequest r);
+    
+    boolean matchRepositoryInfoByValue(RepositoryInfoRequest r, String toMatch);
     
 }

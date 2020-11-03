@@ -23,7 +23,7 @@ import login.system.UserProperty;
 import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -90,7 +90,7 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldExistsAfterSignup()\n");            
         try {
             IUser newCustomer = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(newCustomer, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer, TransactionRequest.TransactionType.SIGN_UP);
             this.repo.addNewCustomer(r);
             
             boolean exists = repo.isSignedUp(r);
@@ -106,15 +106,11 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldReturnUsernameAlreadyUsedError()\n");
         try {
             IUser newCustomer = this.createValidUser();
-            this.repo.addNewCustomer(
-                    UserRequest.createRequestByType(
-                            newCustomer, UserRequest.RequestType.SIGN_UP
+            this.repo.addNewCustomer(TransactionRequest.createRequestByType(newCustomer, TransactionRequest.TransactionType.SIGN_UP
                     )
             );
             
-            this.repo.addNewCustomer(
-                    UserRequest.createRequestByType(
-                            newCustomer, UserRequest.RequestType.SIGN_UP
+            this.repo.addNewCustomer(TransactionRequest.createRequestByType(newCustomer, TransactionRequest.TransactionType.SIGN_UP
                     )
             );
             
@@ -132,11 +128,11 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldContainTwoUsersInDatabase()\n");
         try {
             IUser newCustomer1 = this.createValidUser();
-            UserRequest req1   = UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest req1   = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP);
             this.repo.addNewCustomer(req1);
             
             IUser newCustomer2 = this.createSecondValidUser();
-            UserRequest req2   = UserRequest.createRequestByType(newCustomer2, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest req2   = TransactionRequest.createRequestByType(newCustomer2, TransactionRequest.TransactionType.SIGN_UP);
             this.repo.addNewCustomer(req2);
             
             boolean exists1 = this.repo.isSignedUp(req1);
@@ -155,8 +151,7 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldCreateUserRepository()\n");
         try {
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             boolean exists = this.repo.isSignedUp(r);
@@ -171,8 +166,7 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldHaveOneTransactionAtCreation()\n");
         try {
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             boolean signedUp = this.repo.isSignedUp(r);
@@ -187,13 +181,12 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldSendLoginTransaction()\n");
         try {
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             
-            UserRequest loginRequest = 
-                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGIN);
+            TransactionRequest loginRequest = 
+                    TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.LOGIN);
             this.repo.login(loginRequest);
             boolean logged = this.repo.isLogged(loginRequest);
             assertTrue(logged);
@@ -207,13 +200,13 @@ public class FileParserTest {
         System.out.println("* File Parser: shouldSendLoginTransaction()\n");
         try {
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(
+                    newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             
-            UserRequest loginRequest = 
-                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGIN);
+            TransactionRequest loginRequest = 
+                    TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.LOGIN);
             this.repo.login(loginRequest);
             this.repo.login(loginRequest);
             
@@ -232,14 +225,13 @@ public class FileParserTest {
         try {
             // Signup
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             
             // Login
-            UserRequest wrong = 
-                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGOUT);
+            TransactionRequest wrong = 
+                    TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.LOGOUT);
             this.repo.login(wrong);
             
         } catch (CustomerCreationException | CredentialException ex) {
@@ -255,8 +247,8 @@ public class FileParserTest {
         try {
             IUser newCustomer1 = this.createValidUser();
             // Login
-            UserRequest wrong = 
-                    UserRequest.createRequestByType(newCustomer1, UserRequest.RequestType.LOGIN);
+            TransactionRequest wrong = 
+                    TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.LOGIN);
             this.repo.login(wrong);
             assertTrue(false);
         } catch (CustomerCreationException ex) {
@@ -272,15 +264,13 @@ public class FileParserTest {
         try {
             // Signup
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             
             // Login
-            UserRequest wrong = 
-                    UserRequest.createRequestByType(
-                            this.createValidUsernameWithWrongPassword(), UserRequest.RequestType.LOGIN
+            TransactionRequest wrong = 
+                    TransactionRequest.createRequestByType(this.createValidUsernameWithWrongPassword(), TransactionRequest.TransactionType.LOGIN
                     );
             this.repo.login(wrong);
             assertTrue(false);
@@ -297,15 +287,13 @@ public class FileParserTest {
         try {
             // Signup
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             
             // Logut
-            UserRequest wrong = 
-                    UserRequest.createRequestByType(
-                            this.createValidUsernameWithWrongPassword(), UserRequest.RequestType.LOGOUT
+            TransactionRequest wrong = 
+                    TransactionRequest.createRequestByType(this.createValidUsernameWithWrongPassword(), TransactionRequest.TransactionType.LOGOUT
                     );
             this.repo.logout(wrong);
             assertTrue(false);
@@ -322,21 +310,18 @@ public class FileParserTest {
         try {
             // Signup
             IUser newCustomer1 = this.createValidUser();
-            UserRequest r = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.SIGN_UP
+            TransactionRequest r = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.SIGN_UP
             );
             this.repo.addNewCustomer(r);
             
             // Login
-            UserRequest login = UserRequest.createRequestByType(
-                    newCustomer1, UserRequest.RequestType.LOGIN
+            TransactionRequest login = TransactionRequest.createRequestByType(newCustomer1, TransactionRequest.TransactionType.LOGIN
             );
             this.repo.login(login);
             
             // Logut
-            UserRequest logout = 
-                    UserRequest.createRequestByType(
-                            this.createValidUsernameWithWrongPassword(), UserRequest.RequestType.LOGOUT
+            TransactionRequest logout = 
+                    TransactionRequest.createRequestByType(this.createValidUsernameWithWrongPassword(), TransactionRequest.TransactionType.LOGOUT
                     );
             this.repo.logout(logout);
             boolean isLoggedOut = !this.repo.isLogged(logout);

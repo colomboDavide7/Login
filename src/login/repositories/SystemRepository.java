@@ -8,10 +8,11 @@ package login.repositories;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import login.system.RepositoryInfoRequest;
 import login.tools.CredentialException;
 import login.tools.FileParser;
 import login.system.UserProperty;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 
 
 /**
@@ -33,8 +34,8 @@ public class SystemRepository implements ISystemRepository {
     }
             
     @Override
-    public void addNewCustomer(UserRequest r) throws CredentialException, TransactionException {
-        if(isWrongRequestType(r, UserRequest.RequestType.SIGN_UP))
+    public void addNewCustomer(TransactionRequest r) throws CredentialException, TransactionException {
+        if(isWrongRequestType(r, TransactionRequest.TransactionType.SIGN_UP))
             throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
         if(isSignedUp(r))
@@ -45,7 +46,7 @@ public class SystemRepository implements ISystemRepository {
         signup(r);
     }
    
-    private void signup(UserRequest r) {
+    private void signup(TransactionRequest r) {
         FileParser.appendRecord(subscriptions, r.createUserRecord(), isAppendMode);
         this.usersRepo.add(UserRepository.createUserRepository(r));
         this.lines = FileParser.openAndReadTextFile(subscriptions);
@@ -55,8 +56,8 @@ public class SystemRepository implements ISystemRepository {
     }
     
     @Override
-    public void login(UserRequest r) throws TransactionException {
-        if(isWrongRequestType(r, UserRequest.RequestType.LOGIN))
+    public void login(TransactionRequest r) throws TransactionException, AuthorizationException {
+        if(isWrongRequestType(r, TransactionRequest.TransactionType.LOGIN))
             throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
         if(!isSignedUp(r))
@@ -74,8 +75,8 @@ public class SystemRepository implements ISystemRepository {
     }
     
     @Override
-    public void logout(UserRequest r) throws TransactionException {
-        if(isWrongRequestType(r, UserRequest.RequestType.LOGOUT))
+    public void logout(TransactionRequest r) throws TransactionException {
+        if(isWrongRequestType(r, TransactionRequest.TransactionType.LOGOUT))
             throw new TransactionException(TransactionException.ErrorCode.WRONG_REQUEST);
         
         if(!isSignedUp(r))
@@ -90,7 +91,7 @@ public class SystemRepository implements ISystemRepository {
     }
     
     @Override
-    public boolean isSignedUp(UserRequest r) {
+    public boolean isSignedUp(TransactionRequest r) {
         for(UserRepository repo : this.usersRepo)
             if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
                 return repo.verifyExistanceOfOneAndOnlyOneSignupTransaction();
@@ -98,29 +99,57 @@ public class SystemRepository implements ISystemRepository {
     }
 
     @Override
-    public boolean isLogged(UserRequest r) {
+    public boolean isLogged(TransactionRequest r) {
         for(UserRepository repo : this.usersRepo)
             if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
                 return repo.verifyLastLoginTransactionDateAndTime();
         return false;
     }
     
-    private boolean isWrongRequestType(UserRequest r, UserRequest.RequestType toMatch){
+    private boolean isWrongRequestType(TransactionRequest r, TransactionRequest.TransactionType toMatch){
         return !r.matchType(toMatch);
     }
     
-    private boolean isWrongPassword(UserRequest r){
-        return lines.stream()
-                    .noneMatch(t -> (this.verifyEntityIdentity(t, r)));
+    private boolean isWrongPassword(TransactionRequest r) throws AuthorizationException {
+        for(String l : lines)
+            if(!verifyEntityIdentity(l, r))
+                return true;
+        return false;
     }
     
-    private boolean verifyEntityIdentity(String transaction, UserRequest r){
+    private boolean verifyEntityIdentity(String transaction, TransactionRequest r) throws AuthorizationException {
         String username = UserRepository.getTransactionValueByKey(
                 transaction, UserProperty.USERNAME.name());
         String password = UserRepository.getTransactionValueByKey(
                 transaction, UserProperty.PASSWORD.name());
+        
+        if(isRightUsernameButWrongPassword(username, password, r))
+            for(UserRepository repo : this.usersRepo)
+                if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
+                    return repo.wrongAccess();
         return r.matchUserProperty(UserProperty.USERNAME, username) &&
                r.matchUserProperty(UserProperty.PASSWORD, password);
     }
+    
+    private boolean isRightUsernameButWrongPassword(String username, String password, TransactionRequest r){
+        return r.matchUserProperty(UserProperty.USERNAME, username) &&
+               !r.matchUserProperty(UserProperty.PASSWORD, password);
+    }
 
+    @Override
+    public boolean matchRepositoryInfo(RepositoryInfoRequest r) {
+        for(UserRepository repo : this.usersRepo)
+            if(r.matchRepository(repo))
+                return r.matchRepositoryInfo(repo);
+        return false;
+    }
+
+    @Override
+    public boolean matchRepositoryInfoByValue(RepositoryInfoRequest r, String toMatch) {
+        for(UserRepository repo : this.usersRepo)
+            if(r.matchRepository(repo))
+                return r.matchRepositoryInfoByValue(repo, toMatch);
+        return false;
+    }
+    
 }

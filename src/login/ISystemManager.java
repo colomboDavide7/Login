@@ -7,7 +7,7 @@ package login;
 
 import login.repositories.TransactionException;
 import login.tools.CredentialException;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 
 /**
  *
@@ -15,10 +15,10 @@ import login.system.UserRequest;
  */
 public interface ISystemManager {
     
-    public void parseSignUpRequest(UserRequest r) throws CredentialException;
+    public void parseSignUpRequest(TransactionRequest r) throws CredentialException;
     
-    public void parseLoginRequest(UserRequest r) throws TransactionException;
+    public void parseLoginRequest(TransactionRequest r) throws TransactionException;
     
-    public void parseLogoutRequest(UserRequest r) throws TransactionException;
+    public void parseLogoutRequest(TransactionRequest r) throws TransactionException;
     
 }

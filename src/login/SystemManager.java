@@ -10,7 +10,7 @@ import login.repositories.TransactionException;
 import login.tools.CredentialException;
 import login.system.UserProperty;
 import login.tools.PropertyValidator;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 import login.repositories.ISystemRepository;
 
 /**
@@ -22,7 +22,7 @@ public class SystemManager implements ISystemManager {
     private ISystemRepository repo = new SystemRepository();
     
     @Override
-    public void parseSignUpRequest(UserRequest r) throws CredentialException {
+    public void parseSignUpRequest(TransactionRequest r) throws CredentialException {
         try {
             PropertyValidator.isValidUsername(r.getUserProperty(UserProperty.USERNAME));
             PropertyValidator.isValidPassword(r.getUserProperty(UserProperty.PASSWORD));
@@ -35,11 +35,11 @@ public class SystemManager implements ISystemManager {
     }
     
     @Override
-    public void parseLoginRequest(UserRequest r) throws TransactionException {
+    public void parseLoginRequest(TransactionRequest r) throws TransactionException {
         this.repo.login(r);
     }
     
-    public void parseLogoutRequest(UserRequest r) throws TransactionException {
+    public void parseLogoutRequest(TransactionRequest r) throws TransactionException {
         this.repo.logout(r);
     }
         

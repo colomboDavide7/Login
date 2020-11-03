@@ -5,10 +5,8 @@
  */
 package login.system;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
-import login.tools.FileParser;
 import login.tools.ParserScheme;
 import login.users.IUser;
 
@@ -16,28 +14,28 @@ import login.users.IUser;
  *
  * @author davidecolombo
  */
-public class UserRequest {
+public class TransactionRequest {
     
-    public enum RequestType{
+    public enum TransactionType{
         SIGN_UP, LOGIN, LOGOUT;
     }
     
-    public static UserRequest createRequestByType(IUser u, RequestType t){
-        return new UserRequest(u, t);
+    public static TransactionRequest createRequestByType(IUser u, TransactionType t) {
+        return new TransactionRequest(u, t);
     }
     
 // ================================================================================
     private IUser u;
-    private RequestType t;
+    private TransactionType t;
     private LocalDateTime requestDateTime;
     
-    private UserRequest(IUser u, RequestType t){
+    private TransactionRequest(IUser u, TransactionType t){
         this.u = u;
         this.t = t;
         this.requestDateTime = LocalDateTime.now();
     }
     
-    public boolean matchType(RequestType t){
+    public boolean matchType(TransactionType t){
         return this.t == t;
     }
     
@@ -53,9 +51,9 @@ public class UserRequest {
         return this.u.matchProperty(key, value);
     }
     
-    public void addUserToList(List<IUser> list){
-        list.add(this.u);
-    }
+//    public void addUserToList(List<IUser> list){
+//        list.add(this.u);
+//    }
     
     public String createUserRecord(){
         return this.u.createRecord();
@@ -77,5 +75,5 @@ public class UserRequest {
           .append(ParserScheme.VALID.getPropertySeparator());
         return sb.toString();
     }
-
+    
 }

@@ -15,7 +15,7 @@ import login.repositories.TransactionException;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
 import login.users.User;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 import login.users.IUser;
 import login.system.UserProperty;
 import login.users.CustomerCreationException;
@@ -77,10 +77,10 @@ public class CustomerTest {
         IUser customer = User.getBasicUser(basicProperties);
         
         try {
-            UserRequest sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest sign = TransactionRequest.createRequestByType(customer, TransactionRequest.TransactionType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
-            sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
+            sign = TransactionRequest.createRequestByType(customer, TransactionRequest.TransactionType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
         } catch (CredentialException ex) {
@@ -132,7 +132,7 @@ public class CustomerTest {
         IUser customer = User.getBasicUser(basicProperties);
         
         try{
-            UserRequest r = UserRequest.createRequestByType(customer, UserRequest.RequestType.LOGIN);
+            TransactionRequest r = TransactionRequest.createRequestByType(customer, TransactionRequest.TransactionType.LOGIN);
             this.manager.parseLoginRequest(r);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
@@ -154,12 +154,12 @@ public class CustomerTest {
         
         try{
             IUser customer = User.getBasicUser(basicProperties);
-            UserRequest sign = UserRequest.createRequestByType(customer, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest sign = TransactionRequest.createRequestByType(customer, TransactionRequest.TransactionType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
             basicProperties.put(UserProperty.PASSWORD, "wrong");
             customer = User.getBasicUser(basicProperties);
-            UserRequest login = UserRequest.createRequestByType(customer, UserRequest.RequestType.LOGIN);
+            TransactionRequest login = TransactionRequest.createRequestByType(customer, TransactionRequest.TransactionType.LOGIN);
             this.manager.parseLoginRequest(login);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
@@ -183,12 +183,12 @@ public class CustomerTest {
         
         try{
             IUser basicUser = User.getBasicUser(basicProperties);
-            UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest sign = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
 
             basicProperties.put(UserProperty.USERNAME, "anotherUSer");
             basicUser = User.getBasicUser(basicProperties);
-            UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
+            TransactionRequest login = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.LOGIN);
             this.manager.parseLoginRequest(login);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
@@ -236,11 +236,11 @@ public class CustomerTest {
         
         try{
             IUser basicUser = User.getBasicUser(basicProperties);
-            UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest sign = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
-            UserRequest login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
+            TransactionRequest login = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.LOGIN);
             this.manager.parseLoginRequest(login);
-            login = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGIN);
+            login = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.LOGIN);
             this.manager.parseLoginRequest(login);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
@@ -266,10 +266,10 @@ public class CustomerTest {
         
         try{
             IUser basicUser = User.getBasicUser(basicProperties);
-            UserRequest sign = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.SIGN_UP);
+            TransactionRequest sign = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.SIGN_UP);
             this.manager.parseSignUpRequest(sign);
             
-            UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
+            TransactionRequest logout = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.LOGOUT);
             this.manager.parseLogoutRequest(logout);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.NOT_LOGGED_IN, ex.getErrorCode());
@@ -294,7 +294,7 @@ public class CustomerTest {
         
         try{
             IUser basicUser = User.getBasicUser(basicProperties);
-            UserRequest logout = UserRequest.createRequestByType(basicUser, UserRequest.RequestType.LOGOUT);
+            TransactionRequest logout = TransactionRequest.createRequestByType(basicUser, TransactionRequest.TransactionType.LOGOUT);
             this.manager.parseLogoutRequest(logout);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());

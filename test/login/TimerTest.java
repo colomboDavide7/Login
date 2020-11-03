@@ -9,11 +9,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import login.repositories.AuthorizationException;
 import login.repositories.ISystemRepository;
 import login.repositories.SystemRepository;
 import login.repositories.TransactionException;
+import login.repositories.UserRepository;
+import login.system.RepositoryInfoRequest;
+import login.system.RepositoryInfoRequest.AvailableInfo;
+import login.system.TransactionRequest;
 import login.system.UserProperty;
-import login.system.UserRequest;
 import login.tools.CredentialException;
 import login.users.CustomerCreationException;
 import login.users.IUser;
@@ -36,20 +40,59 @@ public class TimerTest {
     }
     
     @Test
-    public void shouldHaveMaximumNumberOfTentatives() {
-        System.out.println("* Timer Test: shouldHaveMaximumNumberOfTentatives()\n");
+    public void shouldCreateRepositoryInfoRequest() {
+        System.out.println("* Timer Test: shouldCreateRepositoryInfoRequest()\n");
         
         try {
-            this.repo.addNewCustomer(
-                    UserRequest.createRequestByType(
-                            createValidUser(), UserRequest.RequestType.SIGN_UP
-                    )
+            
+            TransactionRequest r = TransactionRequest.createRequestByType(
+                    createValidUser(), TransactionRequest.TransactionType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            UserRepository userRepo = UserRepository.createUserRepository(r);
+            RepositoryInfoRequest repoReq = RepositoryInfoRequest.createInfoRequest(
+                    userRepo, RepositoryInfoRequest.AvailableInfo.LOGIN_ATTEMPTS
             );
             
+            boolean matchInfo = this.repo.matchRepositoryInfo(repoReq);
+            assertTrue(matchInfo);
             
         } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
         }
+    }
+    
+    @Test
+    public void shouldDecreseNumberOfAttemptsWhenWrongPasswordErrorOccur(){
+        System.out.println("* Timer Test: shouldDecreseNumberOfAttemptsWhenWrongPasswordErrorOccur()\n");
+        TransactionRequest r = null;
+        try {
+            r = TransactionRequest.createRequestByType(
+                    createValidUser(), TransactionRequest.TransactionType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            r = TransactionRequest.createRequestByType(
+                    createValidUserWithWrongPassword(), TransactionRequest.TransactionType.LOGIN
+            );
+            this.repo.login(r);
+            
+        } catch (CustomerCreationException | CredentialException | AuthorizationException ex) {
+            assertTrue(false);
+        } catch (TransactionException ex) {
+            assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        }
+        
+        UserRepository userRepo = UserRepository.createUserRepository(r);
+        RepositoryInfoRequest repoReq = RepositoryInfoRequest.createInfoRequest(
+                userRepo, RepositoryInfoRequest.AvailableInfo.LOGIN_ATTEMPTS
+        );
+        
+        boolean matchValue = this.repo.matchRepositoryInfoByValue(repoReq, "3");
+        assertFalse(matchValue);
+        boolean matchByValue = this.repo.matchRepositoryInfoByValue(repoReq, "2");
+        assertTrue(matchByValue);
     }
     
 // ====================================================================================
@@ -57,6 +100,20 @@ public class TimerTest {
     private IUser createValidUser() throws CustomerCreationException{
         String username  = "newCustomer";
         String pwd       = "Test1!";
+        String firstName = "new";
+        String lastName  = "customer";
+        
+        Map<UserProperty, String> basicProperties = new HashMap<>();
+            basicProperties.put(UserProperty.USERNAME, username);
+            basicProperties.put(UserProperty.PASSWORD, pwd);
+            basicProperties.put(UserProperty.FIRST_NAME, firstName);
+            basicProperties.put(UserProperty.LAST_NAME, lastName);
+        return User.getBasicUser(basicProperties);
+    }
+    
+    private IUser createValidUserWithWrongPassword() throws CustomerCreationException{
+        String username  = "newCustomer";
+        String pwd       = "wrongPassword";
         String firstName = "new";
         String lastName  = "customer";
         

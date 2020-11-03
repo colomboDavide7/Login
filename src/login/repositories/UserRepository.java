@@ -8,12 +8,15 @@ package login.repositories;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import login.system.RepositoryInfoRequest.AvailableInfo;
 import login.system.SystemProperty;
 import login.tools.FileParser;
 import login.tools.ParserScheme;
 import login.system.UserProperty;
-import login.system.UserRequest;
+import login.system.TransactionRequest;
 
 /**
  *
@@ -30,32 +33,50 @@ public class UserRepository {
         return "";
     }
     
-    public static UserRepository createUserRepository(UserRequest r){
+    public static UserRepository createUserRepository(TransactionRequest r){
         return new UserRepository(r);
     }
     
     private File repository;
-    private String ownerUser;
     private boolean created = false;
-    private List<String> transactions = new ArrayList<>();
     
-    private UserRepository(UserRequest r){
-        ownerUser = r.getUserProperty(UserProperty.USERNAME);
-        repository = new File(ownerUser + ".txt");
+    private List<String> transactions = new ArrayList<>();
+    private RepositoryInfo info = new RepositoryInfo();
+    
+    private UserRepository(TransactionRequest r){
+        setupRepository(r);
         addTransaction(r);
-        created = true;
+        created    = true;
     }
     
+    private void setupRepository(TransactionRequest r){
+        this.info.setInfo(AvailableInfo.OWNER, r.getUserProperty(UserProperty.USERNAME));
+        repository = new File(r.getUserProperty(UserProperty.USERNAME) + ".txt");
+    }
+        
 // ====================================================================================
     // Add transaction logic
-    public final void addTransaction(UserRequest r){
+    public final void addTransaction(TransactionRequest r){
         FileParser.appendRecord(repository, r.createTransaction(), created);
         // Update the file content
         this.transactions = FileParser.openAndReadTextFile(this.repository);
     }
     
     public boolean matchOwner(String toMatch){
-        return ownerUser.equals(toMatch);
+        return this.info.matchInfoByValue(AvailableInfo.OWNER, toMatch);
+    }
+    
+    public boolean equals(UserRepository repo){
+        return this.info.equals(repo.info);
+    }
+    
+    public boolean matchInfo(AvailableInfo i, UserRepository repo){
+        return this.info.matchInfo(info, i);
+    }
+    
+    public boolean matchInfoByValue(AvailableInfo i, String toMatch){
+        System.out.println("info to match = " + i + ", value to match = " + toMatch);
+        return this.info.matchInfoByValue(i, toMatch);
     }
     
 // ====================================================================================
@@ -69,12 +90,12 @@ public class UserRepository {
     public boolean verifyExistanceOfOneAndOnlyOneSignupTransaction(){
         int counter = 0;
         for(String line : transactions)
-            if(matchRequestType(line, UserRequest.RequestType.SIGN_UP))
+            if(matchRequestType(line, TransactionRequest.TransactionType.SIGN_UP))
                 counter++;
         return (counter == 1);
     }
     
-    private boolean matchRequestType(String line, UserRequest.RequestType t){
+    private boolean matchRequestType(String line, TransactionRequest.TransactionType t){
         return getTransactionValueByKey(line, SystemProperty.TRANSACTION_TYPE.name())
                .equals(t.name());
     }
@@ -84,7 +105,7 @@ public class UserRepository {
     public boolean verifyLastLoginTransactionDateAndTime(){
         String t = findLatestTransaction();
         String transactionType = getTransactionValueByKey(t, SystemProperty.TRANSACTION_TYPE.name());
-        return transactionType.equals(UserRequest.RequestType.LOGIN.name());
+        return transactionType.equals(TransactionRequest.TransactionType.LOGIN.name());
     }
     
     private String findLatestTransaction(){
@@ -105,7 +126,10 @@ public class UserRepository {
                 )
         );
     }
-        
-// ====================================================================================
+    
+    public boolean wrongAccess() throws AuthorizationException{
+        this.info.decrementNumberOfAvailableLoginAttempts();
+        return false;
+    }
     
 }
