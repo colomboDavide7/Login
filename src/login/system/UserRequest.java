@@ -57,8 +57,8 @@ public class UserRequest {
         list.add(this.u);
     }
     
-    public void processSignupRequest(File file, boolean appendMode){
-        FileParser.appendRecord(file, this.u.createRecord(), appendMode);
+    public String createUserRecord(){
+        return this.u.createRecord();
     }
     
     public String createTransaction(){

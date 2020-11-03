@@ -21,6 +21,15 @@ import login.system.UserRequest;
  */
 public class UserRepository {
     
+    public static String getTransactionValueByKey(String transaction, String key){
+        for(String keyValuePair : transaction.split(ParserScheme.VALID.getPropertySeparator())){
+            String[] tokens = keyValuePair.split(ParserScheme.VALID.getKeyValueSeparator());
+            if(tokens[0].equals(key))
+                return tokens[1];
+        }
+        return "";
+    }
+    
     public static UserRepository createUserRepository(UserRequest r){
         return new UserRepository(r);
     }
@@ -68,15 +77,6 @@ public class UserRepository {
     private boolean matchRequestType(String line, UserRequest.RequestType t){
         return getTransactionValueByKey(line, SystemProperty.TRANSACTION_TYPE.name())
                .equals(t.name());
-    }
-    
-    public static String getTransactionValueByKey(String transaction, String key){
-        for(String keyValuePair : transaction.split(ParserScheme.VALID.getPropertySeparator())){
-            String[] tokens = keyValuePair.split(ParserScheme.VALID.getKeyValueSeparator());
-            if(tokens[0].equals(key))
-                return tokens[1];
-        }
-        return "";
     }
     
 // ====================================================================================

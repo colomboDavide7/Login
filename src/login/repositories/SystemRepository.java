@@ -25,6 +25,7 @@ public class SystemRepository implements ISystemRepository {
     private File subscriptions;
     private boolean isAppendMode = false;
     private List<UserRepository> usersRepo;
+    private List<String> lines = new ArrayList<>();
     
     public SystemRepository(){
         subscriptions = new File(SUBSCRIPTION_FILE);
@@ -41,13 +42,18 @@ public class SystemRepository implements ISystemRepository {
                     CredentialException.ErrorCode.USERNAME_ALREADY_USED, UserProperty.USERNAME
             );
         
-        r.processSignupRequest(subscriptions, isAppendMode);
+        signup(r);
+    }
+   
+    private void signup(UserRequest r) {
+        FileParser.appendRecord(subscriptions, r.createUserRecord(), isAppendMode);
         this.usersRepo.add(UserRepository.createUserRepository(r));
+        this.lines = FileParser.openAndReadTextFile(subscriptions);
         
         if(!isAppendMode)
             isAppendMode = true;
     }
-   
+    
     @Override
     public void login(UserRequest r) throws TransactionException {
         if(isWrongRequestType(r, UserRequest.RequestType.LOGIN))
@@ -104,15 +110,15 @@ public class SystemRepository implements ISystemRepository {
     }
     
     private boolean isWrongPassword(UserRequest r){
-        List<String> lines = FileParser.openAndReadTextFile(subscriptions);
-        return lines.stream().noneMatch((sub) -> (verifyEntityIdentity(sub, r)));
+        return lines.stream()
+                    .noneMatch(t -> (this.verifyEntityIdentity(t, r)));
     }
     
-    private boolean verifyEntityIdentity(String sub, UserRequest r){
+    private boolean verifyEntityIdentity(String transaction, UserRequest r){
         String username = UserRepository.getTransactionValueByKey(
-                sub, UserProperty.USERNAME.name());
+                transaction, UserProperty.USERNAME.name());
         String password = UserRepository.getTransactionValueByKey(
-                sub, UserProperty.PASSWORD.name());
+                transaction, UserProperty.PASSWORD.name());
         return r.matchUserProperty(UserProperty.USERNAME, username) &&
                r.matchUserProperty(UserProperty.PASSWORD, password);
     }
