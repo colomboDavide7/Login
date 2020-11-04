@@ -10,8 +10,6 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import login.UI.IAppUI;
 import login.repositories.TransactionException;
@@ -88,7 +86,7 @@ public class UIController {
             } catch (TransactionException ex) {
                 this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.red);
             } catch (AuthorizationException ex) {
-                // implement the logic
+                this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.RED);
             }
         });
     }

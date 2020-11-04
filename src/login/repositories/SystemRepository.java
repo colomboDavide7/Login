@@ -122,7 +122,6 @@ public class SystemRepository implements ISystemRepository {
     }
     
     private boolean verifyEntityIdentity(String transaction, TransactionRequest r) throws AuthorizationException {
-    
         if(verifyUsername(transaction, r) && !verifyPassword(transaction, r))
             for(UserRepository repo : this.usersRepo)
                 if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))

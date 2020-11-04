@@ -54,10 +54,9 @@ public class RepositoryInfo {
         return this.info.get(AvailableInfo.OWNER).equals(i.info.get(AvailableInfo.OWNER));
     }
     
-    public void decrementNumberOfAvailableLoginAttempts() throws AuthorizationException{
+    public void decrementNumberOfAvailableLoginAttempts() throws AuthorizationException {
         int currentAttempts = Integer.parseInt(this.info.get(AvailableInfo.LOGIN_ATTEMPTS));
-        currentAttempts--;
-        if(currentAttempts <= 0)
+        if(--currentAttempts <= 0)
             throw new AuthorizationException(AuthorizationException.ErrorCode.LOGIN_ATTEMPTS_OVERFLOW);
         this.info.replace(AvailableInfo.LOGIN_ATTEMPTS, Integer.toString(currentAttempts));
         throw new AuthorizationException(currentAttempts);

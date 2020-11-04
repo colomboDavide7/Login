@@ -7,6 +7,7 @@ package login;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import login.repositories.AuthorizationException;
@@ -14,6 +15,8 @@ import login.repositories.ISystemRepository;
 import login.repositories.SystemRepository;
 import login.repositories.TransactionException;
 import login.repositories.UserRepository;
+import login.system.ITimer;
+import login.system.SystemTimer;
 import login.system.RepositoryInfoRequest;
 import login.system.TransactionRequest;
 import login.system.UserProperty;
@@ -136,6 +139,30 @@ public class TimerTest {
             assertTrue(false);
         }
         
+    }
+
+    @Test
+    public void shouldCreateTimerOfAnyAmountOfTime(){
+        System.out.println("* Timer Test: shouldCreateTimerOfAnyAmountOfTime()\n");
+        ITimer timer = new SystemTimer(6550);   // seconds
+        assertTrue(timer.matchStartTime(1, TimeUnit.HOURS));
+        assertTrue(timer.matchStartTime(49, TimeUnit.MINUTES));
+        assertTrue(timer.matchStartTime(10, TimeUnit.SECONDS));
+        
+        timer = new SystemTimer(91, 3440);   // minutes, seconds
+        assertTrue(timer.matchStartTime(2, TimeUnit.HOURS));
+        assertTrue(timer.matchStartTime(28, TimeUnit.MINUTES));
+        assertTrue(timer.matchStartTime(20, TimeUnit.SECONDS));
+        
+        timer = new SystemTimer(91, 3740);   // minutes, seconds
+        assertTrue(timer.matchStartTime(2, TimeUnit.HOURS));
+        assertTrue(timer.matchStartTime(33, TimeUnit.MINUTES));
+        assertTrue(timer.matchStartTime(20, TimeUnit.SECONDS));
+        
+        timer = new SystemTimer(4, 91, 3740);   // minutes, seconds
+        assertTrue(timer.matchStartTime(6, TimeUnit.HOURS));
+        assertTrue(timer.matchStartTime(33, TimeUnit.MINUTES));
+        assertTrue(timer.matchStartTime(20, TimeUnit.SECONDS));
     }
     
 // ====================================================================================
