@@ -8,9 +8,7 @@ package login.repositories;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import login.system.RepositoryInfoRequest.AvailableInfo;
 import login.system.SystemProperty;
 import login.tools.FileParser;
@@ -50,10 +48,11 @@ public class UserRepository {
     }
     
     private void setupRepository(TransactionRequest r){
-        this.info.setInfo(AvailableInfo.OWNER, r.getUserProperty(UserProperty.USERNAME));
-        repository = new File(r.getUserProperty(UserProperty.USERNAME) + ".txt");
+        String username = r.getUserProperty(UserProperty.USERNAME);
+        this.info.setInfo(AvailableInfo.OWNER, username);
+        this.repository = new File(username + ".txt");
     }
-        
+    
 // ====================================================================================
     // Add transaction logic
     public final void addTransaction(TransactionRequest r){
@@ -62,6 +61,8 @@ public class UserRepository {
         this.transactions = FileParser.openAndReadTextFile(this.repository);
     }
     
+// ====================================================================================
+    // Comparation logic
     public boolean matchOwner(String toMatch){
         return this.info.matchInfoByValue(AvailableInfo.OWNER, toMatch);
     }
@@ -71,7 +72,7 @@ public class UserRepository {
     }
     
     public boolean matchInfo(AvailableInfo i, UserRepository repo){
-        return this.info.matchInfo(info, i);
+        return this.info.matchInfo(repo.info, i);
     }
     
     public boolean matchInfoByValue(AvailableInfo i, String toMatch){

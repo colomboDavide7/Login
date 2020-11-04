@@ -7,15 +7,12 @@ package login;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import login.repositories.AuthorizationException;
 import login.repositories.ISystemRepository;
 import login.repositories.SystemRepository;
 import login.repositories.TransactionException;
 import login.repositories.UserRepository;
 import login.system.RepositoryInfoRequest;
-import login.system.RepositoryInfoRequest.AvailableInfo;
 import login.system.TransactionRequest;
 import login.system.UserProperty;
 import login.tools.CredentialException;
@@ -89,7 +86,7 @@ public class TimerTest {
                 userRepo, RepositoryInfoRequest.AvailableInfo.LOGIN_ATTEMPTS
         );
         
-        boolean matchValue = this.repo.matchRepositoryInfoByValue(repoReq, "3");
+        boolean matchValue = this.repo.matchRepositoryInfo(repoReq);
         assertFalse(matchValue);
         boolean matchByValue = this.repo.matchRepositoryInfoByValue(repoReq, "2");
         assertTrue(matchByValue);

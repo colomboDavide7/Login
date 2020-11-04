@@ -33,6 +33,8 @@ public class SystemRepository implements ISystemRepository {
         usersRepo     = new ArrayList<>();
     }
             
+// ====================================================================================
+    // Add customer logic
     @Override
     public void addNewCustomer(TransactionRequest r) throws CredentialException, TransactionException {
         if(isWrongRequestType(r, TransactionRequest.TransactionType.SIGN_UP))
@@ -45,7 +47,7 @@ public class SystemRepository implements ISystemRepository {
         
         signup(r);
     }
-   
+    
     private void signup(TransactionRequest r) {
         FileParser.appendRecord(subscriptions, r.createUserRecord(), isAppendMode);
         this.usersRepo.add(UserRepository.createUserRepository(r));
@@ -55,6 +57,8 @@ public class SystemRepository implements ISystemRepository {
             isAppendMode = true;
     }
     
+// ====================================================================================
+    // Login logic
     @Override
     public void login(TransactionRequest r) throws TransactionException, AuthorizationException {
         if(isWrongRequestType(r, TransactionRequest.TransactionType.LOGIN))
@@ -74,6 +78,8 @@ public class SystemRepository implements ISystemRepository {
                       .forEachOrdered(repo -> repo.addTransaction(r));
     }
     
+// ====================================================================================
+    // Logout logic
     @Override
     public void logout(TransactionRequest r) throws TransactionException {
         if(isWrongRequestType(r, TransactionRequest.TransactionType.LOGOUT))
@@ -136,6 +142,8 @@ public class SystemRepository implements ISystemRepository {
                !r.matchUserProperty(UserProperty.PASSWORD, password);
     }
 
+// ====================================================================================
+    // Repository info logic
     @Override
     public boolean matchRepositoryInfo(RepositoryInfoRequest r) {
         for(UserRepository repo : this.usersRepo)
@@ -151,5 +159,7 @@ public class SystemRepository implements ISystemRepository {
                 return r.matchRepositoryInfoByValue(repo, toMatch);
         return false;
     }
+    
+// ====================================================================================
     
 }

@@ -3,7 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/davidecolombo/Desktop/myGitRepo/Login/src/login/users/UserRequest.java</file>
+            <file>file:/Users/davidecolombo/Desktop/myGitRepo/Login/src/login/SystemManager.java</file>
+            <file>file:/Users/davidecolombo/Desktop/myGitRepo/Login/src/login/ISystemManager.java</file>
+            <file>file:/Users/davidecolombo/Desktop/myGitRepo/Login/src/login/controllers/UIController.java</file>
+            <file>file:/Users/davidecolombo/Desktop/myGitRepo/Login/test/login/FileParserTest.java</file>
         </group>
     </open-files>
 </project-private>

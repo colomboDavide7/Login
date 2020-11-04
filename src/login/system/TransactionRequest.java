@@ -6,7 +6,6 @@
 package login.system;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import login.tools.ParserScheme;
 import login.users.IUser;
 
@@ -50,10 +49,6 @@ public class TransactionRequest {
     public boolean matchUserProperty(UserProperty key, String value){
         return this.u.matchProperty(key, value);
     }
-    
-//    public void addUserToList(List<IUser> list){
-//        list.add(this.u);
-//    }
     
     public String createUserRecord(){
         return this.u.createRecord();

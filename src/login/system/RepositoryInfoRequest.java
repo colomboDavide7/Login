@@ -14,16 +14,12 @@ import login.repositories.UserRepository;
 public class RepositoryInfoRequest {
     
     public enum AvailableInfo {
-        LOGIN_ATTEMPTS("3"), OWNER();
+        LOGIN_ATTEMPTS("3"), OWNER("");
         
         private String value;
         
         AvailableInfo(String value){
             this.value = value;
-        }
-        
-        AvailableInfo(){
-            
         }
         
         public String getValue(){
