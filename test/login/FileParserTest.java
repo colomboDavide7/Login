@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import login.repositories.AuthorizationException;
 import login.repositories.SystemRepository;
 import login.repositories.TransactionException;
@@ -277,10 +275,10 @@ public class FileParserTest {
                     );
             this.repo.login(wrong);
             assertTrue(false);
-        } catch (CustomerCreationException | CredentialException | AuthorizationException ex) {
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
-        } catch (TransactionException ex) {
-            assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        } catch (AuthorizationException ex) {
+            assertEquals("Wrong attempts. 2 attempts left", ex.getErrorMessage());
         }
     }
     

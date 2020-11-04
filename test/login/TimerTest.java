@@ -77,10 +77,10 @@ public class TimerTest {
             );
             this.repo.login(r);
             
-        } catch (CustomerCreationException | CredentialException | AuthorizationException ex) {
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
-        } catch (TransactionException ex) {
-            assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+        } catch (AuthorizationException ex) {
+            assertEquals("Wrong attempts. 2 attempts left", ex.getErrorMessage());
         }
         
         UserRepository userRepo = UserRepository.createUserRepository(r);
@@ -111,27 +111,29 @@ public class TimerTest {
             try {
                 this.repo.login(wrong);
             } catch (TransactionException ex) {
-                assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+                assertTrue(false);
+            } catch (AuthorizationException ex) {
+                assertEquals("Wrong attempts. 2 attempts left", ex.getErrorMessage());
             }
             
             try {
                 this.repo.login(wrong);
             } catch (TransactionException ex) {
-                assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+                assertTrue(false);
+            } catch (AuthorizationException ex) {
+                assertEquals("Wrong attempts. 1 attempts left", ex.getErrorMessage());
             }
             
             try {
                 this.repo.login(wrong);
             } catch (TransactionException ex) {
-                assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+                assertTrue(false);
+            } catch (AuthorizationException ex) {
+                assertEquals(AuthorizationException.ErrorCode.LOGIN_ATTEMPTS_OVERFLOW, ex.getErrorCode());
             }
-            
-            assertTrue(false);
             
         } catch (CustomerCreationException | CredentialException | TransactionException ex) {
             assertTrue(false);
-        } catch (AuthorizationException ex) {
-            assertEquals(AuthorizationException.ErrorCode.LOGIN_ATTEMPTS_OVERFLOW, ex.getErrorCode());
         }
         
     }

@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import static junit.framework.Assert.*;
+import login.repositories.AuthorizationException;
 import login.repositories.TransactionException;
 import login.tools.CredentialException;
 import login.tools.CredentialException.ErrorCode;
@@ -19,6 +20,8 @@ import login.system.TransactionRequest;
 import login.users.IUser;
 import login.system.UserProperty;
 import login.users.CustomerCreationException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -136,6 +139,8 @@ public class CustomerTest {
             this.manager.parseLoginRequest(r);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
+        } catch (AuthorizationException ex) {
+            assertTrue(false);
         }
     }
     
@@ -161,10 +166,10 @@ public class CustomerTest {
             customer = User.getBasicUser(basicProperties);
             TransactionRequest login = TransactionRequest.createRequestByType(customer, TransactionRequest.TransactionType.LOGIN);
             this.manager.parseLoginRequest(login);
-        }catch(TransactionException ex){
-            Assert.assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
-        } catch (CustomerCreationException ex) {
-            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
+            assertTrue(false);
+        } catch (AuthorizationException ex) {
+            assertEquals("Wrong attempts. 2 attempts left", ex.getErrorMessage());
         }
     }
     
@@ -192,8 +197,8 @@ public class CustomerTest {
             this.manager.parseLoginRequest(login);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.NOT_SIGNED_UP, ex.getErrorCode());
-        } catch (CustomerCreationException ex) {
-            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CustomerCreationException | AuthorizationException ex) {
+            assertTrue(false);
         }
     }
     
@@ -244,8 +249,8 @@ public class CustomerTest {
             this.manager.parseLoginRequest(login);
         }catch(TransactionException ex){
             Assert.assertEquals(TransactionException.ErrorCode.ALREADY_LOGGED_IN, ex.getErrorCode());
-        } catch (CustomerCreationException ex) {
-            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CustomerCreationException | AuthorizationException ex) {
+            assertTrue(false);
         }
     }
     
