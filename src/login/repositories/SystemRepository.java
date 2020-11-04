@@ -98,12 +98,10 @@ public class SystemRepository implements ISystemRepository {
     
     @Override
     public boolean isSignedUp(TransactionRequest r) {
-        for(UserRepository repo : this.usersRepo)
-            if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
-                return repo.verifyExistanceOfOneAndOnlyOneSignupTransaction();
-        return false;
+        return this.usersRepo.stream()
+                             .anyMatch(repo -> (repo.matchOwner(r.getUserProperty(UserProperty.USERNAME))));
     }
-
+    
     @Override
     public boolean isLogged(TransactionRequest r) {
         for(UserRepository repo : this.usersRepo)
@@ -117,31 +115,33 @@ public class SystemRepository implements ISystemRepository {
     }
     
     private boolean isWrongPassword(TransactionRequest r) throws AuthorizationException {
-        for(String l : lines)
-            if(!verifyEntityIdentity(l, r))
+        for(String subscription : lines)
+            if(!verifyEntityIdentity(subscription, r))
                 return true;
         return false;
     }
     
     private boolean verifyEntityIdentity(String transaction, TransactionRequest r) throws AuthorizationException {
-        String username = UserRepository.getTransactionValueByKey(
-                transaction, UserProperty.USERNAME.name());
-        String password = UserRepository.getTransactionValueByKey(
-                transaction, UserProperty.PASSWORD.name());
-        
-        if(isRightUsernameButWrongPassword(username, password, r))
+    
+        if(verifyUsername(transaction, r) && !verifyPassword(transaction, r))
             for(UserRepository repo : this.usersRepo)
                 if(repo.matchOwner(r.getUserProperty(UserProperty.USERNAME)))
                     return repo.wrongAccess();
-        return r.matchUserProperty(UserProperty.USERNAME, username) &&
-               r.matchUserProperty(UserProperty.PASSWORD, password);
+        return verifyUsername(transaction, r) && verifyPassword(transaction, r);
     }
     
-    private boolean isRightUsernameButWrongPassword(String username, String password, TransactionRequest r){
-        return r.matchUserProperty(UserProperty.USERNAME, username) &&
-               !r.matchUserProperty(UserProperty.PASSWORD, password);
+    private boolean verifyUsername(String transaction, TransactionRequest r){
+        String username = UserRepository.getTransactionValueByKey(
+                transaction, UserProperty.USERNAME.name());
+        return r.matchUserProperty(UserProperty.USERNAME, username);
     }
-
+    
+    private boolean verifyPassword(String transaction, TransactionRequest r){
+        String pwd = UserRepository.getTransactionValueByKey(
+                transaction, UserProperty.PASSWORD.name());
+        return r.matchUserProperty(UserProperty.PASSWORD, pwd);
+    }
+    
 // ====================================================================================
     // Repository info logic
     @Override

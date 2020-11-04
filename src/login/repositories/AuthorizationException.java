@@ -11,7 +11,18 @@ package login.repositories;
  */
 public class AuthorizationException extends Exception {
 
-    public AuthorizationException() {
+    public enum ErrorCode{
+        LOGIN_ATTEMPTS_OVERFLOW;
+    }
+    
+    private ErrorCode errCode;
+    
+    public AuthorizationException(ErrorCode code) {
+        this.errCode = code;
+    }
+    
+    public ErrorCode getErrorCode(){
+        return this.errCode;
     }
     
 }

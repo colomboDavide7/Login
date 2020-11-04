@@ -128,9 +128,13 @@ public class UserRepository {
         );
     }
     
-    public boolean wrongAccess() throws AuthorizationException{
+// ====================================================================================
+    // Access attempts logic
+    public boolean wrongAccess() throws AuthorizationException {
         this.info.decrementNumberOfAvailableLoginAttempts();
         return false;
     }
+    
+// ====================================================================================
     
 }

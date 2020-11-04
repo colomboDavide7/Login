@@ -7,6 +7,8 @@ package login;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import login.repositories.AuthorizationException;
 import login.repositories.ISystemRepository;
 import login.repositories.SystemRepository;
@@ -90,6 +92,48 @@ public class TimerTest {
         assertFalse(matchValue);
         boolean matchByValue = this.repo.matchRepositoryInfoByValue(repoReq, "2");
         assertTrue(matchByValue);
+    }
+    
+    @Test
+    public void shouldThrowAuthorizationException(){
+        System.out.println("* Timer Test: shouldThrowAuthorizationException()\n");
+        
+        try {
+            TransactionRequest r = TransactionRequest.createRequestByType(
+                    createValidUser(), TransactionRequest.TransactionType.SIGN_UP
+            );
+            this.repo.addNewCustomer(r);
+            
+            TransactionRequest wrong = TransactionRequest.createRequestByType(
+                    createValidUserWithWrongPassword(), TransactionRequest.TransactionType.LOGIN
+            );
+            
+            try {
+                this.repo.login(wrong);
+            } catch (TransactionException ex) {
+                assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+            }
+            
+            try {
+                this.repo.login(wrong);
+            } catch (TransactionException ex) {
+                assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+            }
+            
+            try {
+                this.repo.login(wrong);
+            } catch (TransactionException ex) {
+                assertEquals(TransactionException.ErrorCode.WRONG_PASSWORD, ex.getErrorCode());
+            }
+            
+            assertTrue(false);
+            
+        } catch (CustomerCreationException | CredentialException | TransactionException ex) {
+            assertTrue(false);
+        } catch (AuthorizationException ex) {
+            assertEquals(AuthorizationException.ErrorCode.LOGIN_ATTEMPTS_OVERFLOW, ex.getErrorCode());
+        }
+        
     }
     
 // ====================================================================================
