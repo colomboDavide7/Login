@@ -3,26 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login.UI;
+package login.controllers;
 
-import javax.swing.JButton;
+import login.UI.ITimerPanel;
 
 /**
  *
  * @author davidecolombo
  */
-public interface IAppUI {
+public interface UIControllerInterface {
     
-    JButton getLogoutButton();
-    
-    ILoginPanel getLoginPanel();
-    
-    ITitlePanel getTitlePanel();
-    
-    ISignupPanel getSignupPanel();
+    void appendLoginPanel();
     
     void appendTimerPanel(ITimerPanel p);
     
-    void appendLoginPanel();
+    void setTimerController(TimerControllerInterface c);
     
 }

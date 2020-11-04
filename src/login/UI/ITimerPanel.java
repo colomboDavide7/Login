@@ -11,18 +11,16 @@ import javax.swing.JButton;
  *
  * @author davidecolombo
  */
-public interface IAppUI {
+public interface ITimerPanel {
     
-    JButton getLogoutButton();
+    JButton getTimerExpiredButton();
     
-    ILoginPanel getLoginPanel();
+    void setStartTime(int hours, int minutes, int seconds);
     
-    ITitlePanel getTitlePanel();
+    void setHours(int hours);
     
-    ISignupPanel getSignupPanel();
+    void setMinutes(int minutes);
     
-    void appendTimerPanel(ITimerPanel p);
-    
-    void appendLoginPanel();
+    void setSeconds(int seconds);
     
 }

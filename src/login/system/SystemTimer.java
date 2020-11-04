@@ -6,12 +6,45 @@
 package login.system;
 
 import java.util.concurrent.TimeUnit;
+import login.controllers.TimerControllerInterface;
 
 /**
  *
  * @author davidecolombo
  */
 public class SystemTimer extends Thread implements ITimer {
+    
+    public static ITimer createTimerByLevels(TimerLevel l){
+        switch(l){
+            case NO_TIMER:
+                return createLevelOneTimer();
+            case TIMER_LEVEL_ONE:
+                return createLevelTwoTimer();
+            case TIMER_LEVEL_TWO:
+                return createLevelThreeTimer();
+            default:
+                return createTestTimer(0, 0, 15);
+        }
+    }
+    
+    public static ITimer createLevelOneTimer(){
+        return new SystemTimer(60); // seconds
+    }
+    
+    public static ITimer createLevelTwoTimer(){
+        return new SystemTimer(5, 0); // minutes, seconds
+    }
+            
+    public static ITimer createLevelThreeTimer(){
+        return new SystemTimer(15, 0); // minutes, seconds
+    }
+    
+    public static ITimer createTestTimer(int hours, int minutes, int seconds){
+        return new SystemTimer(hours, minutes, seconds);
+    }
+    
+// ================================================================================
+    
     private final int ZERO_TIME          = 0;
     private final int ONE_SECOND         = 1000;
     private final int SECONDS_TO_HOURS   = 3600;
@@ -21,19 +54,20 @@ public class SystemTimer extends Thread implements ITimer {
     private int hours   = ZERO_TIME;
     private int minutes = ZERO_TIME;
     private int seconds = ZERO_TIME;
+    private TimerControllerInterface c;
     
-    public SystemTimer(int hours, int minutes, int seconds){
+    private SystemTimer(int hours, int minutes, int seconds){
         this.hours   = hours;
         convertMinutes(minutes);
         convertSeconds(seconds);
     }
     
-    public SystemTimer(int minutes, int seconds){
+    private SystemTimer(int minutes, int seconds){
         convertMinutes(minutes);
         convertSeconds(seconds);
     }
     
-    public SystemTimer(int seconds){
+    private SystemTimer(int seconds){
         convertSeconds(seconds);
     }
     
@@ -77,6 +111,31 @@ public class SystemTimer extends Thread implements ITimer {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public int getStartHours() {
+        return this.hours;
+    }
+
+    @Override
+    public int getStartMinutes() {
+        return this.minutes;
+    }
+
+    @Override
+    public int getStartSeconds() {
+        return this.seconds;
+    }
+
+    @Override
+    public void startCountdown() {
+        this.start();
+    }
+
+    @Override
+    public void setTimerController(TimerControllerInterface c) {
+        this.c = c;
     }
     
 }

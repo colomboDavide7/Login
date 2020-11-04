@@ -5,12 +5,10 @@
  */
 package login.UI;
 
-import com.sun.xml.internal.ws.api.server.InstanceResolver;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  *
@@ -21,7 +19,8 @@ public class UIFrame extends JFrame implements IAppUI {
     private ILoginPanel loginPanel;
     private ISignupPanel signupPanel;
     private ITitlePanel titlePanel;
-            
+    private ITimerPanel timerPanel;
+    
     private final int heigthInPixel = 500;
     private final int widthInPixel  = 500;
             
@@ -78,6 +77,22 @@ public class UIFrame extends JFrame implements IAppUI {
     @Override
     public ISignupPanel getSignupPanel() {
         return this.signupPanel;
+    }
+
+    @Override
+    public void appendTimerPanel(ITimerPanel p) {
+        this.timerPanel = p;
+        this.getContentPane().remove((Component) this.loginPanel);
+        this.getContentPane().add((Component) this.timerPanel, BorderLayout.EAST);
+        this.getContentPane().validate();
+    }
+
+    @Override
+    public void appendLoginPanel() {
+        this.getContentPane().remove((Component) this.timerPanel);
+        this.getContentPane().add((Component) this.loginPanel, BorderLayout.EAST);
+//        this.getContentPane().repaint();
+        this.getContentPane().validate();
     }
     
 }

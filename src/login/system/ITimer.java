@@ -6,6 +6,7 @@
 package login.system;
 
 import java.util.concurrent.TimeUnit;
+import login.controllers.TimerControllerInterface;
 
 /**
  *
@@ -13,6 +14,16 @@ import java.util.concurrent.TimeUnit;
  */
 public interface ITimer {
     
+    void setTimerController(TimerControllerInterface c);
+    
     boolean matchStartTime(int time, TimeUnit u);
+    
+    int getStartHours();
+    
+    int getStartMinutes();
+    
+    int getStartSeconds();
+    
+    void startCountdown();
     
 }

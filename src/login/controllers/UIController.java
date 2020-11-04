@@ -20,17 +20,22 @@ import login.users.CustomerCreationException;
 import login.users.IUser;
 import login.users.User;
 import login.ISystemManager;
+import login.UI.ITimerPanel;
 import login.repositories.AuthorizationException;
+import login.system.SystemTimer;
+import login.system.TimerLevel;
 
 /**
  *
  * @author davidecolombo
  */
-public class UIController {
+public class UIController implements UIControllerInterface {
     
     private ISystemManager app;
     private IAppUI ui;
-            
+    private TimerControllerInterface timerC;
+    private TimerLevel timerLevel = TimerLevel.NO_TIMER;
+    
     public UIController(ISystemManager app, IAppUI ui){
         this.app = app;
         this.ui  = ui;
@@ -86,6 +91,8 @@ public class UIController {
             } catch (TransactionException ex) {
                 this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.red);
             } catch (AuthorizationException ex) {
+                if(ex.getErrorCode().equals(AuthorizationException.ErrorCode.LOGIN_ATTEMPTS_OVERFLOW))
+                    insertTimer();
                 this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.RED);
             }
         });
@@ -150,5 +157,30 @@ public class UIController {
         
         return User.getBasicUser(basicProperties);
     }
+
+// ================================================================================
+    // Interface methods
+    @Override
+    public void appendLoginPanel() {
+        this.ui.appendLoginPanel();
+    }
     
+    @Override
+    public void appendTimerPanel(ITimerPanel p) {
+        this.ui.appendTimerPanel(p);
+    }
+    
+// ================================================================================
+
+    @Override
+    public void setTimerController(TimerControllerInterface c) {
+        this.timerC = c;
+    }
+    
+    private void insertTimer(){      
+        this.timerC.startTimer(SystemTimer.createTimerByLevels(this.timerLevel));
+        this.timerLevel = TimerLevel.getNextLevel(this.timerLevel);
+        this.ui.appendTimerPanel(timerC.getTimerPanel());
+    }
+
 }
