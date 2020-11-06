@@ -176,8 +176,8 @@ public class UIController implements UIControllerInterface {
     public void setTimerController(TimerControllerInterface c) {
         this.timerC = c;
     }
-    
-    private void insertTimer(){      
+        
+    private void insertTimer(){   
         this.timerC.startTimer(SystemTimer.createTimerByLevels(this.timerLevel));
         this.timerLevel = TimerLevel.getNextLevel(this.timerLevel);
         this.ui.appendTimerPanel(timerC.getTimerPanel());

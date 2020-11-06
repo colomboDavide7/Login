@@ -14,6 +14,10 @@ import login.system.ITimer;
  */
 public interface TimerControllerInterface {
     
+    void timerExpired();
+    
+    void setTime(int hours, int minutes, int seconds);
+    
     void startTimer(ITimer t);
     
     ITimerPanel getTimerPanel();

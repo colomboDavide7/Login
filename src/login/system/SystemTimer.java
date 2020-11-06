@@ -54,7 +54,7 @@ public class SystemTimer extends Thread implements ITimer {
     private int hours   = ZERO_TIME;
     private int minutes = ZERO_TIME;
     private int seconds = ZERO_TIME;
-    private TimerControllerInterface c;
+    private TimerControllerInterface timerController;
     
     private SystemTimer(int hours, int minutes, int seconds){
         this.hours   = hours;
@@ -96,7 +96,36 @@ public class SystemTimer extends Thread implements ITimer {
     
     @Override
     public void run(){
-        
+        while(this.hours != 0 || this.minutes != 0 || this.seconds != 0)
+            timerTick();
+        System.out.println(" ******************************* TIMER EXPIRED ******************************* ");
+        this.timerController.timerExpired();
+    }
+    
+    private void timerTick(){
+        System.out.println(" ******************************* TIMER TICK ******************************* ");
+        try{
+            Thread.sleep(1000);  // ms
+            if(seconds != 0){
+                --seconds;
+            }else{
+                if(minutes != 0){
+                    --minutes;
+                    seconds = SECONDS_TO_MINUTES-1;
+                }else{
+                    if(hours != 0){
+                        --hours;
+                        minutes = SECONDS_TO_MINUTES-1;
+                    }
+                }
+            }
+            // Setting time on timer Panel
+            this.timerController.setTime(this.hours, this.minutes, this.seconds);
+            
+        }catch(InterruptedException ex){
+            System.err.println("Timer has been interrupted\n");
+            System.exit(-1);
+        }
     }
     
     @Override
@@ -135,7 +164,7 @@ public class SystemTimer extends Thread implements ITimer {
 
     @Override
     public void setTimerController(TimerControllerInterface c) {
-        this.c = c;
+        this.timerController = c;
     }
     
 }

@@ -23,4 +23,6 @@ public interface ITimerPanel {
     
     void setSeconds(int seconds);
     
+    void timerExpired();
+    
 }

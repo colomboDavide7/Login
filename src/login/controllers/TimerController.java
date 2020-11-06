@@ -42,12 +42,25 @@ public class TimerController implements TimerControllerInterface {
                 t.getStartHours(), 
                 t.getStartMinutes(), 
                 t.getStartSeconds());
+        t.setTimerController(this);
         t.startCountdown();
     }
 
     @Override
     public ITimerPanel getTimerPanel() {
         return this.timerPanel;
+    }
+
+    @Override
+    public void setTime(int hours, int minutes, int seconds) {
+        this.timerPanel.setHours(hours);
+        this.timerPanel.setMinutes(minutes);
+        this.timerPanel.setSeconds(seconds);
+    }
+    
+    @Override
+    public void timerExpired(){
+        this.timerPanel.timerExpired();
     }
     
 }

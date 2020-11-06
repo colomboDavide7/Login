@@ -138,6 +138,7 @@ public class TimerPanel extends JPanel implements ITimerPanel {
     
     private void initButton(){
         this.timerExpired = new JButton("back");
+        this.timerExpired.setEnabled(false);
         timerExpired.setPreferredSize(new Dimension(20, 20));
     }
 
@@ -166,6 +167,11 @@ public class TimerPanel extends JPanel implements ITimerPanel {
     @Override
     public JButton getTimerExpiredButton() {
         return this.timerExpired;
+    }
+
+    @Override
+    public void timerExpired() {
+        this.timerExpired.setEnabled(true);
     }
     
 }
