@@ -25,4 +25,6 @@ public interface IAppUI {
     
     void appendLoginPanel();
     
+    void clearLoginForm();
+    
 }

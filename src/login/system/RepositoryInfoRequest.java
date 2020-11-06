@@ -14,7 +14,7 @@ import login.repositories.UserRepository;
 public class RepositoryInfoRequest {
     
     public enum AvailableInfo {
-        LOGIN_ATTEMPTS("3"), OWNER("");
+        LOGIN_ATTEMPTS("3"), OWNER(""), MAX_ATTEMPTS("3");
         
         private String value;
         

@@ -33,6 +33,7 @@ public class TimerController implements TimerControllerInterface {
         JButton timerExpired = this.timerPanel.getTimerExpiredButton();
         timerExpired.addActionListener((ActionEvent e) -> {
             uiControl.appendLoginPanel();
+            timerExpired.setEnabled(false);
         });
     }
     

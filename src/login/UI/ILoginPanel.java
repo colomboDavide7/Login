@@ -14,7 +14,7 @@ import login.system.UserProperty;
  *
  * @author davidecolombo
  */
-public interface ILoginPanel {
+public interface ILoginPanel extends IResetUIFields {
     
     JButton getLoginButton();
     
@@ -24,6 +24,10 @@ public interface ILoginPanel {
     
     JTextArea getErrorArea();
     
+    @Override
     void highlightMissing(List<UserProperty> missing);
+    
+    @Override
+    void clearForm();
     
 }

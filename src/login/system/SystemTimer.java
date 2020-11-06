@@ -98,12 +98,10 @@ public class SystemTimer extends Thread implements ITimer {
     public void run(){
         while(this.hours != 0 || this.minutes != 0 || this.seconds != 0)
             timerTick();
-        System.out.println(" ******************************* TIMER EXPIRED ******************************* ");
         this.timerController.timerExpired();
     }
     
     private void timerTick(){
-        System.out.println(" ******************************* TIMER TICK ******************************* ");
         try{
             Thread.sleep(1000);  // ms
             if(seconds != 0){
@@ -118,10 +116,9 @@ public class SystemTimer extends Thread implements ITimer {
                         minutes = SECONDS_TO_MINUTES-1;
                     }
                 }
-            }
+            }       
             // Setting time on timer Panel
             this.timerController.setTime(this.hours, this.minutes, this.seconds);
-            
         }catch(InterruptedException ex){
             System.err.println("Timer has been interrupted\n");
             System.exit(-1);

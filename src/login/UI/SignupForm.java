@@ -97,7 +97,7 @@ public class SignupForm implements ISignupForm {
     }
 
     @Override
-    public void clear() {
+    public void clearForm() {
         this.form.keySet().stream()
                           .filter(p -> p != UserProperty.PASSWORD)
                           .forEach(p -> this.form.get(p).setText(p.toString()));

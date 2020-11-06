@@ -95,6 +95,8 @@ public class UIController implements UIControllerInterface {
                     insertTimer();
                 this.setLoginMessageTextAndColor(ex.getErrorMessage(), Color.RED);
             }
+            // Clear form every time a login transaction was sent
+            this.ui.clearLoginForm();
         });
     }
     
@@ -176,7 +178,7 @@ public class UIController implements UIControllerInterface {
     public void setTimerController(TimerControllerInterface c) {
         this.timerC = c;
     }
-        
+    
     private void insertTimer(){   
         this.timerC.startTimer(SystemTimer.createTimerByLevels(this.timerLevel));
         this.timerLevel = TimerLevel.getNextLevel(this.timerLevel);

@@ -84,6 +84,7 @@ public class UIFrame extends JFrame implements IAppUI {
         this.timerPanel = p;
         this.getContentPane().remove((Component) this.loginPanel);
         this.getContentPane().add((Component) this.timerPanel, BorderLayout.EAST);
+        this.getContentPane().repaint();
         this.getContentPane().validate();
     }
 
@@ -91,8 +92,13 @@ public class UIFrame extends JFrame implements IAppUI {
     public void appendLoginPanel() {
         this.getContentPane().remove((Component) this.timerPanel);
         this.getContentPane().add((Component) this.loginPanel, BorderLayout.EAST);
-//        this.getContentPane().repaint();
+        this.getContentPane().repaint();
         this.getContentPane().validate();
+    }
+
+    @Override
+    public void clearLoginForm() {
+        this.loginPanel.clearForm();
     }
     
 }

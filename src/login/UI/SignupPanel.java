@@ -209,7 +209,7 @@ public class SignupPanel extends JPanel implements ISignupPanel {
 
     @Override
     public void clearForm() {
-        this.form.clear();
+        this.form.clearForm();
     }
     
 }

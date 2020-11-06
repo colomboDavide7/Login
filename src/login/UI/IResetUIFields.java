@@ -6,24 +6,16 @@
 package login.UI;
 
 import java.util.List;
-import java.util.Map;
-import javax.swing.text.JTextComponent;
 import login.system.UserProperty;
 
 /**
  *
  * @author davidecolombo
  */
-public interface ISignupForm extends IResetUIFields {
+public interface IResetUIFields {
     
-    JTextComponent getPropertyField(UserProperty p);
-    
-    Map<UserProperty, String> getInsertedProperties();
-    
-    @Override
     void highlightMissing(List<UserProperty> missing);
     
-    @Override
     void clearForm();
     
 }

@@ -208,5 +208,11 @@ public class LoginPanel extends JPanel implements ILoginPanel {
         if(missing.contains(UserProperty.PASSWORD))
             this.pwd.setBorder(BorderFactory.createEtchedBorder(Color.RED, Color.RED)); 
     }
+
+    @Override
+    public void clearForm() {
+        this.username.setText("");
+        this.pwd.setText("");
+    }
     
 }
